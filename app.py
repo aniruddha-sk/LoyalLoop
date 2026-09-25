@@ -6000,6 +6000,11 @@ def customer_logout():
 
     return redirect("/")
 
+
+@app.route("/health")
+def health():
+    return {"status": "healthy"}, 200
+
 if __name__=="__main__":
     print("\n"+"="*55)
     print("             LoyalLoop Backend 🚀")
