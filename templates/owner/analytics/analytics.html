@@ -1,0 +1,678 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<!-- ANALYTICS PAGE CSS -->
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/owner/analytics.css') }}"
+>
+
+<div class="owner-app">
+
+    <!-- SIDEBAR -->
+    {% include "owner/components/sidebar.html" %}
+
+
+    <!-- MAIN -->
+    <main class="owner-main">
+
+        <!-- HEADER -->
+        {% set header_section = "BUSINESS INSIGHTS" %}
+        {% set header_title = "Analytics" %}
+
+        {% include "owner/components/header.html" %}
+
+
+        <!-- ANALYTICS CONTENT -->
+        <div class="dashboard-content analytics-page">
+
+
+            <!-- ==========================================
+                 ANALYTICS HEADER
+            =========================================== -->
+
+            <div class="analytics-header">
+
+                <div class="analytics-header-left">
+
+                    <span class="analytics-eyebrow">
+                        BUSINESS INSIGHTS
+                    </span>
+
+                    <h2>
+                        Analytics
+                    </h2>
+
+                    <p>
+                        Understand your customers, orders,
+                        revenue and loyalty activity.
+                    </p>
+
+                </div>
+
+
+                <div class="analytics-period">
+
+                    <span class="period-dot"></span>
+
+                    <span>
+                        Last 7 Days + Overall
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 MAIN STATS
+            =========================================== -->
+
+            <div class="analytics-stats">
+
+
+                <!-- TOTAL CUSTOMERS -->
+
+                <div class="analytics-stat-card">
+
+                    <div class="analytics-stat-icon">
+                        👥
+                    </div>
+
+                    <div class="analytics-stat-content">
+
+                        <span>
+                            Total Customers
+                        </span>
+
+                        <strong>
+                            {{ total_customers or 0 }}
+                        </strong>
+
+                        <small>
+                            {{ active_customers or 0 }} active
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RETURNING CUSTOMERS -->
+
+                <div class="analytics-stat-card">
+
+                    <div class="analytics-stat-icon">
+                        ↻
+                    </div>
+
+                    <div class="analytics-stat-content">
+
+                        <span>
+                            Returning Customers
+                        </span>
+
+                        <strong>
+                            {{ returning_customers or 0 }}
+                        </strong>
+
+                        <small>
+                            Visited more than once
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TOTAL ORDERS -->
+
+                <div class="analytics-stat-card">
+
+                    <div class="analytics-stat-icon">
+                        🛍
+                    </div>
+
+                    <div class="analytics-stat-content">
+
+                        <span>
+                            Total Orders
+                        </span>
+
+                        <strong>
+                            {{ total_orders or 0 }}
+                        </strong>
+
+                        <small>
+                            {{ delivered_orders or 0 }} delivered
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TOTAL REVENUE -->
+
+                <div class="analytics-stat-card">
+
+                    <div class="analytics-stat-icon">
+                        ₹
+                    </div>
+
+                    <div class="analytics-stat-content">
+
+                        <span>
+                            Total Revenue
+                        </span>
+
+                        <strong>
+                            ₹{{ "{:,.0f}".format(total_revenue or 0) }}
+                        </strong>
+
+                        <small>
+                            Delivered orders
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 SECONDARY STATS
+            =========================================== -->
+
+            <div class="analytics-mini-grid">
+
+
+                <div class="analytics-mini-card">
+
+                    <div>
+
+                        <span>
+                            Average Order Value
+                        </span>
+
+                        <strong>
+                            ₹{{ "{:,.2f}".format(average_order_value or 0) }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="analytics-mini-card">
+
+                    <div>
+
+                        <span>
+                            Total Visits
+                        </span>
+
+                        <strong>
+                            {{ total_visits or 0 }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="analytics-mini-card">
+
+                    <div>
+
+                        <span>
+                            Loyalty Stamps
+                        </span>
+
+                        <strong>
+                            {{ total_stamps or 0 }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="analytics-mini-card">
+
+                    <div>
+
+                        <span>
+                            Rewards Claimed
+                        </span>
+
+                        <strong>
+                            {{ rewards_claimed or 0 }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 PERFORMANCE SECTION
+            =========================================== -->
+
+            <div class="analytics-grid">
+
+
+                <!-- ======================================
+                     LAST 7 DAYS
+                ======================================= -->
+
+                <div class="analytics-panel">
+
+                    <div class="analytics-panel-head">
+
+                        <div>
+
+                            <h3>
+                                Last 7 Days
+                            </h3>
+
+                            <p>
+                                Orders and revenue performance.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="analytics-chart">
+
+                        {% if daily_stats %}
+
+                            {% for day in daily_stats %}
+
+                                <div class="chart-row">
+
+
+                                    <!-- DATE -->
+
+                                    <div class="chart-label">
+
+                                        <span>
+                                            {{ day[0].strftime('%d %b') }}
+                                        </span>
+
+                                    </div>
+
+
+
+                                    <!-- BAR -->
+
+                                    <div class="chart-track">
+
+                                        <div
+                                            class="chart-bar"
+                                            style="width: {{ day[3] or 0 }}%;"
+                                        ></div>
+
+                                    </div>
+
+
+
+                                    <!-- REVENUE -->
+
+                                    <div class="chart-value">
+
+                                        ₹{{ "{:,.0f}".format(day[2] or 0) }}
+
+                                    </div>
+
+
+                                </div>
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+                            <div class="analytics-empty">
+
+                                No order activity in the last 7 days.
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ======================================
+                     CUSTOMER OVERVIEW
+                ======================================= -->
+
+                <div class="analytics-panel">
+
+                    <div class="analytics-panel-head">
+
+                        <div>
+
+                            <h3>
+                                Customer Overview
+                            </h3>
+
+                            <p>
+                                Current customer activity.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="customer-overview-list">
+
+
+                        <div class="overview-row">
+
+                            <span>
+                                Total Customers
+                            </span>
+
+                            <strong>
+                                {{ total_customers or 0 }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="overview-row">
+
+                            <span>
+                                Active Customers
+                            </span>
+
+                            <strong>
+                                {{ active_customers or 0 }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="overview-row">
+
+                            <span>
+                                Returning Customers
+                            </span>
+
+                            <strong>
+                                {{ returning_customers or 0 }}
+                            </strong>
+
+                        </div>
+
+
+
+                        <div class="overview-row">
+
+                            <span>
+                                Inactive Customers
+                            </span>
+
+                            <strong>
+                                {{ inactive_customers or 0 }}
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 TOP SELLING ITEMS
+            =========================================== -->
+
+            <div class="analytics-panel analytics-full-panel">
+
+
+                <div class="analytics-panel-head">
+
+                    <div>
+
+                        <h3>
+                            Top Selling Items
+                        </h3>
+
+                        <p>
+                            Items with the highest quantity sold.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                {% if top_items %}
+
+                    <div class="top-items">
+
+                        {% for item in top_items %}
+
+                            <div class="top-item-row">
+
+
+                                <!-- RANK -->
+
+                                <div class="top-item-rank">
+                                    {{ loop.index }}
+                                </div>
+
+
+
+                                <!-- ITEM -->
+
+                                <div class="top-item-info">
+
+                                    <strong>
+                                        {{ item[0] }}
+                                    </strong>
+
+                                    <span>
+
+                                        {{ item[1] }}
+
+                                        item{% if item[1] != 1 %}s{% endif %}
+
+                                        sold
+
+                                    </span>
+
+                                </div>
+
+
+
+                                <!-- REVENUE -->
+
+                                <div class="top-item-revenue">
+
+                                    ₹{{ "{:,.0f}".format(item[2] or 0) }}
+
+                                </div>
+
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                {% else %}
+
+                    <div class="analytics-empty">
+
+                        No item sales data available yet.
+
+                    </div>
+
+                {% endif %}
+
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 LOYALTY INSIGHTS
+            =========================================== -->
+
+            <div class="analytics-panel analytics-full-panel">
+
+
+                <div class="analytics-panel-head">
+
+                    <div>
+
+                        <h3>
+                            Loyalty Insights
+                        </h3>
+
+                        <p>
+                            Understand how your loyalty
+                            program is performing.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('owner_loyalty_settings') }}"
+                        class="analytics-btn"
+                    >
+                        Manage Loyalty
+                    </a>
+
+                </div>
+
+
+
+                <div class="loyalty-insight-grid">
+
+
+                    <!-- TOTAL STAMPS -->
+
+                    <div class="loyalty-insight-card">
+
+                        <div class="insight-icon">
+                            ★
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Total Stamps
+                            </span>
+
+                            <strong>
+                                {{ total_stamps or 0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- REWARDS -->
+
+                    <div class="loyalty-insight-card">
+
+                        <div class="insight-icon">
+                            🎁
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Rewards Claimed
+                            </span>
+
+                            <strong>
+                                {{ rewards_claimed or 0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ELIGIBLE -->
+
+                    <div class="loyalty-insight-card">
+
+                        <div class="insight-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Eligible Customers
+                            </span>
+
+                            <strong>
+                                {{ eligible_customers or 0 }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        {% include "owner/components/footer.html" %}
+
+    </main>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#080812"
+    >
+
+    <title>
+        Customer Login | LoyalLoop
+    </title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/customer-auth.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="customer-auth">
+
+    <!-- Animated Background Orbs -->
+
+    <div class="auth-orb one"></div>
+
+    <div class="auth-orb two"></div>
+
+    <div class="auth-orb three"></div>
+
+
+    <div class="auth-container">
+
+        <!-- BRAND -->
+
+        <div class="auth-brand">
+
+            <div class="brand-logo">
+                L
+            </div>
+
+            <h1>
+                LoyalLoop
+            </h1>
+
+            <p>
+                Customer Experience
+            </p>
+
+        </div>
+
+
+        <!-- LOGIN CARD -->
+
+        <div class="auth-card">
+
+            <!-- BADGE -->
+
+            <div class="auth-badge">
+                WELCOME BACK
+            </div>
+
+
+            <!-- HEADING -->
+
+            <h2>
+                Good to see you!
+            </h2>
+
+            <p>
+                Login to continue your loyalty journey.
+            </p>
+
+
+            <!-- FLASH MESSAGES -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    <div class="flash-container">
+
+                        {% for category, message in messages %}
+
+                            <div
+                                class="flash-message
+                                {% if category == 'danger' %}
+                                    error
+                                {% else %}
+                                    {{ category }}
+                                {% endif %}"
+                            >
+
+                                <span>
+                                    {{ message }}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    onclick="this.parentElement.remove()"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- LOGIN FORM -->
+
+            <form
+                class="auth-form"
+                method="POST"
+                action="{{ url_for('customer_login', qr_token=qr_token) }}"
+                id="customerLoginForm"
+            >
+
+                <!-- MOBILE NUMBER -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Mobile Number
+                    </label>
+
+                    <div class="phone-input">
+
+                        <div class="phone-prefix">
+                            +91
+                        </div>
+
+                        <input
+                            type="tel"
+                            name="phone"
+                            id="phone"
+                            placeholder="Enter mobile number"
+                            maxlength="10"
+                            minlength="10"
+                            inputmode="numeric"
+                            autocomplete="tel"
+                            required
+                        >
+
+                    </div>
+
+                    <small
+                        id="phoneError"
+                        class="phone-error"
+                    ></small>
+
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                    id="loginButton"
+                >
+
+                    <span class="button-text">
+                        Continue
+                    </span>
+
+                    <span class="button-arrow">
+                        →
+                    </span>
+
+                </button>
+
+            </form>
+
+
+            <!-- DIVIDER -->
+
+            <div class="auth-divider">
+
+                <span>
+                    NEW CUSTOMER?
+                </span>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div class="auth-login">
+
+                Don't have an account?
+
+                <a
+                    href="{{ url_for(
+                        'customer_register',
+                        qr_token=qr_token
+                    ) }}"
+                >
+                    Create your account
+                </a>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <div class="auth-footer">
+
+                Powered by
+                <strong>
+                    LoyalLoop
+                </strong>
+
+                • Loyalty & Retention
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- CUSTOMER AUTH JS -->
+
+<script
+    src="{{ url_for(
+        'static',
+        filename='js/customer-auth.js'
+    ) }}"
+></script>
+
+</body>
+</html>

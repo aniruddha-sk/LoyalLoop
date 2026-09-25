@@ -1,0 +1,505 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | {{ business_name }}{% endblock %}
+
+{% block content %}
+
+{% set header_section = "OVERVIEW" %}
+{% set header_title = "Good evening, " ~ session.get("owner_name") ~ " 👋" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="welcome-card">
+
+<div>
+
+<span class="welcome-badge">
+● BUSINESS ACTIVE
+</span>
+
+<h2>
+Everything is looking good.
+</h2>
+
+<p>
+Manage your customers, orders and loyalty
+from one place.
+</p>
+
+</div>
+
+<div class="welcome-art">
+<div>↗</div>
+<span>Grow • Engage • Retain</span>
+</div>
+
+</div>
+
+
+<div class="stats-grid">
+
+<div class="stat-card">
+
+<div class="stat-top">
+
+<span class="stat-icon purple">
+♙
+</span>
+
+<span class="stat-trend">
+Customers
+</span>
+
+</div>
+
+<strong>
+{{ total_customers }}
+</strong>
+
+<span>
+Total customers
+</span>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-top">
+
+<span class="stat-icon blue">
+◉
+</span>
+
+<span class="stat-trend">
+Orders
+</span>
+
+</div>
+
+<strong>
+{{ total_orders }}
+</strong>
+
+<span>
+Total orders
+</span>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-top">
+
+<span class="stat-icon green">
+₹
+</span>
+
+<span class="stat-trend">
+Revenue
+</span>
+
+</div>
+
+<strong>
+₹{{ "{:,.0f}".format(total_revenue) }}
+</strong>
+
+<span>
+Delivered orders
+</span>
+
+</div>
+
+
+<div class="stat-card">
+
+<div class="stat-top">
+
+<span class="stat-icon orange">
+◷
+</span>
+
+<span class="stat-trend">
+{{ today_orders }} today
+</span>
+
+</div>
+
+<strong>
+{{ pending_orders }}
+</strong>
+
+<span>
+Pending orders
+</span>
+
+</div>
+
+</div>
+
+
+<div class="dashboard-grid">
+
+<section class="panel quick-panel">
+
+<div class="panel-heading">
+
+<div>
+
+<span>
+QUICK ACTIONS
+</span>
+
+<h3>
+Manage your business
+</h3>
+
+</div>
+
+</div>
+
+
+<div class="quick-actions">
+
+<a
+href="{{ url_for('add_menu_item') }}"
+class="quick-action"
+>
+
+<div class="quick-icon purple">
+＋
+</div>
+
+<div>
+
+<strong>
+Add Menu Item
+</strong>
+
+<span>
+Add food or service
+</span>
+
+</div>
+
+<b>→</b>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders') }}"
+class="quick-action"
+>
+
+<div class="quick-icon blue">
+▣
+</div>
+
+<div>
+
+<strong>
+View Orders
+</strong>
+
+<span>
+{{ pending_orders }} pending
+</span>
+
+</div>
+
+<b>→</b>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_customers') }}"
+class="quick-action"
+>
+
+<div class="quick-icon green">
+♙
+</div>
+
+<div>
+
+<strong>
+Customers
+</strong>
+
+<span>
+{{ total_customers }} customers
+</span>
+
+</div>
+
+<b>→</b>
+
+</a>
+
+
+<a
+href="#"
+class="quick-action"
+>
+
+<div class="quick-icon orange">
+★
+</div>
+
+<div>
+
+<strong>
+Loyalty Program
+</strong>
+
+<span>
+Manage rewards
+</span>
+
+</div>
+
+<b>→</b>
+
+</a>
+
+</div>
+
+</section>
+
+
+<section class="panel overview-panel">
+
+<div class="panel-heading">
+
+<div>
+
+<span>
+BUSINESS SNAPSHOT
+</span>
+
+<h3>
+At a glance
+</h3>
+
+</div>
+
+</div>
+
+
+<div class="snapshot-list">
+
+
+<div>
+
+<span class="snapshot-icon">
+●
+</span>
+
+<div>
+
+<strong>
+Active customers
+</strong>
+
+<small>
+Visited in last 30 days
+</small>
+
+</div>
+
+<b>
+{{ active_customers }}
+</b>
+
+</div>
+
+
+<div>
+
+<span class="snapshot-icon">
+▦
+</span>
+
+<div>
+
+<strong>
+Menu items
+</strong>
+
+<small>
+Currently active
+</small>
+
+</div>
+
+<b>
+{{ total_menu_items }}
+</b>
+
+</div>
+
+
+<div>
+
+<span class="snapshot-icon">
+◇
+</span>
+
+<div>
+
+<strong>
+Reward claims
+</strong>
+
+<small>
+Waiting for redemption
+</small>
+
+</div>
+
+<b>
+{{ pending_rewards }}
+</b>
+
+</div>
+
+
+</div>
+
+</section>
+
+</div>
+
+
+<section class="getting-started panel">
+
+<div class="panel-heading">
+
+<div>
+
+<span>
+GETTING STARTED
+</span>
+
+<h3>
+Build your customer experience
+</h3>
+
+</div>
+
+<span class="progress-text">
+1 of 5 complete
+</span>
+
+</div>
+
+
+<div class="progress-line">
+<span></span>
+</div>
+
+
+<div class="setup-tasks">
+
+<div class="task complete">
+
+<div>✓</div>
+
+<strong>
+Business profile
+</strong>
+
+<span>
+Completed
+</span>
+
+</div>
+
+
+<a
+href="{{ url_for('owner_menu') }}"
+class="task"
+>
+
+<div>2</div>
+
+<strong>
+Add your menu
+</strong>
+
+<span>
+Next step
+</span>
+
+</a>
+
+
+<div class="task">
+
+<div>3</div>
+
+<strong>
+Set loyalty
+</strong>
+
+<span>
+Configure rewards
+</span>
+
+</div>
+
+
+<div class="task">
+
+<div>4</div>
+
+<strong>
+Generate QR
+</strong>
+
+<span>
+Get your QR code
+</span>
+
+</div>
+
+
+<div class="task">
+
+<div>5</div>
+
+<strong>
+Go live
+</strong>
+
+<span>
+Invite customers
+</span>
+
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,445 @@
+.customer-business-page{
+    min-height:100vh;
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 15% 10%,rgba(124,92,255,.18),transparent 30%),
+        radial-gradient(circle at 90% 30%,rgba(0,214,201,.14),transparent 28%),
+        #080a12;
+    color:#fff;
+    padding-bottom:30px;
+}
+
+.customer-business-page *{
+    box-sizing:border-box;
+}
+
+.business-bg-orb{
+    position:absolute;
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    filter:blur(80px);
+    opacity:.25;
+    pointer-events:none;
+    animation:businessFloat 8s ease-in-out infinite;
+}
+
+.orb-one{
+    background:#7c5cff;
+    top:100px;
+    left:-150px;
+}
+
+.orb-two{
+    background:#00d6c9;
+    right:-150px;
+    top:450px;
+    animation-delay:2s;
+}
+
+.customer-business-header{
+    position:relative;
+    z-index:2;
+    height:70px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 20px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    background:rgba(8,10,18,.55);
+    backdrop-filter:blur(18px);
+}
+
+.customer-business-header span{
+    font-size:14px;
+    font-weight:700;
+    letter-spacing:.5px;
+}
+
+.brand-mark,
+.footer-logo{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    display:grid;
+    place-items:center;
+    font-size:18px;
+    font-weight:900;
+    background:linear-gradient(135deg,#8b6cff,#5c7cff);
+    box-shadow:0 10px 30px rgba(110,90,255,.3);
+}
+
+.business-main{
+    position:relative;
+    z-index:1;
+    width:min(760px,100%);
+    margin:auto;
+    padding:48px 20px 20px;
+}
+
+.business-hero{
+    text-align:center;
+    animation:businessReveal .8s ease both;
+}
+
+.business-logo{
+    width:108px;
+    height:108px;
+    margin:0 auto 20px;
+    display:grid;
+    place-items:center;
+    border-radius:32px;
+    font-size:44px;
+    font-weight:900;
+    background:linear-gradient(145deg,#8d6cff,#536dff);
+    box-shadow:
+        0 20px 55px rgba(91,76,255,.35),
+        inset 0 1px 0 rgba(255,255,255,.3);
+    animation:logoPulse 3s ease-in-out infinite;
+}
+
+.business-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 13px;
+    border-radius:999px;
+    margin-bottom:14px;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:#bdb4ff;
+    border:1px solid rgba(139,108,255,.25);
+    background:rgba(139,108,255,.1);
+}
+
+.business-badge span{
+    color:#55e6bd;
+    font-size:9px;
+}
+
+.business-hero h1{
+    margin:0;
+    font-size:clamp(34px,8vw,58px);
+    line-height:1;
+    letter-spacing:-2px;
+    background:linear-gradient(100deg,#fff,#c9c3ff,#fff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.business-location{
+    margin:14px 0 0;
+    color:#aaaebe;
+    font-size:14px;
+}
+
+.business-description{
+    max-width:540px;
+    margin:16px auto 0;
+    color:#8e93a8;
+    line-height:1.7;
+    font-size:15px;
+}
+
+.business-actions{
+    margin-top:30px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:13px;
+}
+
+.business-primary-btn{
+    width:min(100%,430px);
+    min-height:58px;
+    padding:0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    color:#fff;
+    text-decoration:none;
+    font-weight:800;
+    border-radius:18px;
+    background:linear-gradient(100deg,#765cff,#5d7bff);
+    box-shadow:0 18px 45px rgba(91,92,255,.3);
+    transition:.3s ease;
+}
+
+.business-primary-btn b{
+    margin-left:auto;
+    font-size:20px;
+}
+
+.business-primary-btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 25px 55px rgba(91,92,255,.42);
+}
+
+.business-secondary-btn{
+    color:#989db2;
+    text-decoration:none;
+    font-size:13px;
+}
+
+.business-secondary-btn strong{
+    color:#c6bdff;
+}
+
+.business-features{
+    margin-top:48px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+}
+
+.feature-card{
+    padding:20px;
+    min-height:150px;
+    border-radius:22px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.035);
+    backdrop-filter:blur(18px);
+    transition:.3s ease;
+}
+
+.feature-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(139,108,255,.3);
+    background:rgba(255,255,255,.055);
+}
+
+.feature-icon{
+    width:43px;
+    height:43px;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:rgba(255,255,255,.07);
+    font-size:21px;
+}
+
+.feature-card strong{
+    display:block;
+    font-size:14px;
+}
+
+.feature-card span{
+    display:block;
+    margin-top:6px;
+    color:#858b9f;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.business-links{
+    margin-top:48px;
+}
+
+.section-label{
+    margin-bottom:14px;
+    color:#777d91;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.7px;
+}
+
+.social-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.social-card{
+    min-height:78px;
+    padding:15px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    text-decoration:none;
+    color:#fff;
+    border-radius:19px;
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.035);
+    transition:.3s ease;
+}
+
+.social-card:hover{
+    transform:translateY(-3px);
+    border-color:rgba(255,255,255,.15);
+}
+
+.social-card>span{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border-radius:13px;
+    background:rgba(255,255,255,.07);
+    font-size:20px;
+}
+
+.social-card div{
+    min-width:0;
+    flex:1;
+}
+
+.social-card strong{
+    display:block;
+    font-size:13px;
+}
+
+.social-card small{
+    display:block;
+    margin-top:4px;
+    color:#7f8599;
+    font-size:11px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.social-card>b{
+    color:#73798d;
+}
+
+.business-address{
+    margin-top:14px;
+    padding:20px;
+    display:flex;
+    gap:15px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,.07);
+    background:rgba(255,255,255,.035);
+}
+
+.address-icon{
+    width:44px;
+    height:44px;
+    flex-shrink:0;
+    display:grid;
+    place-items:center;
+    border-radius:14px;
+    background:rgba(124,92,255,.12);
+}
+
+.business-address span{
+    display:block;
+    color:#73798d;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:1.5px;
+}
+
+.business-address strong{
+    display:block;
+    margin-top:5px;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.business-address small{
+    display:block;
+    margin-top:3px;
+    color:#808699;
+    font-size:11px;
+}
+
+.customer-business-footer{
+    position:relative;
+    z-index:1;
+    margin-top:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+    color:#62687a;
+    font-size:11px;
+}
+
+.footer-logo{
+    width:25px;
+    height:25px;
+    border-radius:8px;
+    font-size:12px;
+}
+
+.customer-business-footer strong{
+    color:#858a9c;
+}
+
+@keyframes businessReveal{
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes logoPulse{
+    0%,100%{transform:translateY(0) rotate(0)}
+    50%{transform:translateY(-6px) rotate(1deg)}
+}
+
+@keyframes businessFloat{
+    0%,100%{transform:translate(0,0)}
+    50%{transform:translate(30px,-20px)}
+}
+
+@media(max-width:600px){
+    .business-main{
+        padding:38px 16px 20px;
+    }
+
+    .business-logo{
+        width:92px;
+        height:92px;
+        border-radius:28px;
+        font-size:37px;
+    }
+
+    .business-hero h1{
+        letter-spacing:-1.5px;
+    }
+
+    .business-features{
+        grid-template-columns:1fr;
+    }
+
+    .feature-card{
+        min-height:auto;
+        flex-direction:row;
+        align-items:center;
+    }
+
+    .feature-card div:last-child{
+        flex:1;
+    }
+}
+
+@media(max-width:430px){
+    .social-grid{
+        grid-template-columns:1fr;
+    }
+
+    .business-primary-btn{
+        min-height:55px;
+    }
+}
+
+.business-logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:inherit;
+}

@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}Reward Claimed | LoyalLoop{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-reward-claim.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="claim-page">
+
+    <div class="claim-orb orb-1"></div>
+    <div class="claim-orb orb-2"></div>
+    <div class="claim-orb orb-3"></div>
+
+    <div class="confetti-layer" id="confettiLayer"></div>
+
+    <header class="claim-topbar">
+        <a href="{{ url_for('customer_rewards') }}" class="claim-back">
+            ←
+        </a>
+
+        <div class="claim-brand">
+            <span>L</span>
+            <strong>LoyalLoop</strong>
+        </div>
+
+        <div class="claim-spacer"></div>
+    </header>
+
+    <main class="claim-container">
+
+        <section class="claim-success">
+
+            <div class="success-ring">
+
+                <div class="success-circle">
+                    <span>✓</span>
+                </div>
+
+                <div class="ring ring-one"></div>
+                <div class="ring ring-two"></div>
+
+                <span class="success-spark spark-a">✦</span>
+                <span class="success-spark spark-b">✧</span>
+                <span class="success-spark spark-c">✦</span>
+
+            </div>
+
+            <div class="success-badge">
+                🎉 REWARD UNLOCKED
+            </div>
+
+            <h1>
+                It's Yours!
+            </h1>
+
+            <p>
+                Your reward has been successfully claimed.
+            </p>
+
+        </section>
+
+        <section class="claim-card">
+
+            <div class="claim-card-glow"></div>
+
+            <div class="reward-header">
+
+                <div class="reward-icon">
+                    🎁
+                </div>
+
+                <div class="reward-info">
+                    <span class="reward-label">YOUR REWARD</span>
+
+                    <h2>
+                        {{ reward.reward_name }}
+                    </h2>
+
+                    {% if reward.description %}
+                        <p>{{ reward.description }}</p>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="reward-value">
+
+                {% if reward.reward_value %}
+                    <span>VALUE</span>
+                    <strong>{{ reward.reward_value }}</strong>
+                {% else %}
+                    <span>REWARD</span>
+                    <strong>Unlocked</strong>
+                {% endif %}
+
+            </div>
+
+            <div class="claim-code-box">
+
+                <div>
+                    <span class="code-label">CLAIM CODE</span>
+                    <strong id="claimCode">{{ claim.claim_code }}</strong>
+                </div>
+
+                <button
+                    type="button"
+                    id="copyCodeBtn"
+                    class="copy-btn"
+                    onclick="copyClaimCode()"
+                >
+                    <span id="copyIcon">⧉</span>
+                    <span id="copyText">Copy</span>
+                </button>
+
+            </div>
+
+            {% if claim.expires_at %}
+
+            <div class="expiry-box">
+                <span>⏳</span>
+
+                <div>
+                    <strong>Valid until</strong>
+                    <small>
+                        {{ claim.expires_at.strftime('%d %b %Y, %I:%M %p') }}
+                    </small>
+                </div>
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="how-to-use">
+
+            <div class="section-heading">
+                <span>HOW TO USE</span>
+                <h2>Show this code at checkout</h2>
+            </div>
+
+            <div class="steps">
+
+                <div class="step">
+                    <div class="step-number">01</div>
+
+                    <div>
+                        <strong>Visit the business</strong>
+                        <p>Come back and place your next order.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">02</div>
+
+                    <div>
+                        <strong>Show your claim code</strong>
+                        <p>Show this reward code to the staff.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">03</div>
+
+                    <div>
+                        <strong>Enjoy your reward</strong>
+                        <p>The business will redeem your reward.</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <div class="claim-actions">
+
+            <a
+                href="{{ url_for('customer_rewards') }}"
+                class="primary-btn"
+            >
+                <span>🎁</span>
+                View My Rewards
+            </a>
+
+            <a
+                href="{{ url_for('customer_dashboard') }}"
+                class="secondary-btn"
+            >
+                Back to Home
+            </a>
+
+        </div>
+
+    </main>
+
+    <nav class="customer-bottom-nav">
+
+        <a href="{{ url_for('customer_dashboard') }}">
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+        <a href="{{ url_for('customer_menu') }}">
+            <span>☰</span>
+            <small>Menu</small>
+        </a>
+
+        <a href="{{ url_for('customer_loyalty') }}">
+            <span>★</span>
+            <small>Loyalty</small>
+        </a>
+
+        <a
+            href="{{ url_for('customer_rewards') }}"
+            class="active"
+        >
+            <span>🎁</span>
+            <small>Rewards</small>
+        </a>
+
+        <a href="{{ url_for('customer_profile') }}">
+            <span>●</span>
+            <small>Profile</small>
+        </a>
+
+    </nav>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customer-reward-claim.js') }}"></script>
+{% endblock %}

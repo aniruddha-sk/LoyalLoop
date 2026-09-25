@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Business Settings | LoyalLoop{% endblock %}
+
+{% block content %}
+
+{% set header_section = "BUSINESS" %}
+{% set header_title = "Business Settings" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="profile-page-header">
+
+<div>
+
+<span>
+BUSINESS SETTINGS
+</span>
+
+<h2>
+Configure your LoyalLoop business
+</h2>
+
+<p>
+Manage currency, timezone and business availability.
+</p>
+
+</div>
+
+<a
+href="{{ url_for('business_profile') }}"
+class="profile-settings-btn"
+>
+🏪 Profile
+</a>
+
+</div>
+
+
+<form
+method="POST"
+class="settings-form"
+>
+
+
+<div class="settings-section">
+
+<h3>
+⚙️ General Settings
+</h3>
+
+<div class="settings-form-grid">
+
+<div class="settings-form-group">
+
+<label>
+Currency
+</label>
+
+<select name="currency">
+
+<option
+value="INR"
+{% if business[2]=='INR' %}selected{% endif %}
+>
+₹ INR - Indian Rupee
+</option>
+
+<option
+value="USD"
+{% if business[2]=='USD' %}selected{% endif %}
+>
+$ USD - US Dollar
+</option>
+
+<option
+value="EUR"
+{% if business[2]=='EUR' %}selected{% endif %}
+>
+€ EUR - Euro
+</option>
+
+</select>
+
+</div>
+
+
+<div class="settings-form-group">
+
+<label>
+Timezone
+</label>
+
+<select name="timezone">
+
+<option
+value="Asia/Kolkata"
+{% if business[1]=='Asia/Kolkata' %}selected{% endif %}
+>
+India - Asia/Kolkata
+</option>
+
+<option
+value="UTC"
+{% if business[1]=='UTC' %}selected{% endif %}
+>
+UTC
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="settings-section">
+
+<h3>
+🟢 Business Status
+</h3>
+
+<div class="setting-status">
+
+
+<label class="status-option">
+
+<input
+type="radio"
+name="status"
+value="active"
+{% if business[3]=='active' %}checked{% endif %}
+>
+
+<span>
+
+<strong>
+Active
+</strong>
+
+<small>
+Customers can access your business
+</small>
+
+</span>
+
+</label>
+
+
+<label class="status-option">
+
+<input
+type="radio"
+name="status"
+value="inactive"
+{% if business[3]=='inactive' %}checked{% endif %}
+>
+
+<span>
+
+<strong>
+Inactive
+</strong>
+
+<small>
+Temporarily hide business activity
+</small>
+
+</span>
+
+</label>
+
+
+<label class="status-option">
+
+<input
+type="radio"
+name="status"
+value="suspended"
+{% if business[3]=='suspended' %}checked{% endif %}
+>
+
+<span>
+
+<strong>
+Suspended
+</strong>
+
+<small>
+Business access is restricted
+</small>
+
+</span>
+
+</label>
+
+
+</div>
+
+</div>
+
+
+<div class="settings-section">
+
+<h3>
+🔐 Business Information
+</h3>
+
+<div class="info-grid">
+
+<div>
+
+<span>
+Business Code
+</span>
+
+<strong>
+{{ business[4] }}
+</strong>
+
+</div>
+
+
+<div>
+
+<span>
+Business Slug
+</span>
+
+<strong>
+{{ business[5] }}
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_dashboard') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+💾 Save Settings
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

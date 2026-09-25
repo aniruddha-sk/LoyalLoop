@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}Customers - LoyalLoop{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% set header_section = "CUSTOMERS" %}
+{% set header_title = "Customer Management" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="page-title-row">
+
+<div>
+
+<h2>
+Your Customers
+</h2>
+
+<p>
+View and understand your customer relationships.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="customer-stats">
+
+
+<div class="customer-stat">
+
+<div class="customer-stat-icon purple">
+♙
+</div>
+
+<div>
+
+<strong>
+{{ stats[0] }}
+</strong>
+
+<span>
+Total Customers
+</span>
+
+</div>
+
+</div>
+
+
+<div class="customer-stat">
+
+<div class="customer-stat-icon green">
+✓
+</div>
+
+<div>
+
+<strong>
+{{ stats[1] }}
+</strong>
+
+<span>
+Active Customers
+</span>
+
+</div>
+
+</div>
+
+
+<div class="customer-stat">
+
+<div class="customer-stat-icon blue">
+◉
+</div>
+
+<div>
+
+<strong>
+{{ stats[2] }}
+</strong>
+
+<span>
+Total Orders
+</span>
+
+</div>
+
+</div>
+
+
+<div class="customer-stat">
+
+<div class="customer-stat-icon orange">
+₹
+</div>
+
+<div>
+
+<strong>
+₹{{ "{:,.0f}".format(stats[3] or 0) }}
+</strong>
+
+<span>
+Total Spent
+</span>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="panel customers-panel">
+
+
+<div class="panel-head">
+
+<div>
+
+<h3>
+All Customers
+</h3>
+
+<p>
+{{ customers|length }}
+customer{% if customers|length != 1 %}s{% endif %} found
+</p>
+
+</div>
+
+
+<form method="GET" action="{{ url_for('owner_customers') }}" class="customer-search">
+
+<input
+type="text"
+name="search"
+value="{{ search }}"
+placeholder="Search name, mobile or email..."
+autocomplete="off"
+>
+
+<button type="submit">
+Search
+</button>
+
+
+{% if search %}
+
+<a href="{{ url_for('owner_customers') }}">
+Clear
+</a>
+
+{% endif %}
+
+</form>
+
+</div>
+
+
+{% if customers %}
+
+<div class="customers-table-wrap">
+
+<table class="customers-table">
+
+<thead>
+
+<tr>
+
+<th>Customer</th>
+<th>Mobile</th>
+<th>Visits</th>
+<th>Orders</th>
+<th>Total Spent</th>
+<th>Last Order</th>
+<th>Status</th>
+<th></th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for customer in customers %}
+
+<tr>
+
+
+<td>
+
+<a href="{{ url_for('customer_details',customer_id=customer[0]) }}" class="customer-name">
+
+<div class="customer-avatar">
+{{ customer[1][:1]|upper }}
+</div>
+
+<div>
+
+<strong>
+{{ customer[1] }}
+</strong>
+
+{% if customer[2] %}
+
+<span>
+{{ customer[2] }}
+</span>
+
+{% endif %}
+
+</div>
+
+</a>
+
+</td>
+
+
+<td>
+{{ customer[3] }}
+</td>
+
+
+<td>
+{{ customer[5] }}
+</td>
+
+
+<td>
+{{ customer[6] }}
+</td>
+
+
+<td>
+
+<strong>
+₹{{ "{:,.2f}".format(customer[7] or 0) }}
+</strong>
+
+</td>
+
+
+<td>
+
+{% if customer[9] %}
+
+<div class="customer-date">
+
+<strong>
+{{ customer[9].strftime('%d %b %Y') }}
+</strong>
+
+<span>
+{{ customer[9].strftime('%I:%M %p') }}
+</span>
+
+</div>
+
+{% else %}
+
+<span class="muted">
+No order
+</span>
+
+{% endif %}
+
+</td>
+
+
+<td>
+
+<span class="customer-status {{ 'active' if customer[4] else 'inactive' }}">
+{{ 'Active' if customer[4] else 'Inactive' }}
+</span>
+
+</td>
+
+
+<td>
+
+<a href="{{ url_for('customer_details',customer_id=customer[0]) }}" class="mini-btn" title="View Customer">
+→
+</a>
+
+</td>
+
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% else %}
+
+
+<div class="empty-state">
+
+<div class="empty-icon">
+♙
+</div>
+
+<h3>
+No Customers Found
+</h3>
+
+<p>
+
+{% if search %}
+
+No customers match your search.
+
+{% else %}
+
+Customers who register through your business will appear here.
+
+{% endif %}
+
+</p>
+
+
+{% if search %}
+
+<a href="{{ url_for('owner_customers') }}" class="primary-btn">
+View All Customers
+</a>
+
+{% endif %}
+
+</div>
+
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

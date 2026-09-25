@@ -1,0 +1,383 @@
+{% extends "base.html" %}
+
+{% block title %}
+{{ customer[1] }} | LoyalLoop
+{% endblock %}
+
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% set header_section = "CUSTOMER" %}
+{% set header_title = customer[1] %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+
+<div class="customer-detail-top">
+
+<div>
+
+<a href="{{ url_for('owner_customers') }}" class="back-link">
+← Back to Customers
+</a>
+
+<h2>
+{{ customer[1] }}
+</h2>
+
+<p>
+Customer since
+{{ customer[10].strftime('%d %B %Y') }}
+</p>
+
+</div>
+
+
+<span class="customer-status large {{ 'active' if customer[4] else 'inactive' }}">
+{{ 'Active Customer' if customer[4] else 'Inactive Customer' }}
+</span>
+
+</div>
+
+
+<div class="customer-detail-grid">
+
+
+<div class="customer-detail-main">
+
+
+<div class="customer-profile-card panel">
+
+
+<div class="customer-profile-avatar">
+{{ customer[1][:1]|upper }}
+</div>
+
+
+<div class="customer-profile-info">
+
+<h3>
+{{ customer[1] }}
+</h3>
+
+
+<a href="tel:{{ customer[3] }}">
+{{ customer[3] }}
+</a>
+
+
+{% if customer[2] %}
+
+<a href="mailto:{{ customer[2] }}">
+{{ customer[2] }}
+</a>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<div class="customer-metrics">
+
+
+<div>
+
+<strong>
+{{ customer[5] }}
+</strong>
+
+<span>
+Total Visits
+</span>
+
+</div>
+
+
+<div>
+
+<strong>
+{{ customer[6] }}
+</strong>
+
+<span>
+Total Orders
+</span>
+
+</div>
+
+
+<div>
+
+<strong>
+₹{{ "{:,.2f}".format(customer[7] or 0) }}
+</strong>
+
+<span>
+Total Spent
+</span>
+
+</div>
+
+
+</div>
+
+
+<div class="panel">
+
+
+<div class="panel-head">
+
+<div>
+
+<h3>
+Recent Orders
+</h3>
+
+<p>
+Latest 10 customer orders
+</p>
+
+</div>
+
+</div>
+
+
+{% if orders %}
+
+<div class="customer-orders-list">
+
+{% for order in orders %}
+
+<a href="{{ url_for('order_details',order_id=order[0]) }}" class="customer-order-row">
+
+
+<div>
+
+<strong>
+#{{ order[1] }}
+</strong>
+
+<span>
+{{ order[5].strftime('%d %b %Y · %I:%M %p') }}
+</span>
+
+</div>
+
+
+<div>
+
+<span class="order-status {{ order[2] }}">
+{{ order[2]|title }}
+</span>
+
+</div>
+
+
+<div>
+
+<strong>
+₹{{ "{:,.2f}".format(order[3] or 0) }}
+</strong>
+
+</div>
+
+
+</a>
+
+{% endfor %}
+
+</div>
+
+
+{% else %}
+
+<div class="customer-empty">
+No orders found for this customer.
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<div class="customer-detail-side">
+
+
+<div class="panel customer-info-panel">
+
+
+<div class="panel-head">
+
+<div>
+
+<h3>
+Customer Information
+</h3>
+
+</div>
+
+</div>
+
+
+<div class="info-list">
+
+
+<div>
+
+<span>
+Mobile
+</span>
+
+<strong>
+{{ customer[3] }}
+</strong>
+
+</div>
+
+
+<div>
+
+<span>
+Email
+</span>
+
+<strong>
+{{ customer[2] or 'Not provided' }}
+</strong>
+
+</div>
+
+
+<div>
+
+<span>
+Last Visit
+</span>
+
+<strong>
+{{ customer[8].strftime('%d %b %Y') if customer[8] else 'No visit' }}
+</strong>
+
+</div>
+
+
+<div>
+
+<span>
+Last Order
+</span>
+
+<strong>
+{{ customer[9].strftime('%d %b %Y') if customer[9] else 'No order' }}
+</strong>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<div class="panel">
+
+
+<div class="panel-head">
+
+<div>
+
+<h3>
+Loyalty Activity
+</h3>
+
+<p>
+Recent earned stamps
+</p>
+
+</div>
+
+</div>
+
+
+{% if stamps %}
+
+<div class="stamp-list">
+
+
+{% for stamp in stamps %}
+
+
+<div class="stamp-row">
+
+
+<div class="stamp-icon">
+★
+</div>
+
+
+<div>
+
+<strong>
++{{ stamp[1] }}
+Stamp{% if stamp[1] != 1 %}s{% endif %}
+</strong>
+
+<span>
+{{ stamp[2] or 'Loyalty reward' }}
+</span>
+
+</div>
+
+
+<small>
+{{ stamp[3].strftime('%d %b') }}
+</small>
+
+
+</div>
+
+
+{% endfor %}
+
+</div>
+
+
+{% else %}
+
+<div class="customer-empty">
+No loyalty stamps yet.
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

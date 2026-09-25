@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-rewards.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-rewards">
+
+    <header class="rewards-header">
+        <div class="rewards-top">
+            <a href="{{ url_for('customer_dashboard') }}" class="back-btn">←</a>
+
+            <div>
+                <span>LOYALTY REWARDS</span>
+                <h1>My Rewards</h1>
+            </div>
+
+            <div class="gift-icon">🎁</div>
+        </div>
+    </header>
+
+    <main class="rewards-content">
+
+        <section class="reward-balance">
+
+            <div>
+                <span>YOUR STAMPS</span>
+                <strong>{{ total_stamps }}</strong>
+                <small>
+                    Keep collecting to unlock rewards
+                </small>
+            </div>
+
+            <div class="balance-star">⭐</div>
+
+        </section>
+
+        <div class="section-heading">
+            <div>
+                <span>AVAILABLE FOR YOU</span>
+                <h2>Rewards</h2>
+            </div>
+
+            <small>{{ rewards|length }} rewards</small>
+        </div>
+
+        <section class="rewards-list">
+
+            {% for reward in rewards %}
+
+            {% set unlocked = total_stamps >= reward.required_stamps %}
+
+            <article
+                class="reward-card {% if not unlocked %}locked{% endif %}"
+                data-reward-id="{{ reward.id }}"
+                data-required="{{ reward.required_stamps }}"
+            >
+
+                <div class="reward-card-top">
+
+                    <div class="reward-image">
+                        {% if unlocked %}
+                            🎁
+                        {% else %}
+                            🔒
+                        {% endif %}
+                    </div>
+
+                    <div class="reward-main">
+
+                        <span class="reward-status">
+                            {% if unlocked %}
+                                READY TO CLAIM
+                            {% else %}
+                                {{ reward.required_stamps - total_stamps }}
+                                MORE STAMPS
+                            {% endif %}
+                        </span>
+
+                        <h3>{{ reward.reward_name }}</h3>
+
+                        {% if reward.description %}
+                        <p>{{ reward.description }}</p>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="reward-footer">
+
+                    <div class="required-stamps">
+                        <span>REQUIRED</span>
+                        <strong>
+                            ⭐ {{ reward.required_stamps }} stamps
+                        </strong>
+                    </div>
+
+                    {% if reward.reward_value and reward.reward_value > 0 %}
+                    <div class="reward-value">
+                        ₹{{ "%.0f"|format(reward.reward_value) }}
+                    </div>
+                    {% endif %}
+
+                    {% if unlocked %}
+
+                    <button
+                        class="claim-btn"
+                        onclick="claimReward('{{ reward.id }}', this)">
+                        Claim Reward
+                        <span>→</span>
+                    </button>
+
+                    {% else %}
+
+                    <button class="claim-btn locked-btn" disabled>
+                        Locked
+                    </button>
+
+                    {% endif %}
+
+                </div>
+
+                {% if not unlocked %}
+
+                <div class="locked-progress">
+
+                    <div class="locked-progress-top">
+                        <span>Your progress</span>
+                        <strong>
+                            {{ total_stamps }}/{{ reward.required_stamps }}
+                        </strong>
+                    </div>
+
+                    <div class="locked-track">
+                        <div
+                            class="locked-fill"
+                            data-progress="{{ 
+                                [((total_stamps / reward.required_stamps) * 100), 100]|min
+                            }}">
+                        </div>
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </article>
+
+            {% else %}
+
+            <div class="empty-rewards">
+
+                <div>🎁</div>
+
+                <h2>No rewards yet</h2>
+
+                <p>
+                    Keep visiting and collecting stamps.
+                    Exciting rewards will appear here.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+        {% if claimed_rewards %}
+
+        <section class="claimed-section">
+
+            <div class="section-heading">
+                <div>
+                    <span>YOUR REWARDS</span>
+                    <h2>Claimed Rewards</h2>
+                </div>
+            </div>
+
+            {% for claim in claimed_rewards %}
+
+            <div class="claimed-card">
+
+                <div class="claimed-icon">✓</div>
+
+                <div class="claimed-info">
+                    <h3>{{ claim.reward_name }}</h3>
+
+                    <span>
+                        Claimed {{ claim.claimed_at.strftime("%d %b %Y") }}
+                    </span>
+                </div>
+
+                <button
+                    onclick="showClaimCode('{{ claim.claim_code }}')">
+                    View Code
+                </button>
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+    <nav class="customer-rewards-nav">
+
+        <a href="{{ url_for('customer_dashboard') }}">
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+        <a href="{{ url_for('customer_menu') }}">
+            <span>🍴</span>
+            <small>Menu</small>
+        </a>
+
+        <a href="{{ url_for('customer_cart') }}">
+            <span>🛒</span>
+            <small>Cart</small>
+        </a>
+
+        <a href="{{ url_for('customer_loyalty') }}">
+            <span>⭐</span>
+            <small>Loyalty</small>
+        </a>
+
+        <a href="{{ url_for('customer_rewards') }}" class="active">
+            <span>🎁</span>
+            <small>Rewards</small>
+        </a>
+
+    </nav>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.CUSTOMER_REWARD_CLAIM_URL = "{{ url_for('claim_customer_reward') }}";
+</script>
+
+<script src="{{ url_for('static', filename='js/customer-rewards.js') }}"></script>
+{% endblock %}

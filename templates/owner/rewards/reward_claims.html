@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Reward Claims | LoyalLoop{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/reward_claims.css') }}">
+{% endblock %}
+{% block content %}
+<div class="owner-app">
+{% include "owner/components/sidebar.html" %}
+<main class="owner-main">
+{% set header_section="CUSTOMER RETENTION" %}
+{% set header_title="Reward Claims" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content reward-claims-page">
+
+<div class="claims-hero">
+<div>
+<span>REWARD MANAGEMENT</span>
+<h2>Reward Claims</h2>
+<p>Track customer reward claims and redemption activity.</p>
+</div>
+<a href="{{ url_for('owner_rewards') }}" class="claims-back-btn">← Rewards</a>
+</div>
+
+<div class="claims-stats">
+<div class="claim-stat">
+<div class="claim-stat-icon purple">◇</div>
+<div><span>Total Claims</span><strong>{{ stats.total }}</strong></div>
+</div>
+<div class="claim-stat">
+<div class="claim-stat-icon orange">◷</div>
+<div><span>Claimed</span><strong>{{ stats.claimed }}</strong></div>
+</div>
+<div class="claim-stat">
+<div class="claim-stat-icon green">✓</div>
+<div><span>Redeemed</span><strong>{{ stats.redeemed }}</strong></div>
+</div>
+<div class="claim-stat">
+<div class="claim-stat-icon red">×</div>
+<div><span>Expired</span><strong>{{ stats.expired }}</strong></div>
+</div>
+</div>
+
+<div class="panel claims-panel">
+<div class="panel-head">
+<div>
+<h3>All Reward Claims</h3>
+<p>{{ claims|length }} claim{% if claims|length != 1 %}s{% endif %} found.</p>
+</div>
+</div>
+
+{% if claims %}
+<div class="claims-table-wrap">
+<table class="claims-table">
+<thead>
+<tr>
+<th>Customer</th>
+<th>Reward</th>
+<th>Claim Code</th>
+<th>Claimed</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+{% for claim in claims %}
+<tr>
+<td>
+<div class="claim-customer">
+<div class="claim-avatar">{{ claim[11][:1]|upper }}</div>
+<div>
+<strong>{{ claim[11] }}</strong>
+<span>{{ claim[12] }}</span>
+</div>
+</div>
+</td>
+
+<td>
+<div class="claim-reward">
+<strong>{{ claim[7] }}</strong>
+<span>{{ claim[9] if claim[9] is defined else '' }}</span>
+</div>
+</td>
+
+<td>
+<span class="claim-code">{{ claim[1] }}</span>
+</td>
+
+<td>
+<div class="claim-date">
+<strong>{{ claim[3].strftime('%d %b %Y') if claim[3] else '—' }}</strong>
+<span>{{ claim[3].strftime('%I:%M %p') if claim[3] else '' }}</span>
+</div>
+</td>
+
+<td>
+<span class="claim-status {{ claim[2] }}">{{ claim[2]|title }}</span>
+</td>
+
+<td>
+<div class="claim-actions">
+<a href="{{ url_for('reward_claim_details',claim_id=claim[0]) }}" class="claim-action view">View</a>
+
+{% if claim[2]=='claimed' %}
+<form method="POST" action="{{ url_for('update_reward_claim_status',claim_id=claim[0]) }}">
+<input type="hidden" name="status" value="redeemed">
+<button class="claim-action redeem" type="submit">Redeem</button>
+</form>
+{% endif %}
+</div>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="claims-empty">
+<div>◇</div>
+<h3>No Reward Claims Yet</h3>
+<p>Customer reward claims will appear here when customers claim rewards.</p>
+</div>
+{% endif %}
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+</main>
+</div>
+{% endblock %}

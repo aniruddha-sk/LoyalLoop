@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-profile">
+
+    <header class="profile-header">
+        <div class="profile-top">
+            <a href="{{ url_for('customer_dashboard') }}" class="back-btn">←</a>
+
+            <div>
+                <span>MY ACCOUNT</span>
+                <h1>Profile</h1>
+            </div>
+
+            <div class="profile-icon">👤</div>
+        </div>
+    </header>
+
+    <main class="profile-content">
+
+        <section class="profile-hero">
+
+            <div class="avatar">
+                {{ customer.full_name[:1]|upper }}
+            </div>
+
+            <h2>{{ customer.full_name }}</h2>
+
+            <p>{{ customer.phone }}</p>
+
+            {% if customer.email %}
+            <span>{{ customer.email }}</span>
+            {% endif %}
+
+        </section>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div>🛍️</div>
+                <strong>{{ customer.total_orders or 0 }}</strong>
+                <span>Orders</span>
+            </div>
+
+            <div class="stat-card">
+                <div>⭐</div>
+                <strong>{{ total_stamps }}</strong>
+                <span>Stamps</span>
+            </div>
+
+            <div class="stat-card">
+                <div>💰</div>
+                <strong>₹{{ "%.0f"|format(customer.total_spent or 0) }}</strong>
+                <span>Total Spent</span>
+            </div>
+
+        </section>
+
+        <section class="profile-card">
+
+            <div class="card-heading">
+                <div class="heading-icon">👤</div>
+
+                <div>
+                    <span>PERSONAL INFORMATION</span>
+                    <h2>Account Details</h2>
+                </div>
+            </div>
+
+            <div class="info-list">
+
+                <div class="info-row">
+                    <div class="info-icon">👤</div>
+
+                    <div>
+                        <small>Full Name</small>
+                        <strong>{{ customer.full_name }}</strong>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon">📱</div>
+
+                    <div>
+                        <small>Mobile Number</small>
+                        <strong>{{ customer.phone }}</strong>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon">✉️</div>
+
+                    <div>
+                        <small>Email Address</small>
+                        <strong>
+                            {{ customer.email or "Not added" }}
+                        </strong>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="profile-card">
+
+            <div class="card-heading">
+                <div class="heading-icon">🏪</div>
+
+                <div>
+                    <span>LOYALLOOP BUSINESS</span>
+                    <h2>{{ business.business_name }}</h2>
+                </div>
+            </div>
+
+            <div class="business-info">
+
+                {% if business.logo_url %}
+                    <img
+                        src="{{ business.logo_url }}"
+                        alt="{{ business.business_name }}">
+                {% else %}
+                    <div class="business-logo">
+                        {{ business.business_name[:1] }}
+                    </div>
+                {% endif %}
+
+                <div>
+                    <strong>{{ business.business_name }}</strong>
+
+                    {% if business.city %}
+                    <span>{{ business.city }}</span>
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="quick-actions">
+
+            <a href="{{ url_for('customer_orders') }}">
+                <div>📋</div>
+                <span>My Orders</span>
+                <b>→</b>
+            </a>
+
+            <a href="{{ url_for('customer_loyalty') }}">
+                <div>⭐</div>
+                <span>Loyalty Progress</span>
+                <b>→</b>
+            </a>
+
+            <a href="{{ url_for('customer_rewards') }}">
+                <div>🎁</div>
+                <span>My Rewards</span>
+                <b>→</b>
+            </a>
+
+        </section>
+
+        <a
+            href="{{ url_for('customer_logout') }}"
+            class="logout-btn">
+            <span>↪</span>
+            Logout
+        </a>
+
+        <p class="profile-footer">
+            Powered by <strong>LoyalLoop</strong>
+        </p>
+
+    </main>
+
+    <nav class="customer-profile-nav">
+
+        <a href="{{ url_for('customer_dashboard') }}">
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+        <a href="{{ url_for('customer_menu') }}">
+            <span>🍴</span>
+            <small>Menu</small>
+        </a>
+
+        <a href="{{ url_for('customer_cart') }}">
+            <span>🛒</span>
+            <small>Cart</small>
+        </a>
+
+        <a href="{{ url_for('customer_rewards') }}">
+            <span>🎁</span>
+            <small>Rewards</small>
+        </a>
+
+        <a href="{{ url_for('customer_profile') }}" class="active">
+            <span>👤</span>
+            <small>Profile</small>
+        </a>
+
+    </nav>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customer-profile.js') }}"></script>
+{% endblock %}

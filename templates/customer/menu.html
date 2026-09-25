@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-menu.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-menu">
+
+    <header class="menu-header">
+        <div class="menu-top">
+            <a href="{{ url_for('customer_dashboard') }}" class="back-btn">←</a>
+
+            <div class="menu-business">
+                {% if business.logo_url %}
+                    <img src="{{ business.logo_url }}" alt="{{ business.business_name }}">
+                {% else %}
+                    <div class="business-logo">{{ business.business_name[:1] }}</div>
+                {% endif %}
+
+                <div>
+                    <span>Menu</span>
+                    <h1>{{ business.business_name }}</h1>
+                </div>
+            </div>
+
+            <a href="{{ url_for('customer_cart') }}" class="cart-btn">
+                🛒
+                <b id="cartCount">0</b>
+            </a>
+        </div>
+
+        <div class="menu-search">
+            <span>⌕</span>
+            <input type="text" id="menuSearch" placeholder="Search your favourite food...">
+        </div>
+    </header>
+
+    <main class="menu-content">
+
+        <div class="category-wrapper">
+            <div class="category-scroll">
+                <button class="category-chip active" data-category="all">
+                    All
+                </button>
+
+                {% for category in categories %}
+                <button
+                    class="category-chip"
+                    data-category="{{ category.id }}">
+                    {{ category.category_name }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <section class="menu-section">
+
+            <div class="section-heading">
+                <div>
+                    <span>EXPLORE</span>
+                    <h2>Our Menu</h2>
+                </div>
+
+                <small id="itemCount">{{ items|length }} items</small>
+            </div>
+
+            <div class="menu-grid" id="menuGrid">
+
+                {% for item in items %}
+                <article
+                    class="food-card {% if not item.is_available %}unavailable{% endif %}"
+                    data-category="{{ item.category_id or '' }}"
+                    data-name="{{ item.item_name|lower }}"
+                    data-id="{{ item.id }}"
+                    data-item-name="{{ item.item_name }}"
+                    data-price="{{ item.price }}"
+                    data-image="{{ item.image_url or '' }}"
+                >
+
+                    <div class="food-image">
+
+                        {% if item.image_url %}
+                            <img
+                                src="{{ item.image_url }}"
+                                alt="{{ item.item_name }}"
+                                loading="lazy">
+                        {% else %}
+                            <div class="food-placeholder">🍽️</div>
+                        {% endif %}
+
+                        {% if not item.is_available %}
+                            <span class="sold-badge">Unavailable</span>
+                        {% else %}
+                            <span class="available-badge">Available</span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="food-info">
+                        <h3>{{ item.item_name }}</h3>
+
+                        {% if item.description %}
+                        <p>{{ item.description }}</p>
+                        {% else %}
+                        <p>Freshly prepared and served with care.</p>
+                        {% endif %}
+
+                        <div class="food-bottom">
+                            <strong>₹{{ "%.2f"|format(item.price) }}</strong>
+
+                            {% if item.is_available %}
+                            <button
+                                class="add-btn"
+                                onclick="addToCart(this)">
+                                <span>+</span>
+                                Add
+                            </button>
+                            {% else %}
+                            <button class="add-btn disabled" disabled>
+                                Unavailable
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </article>
+                {% endfor %}
+
+            </div>
+
+            <div class="empty-menu" id="emptyMenu">
+                <div>🍽️</div>
+                <h3>No items found</h3>
+                <p>Try another category or search something else.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <nav class="customer-menu-nav">
+        <a href="{{ url_for('customer_dashboard') }}">
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+        <a class="active" href="{{ url_for('customer_menu') }}">
+            <span>🍴</span>
+            <small>Menu</small>
+        </a>
+
+        <a href="{{ url_for('customer_cart') }}" class="nav-cart">
+            <span>🛒</span>
+            <b id="navCartCount">0</b>
+            <small>Cart</small>
+        </a>
+
+        <a href="{{ url_for('customer_rewards') }}">
+            <span>🎁</span>
+            <small>Rewards</small>
+        </a>
+
+        <a href="{{ url_for('customer_profile') }}">
+            <span>👤</span>
+            <small>Profile</small>
+        </a>
+    </nav>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.LOYALLOOP_BUSINESS_ID = "{{ business.id }}";
+</script>
+<script src="{{ url_for('static', filename='js/customer-menu.js') }}"></script>
+{% endblock %}

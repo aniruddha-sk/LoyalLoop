@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+
+{% block title %}My Cart | LoyalLoop{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-cart.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="customer-cart">
+
+    <header class="cart-header">
+
+        <a
+            href="{{ url_for('customer_menu') }}"
+            class="back-btn"
+        >
+            ←
+        </a>
+
+        <div>
+            <span>YOUR ORDER</span>
+            <h1>My Cart</h1>
+        </div>
+
+        <div class="cart-icon">
+            🛒
+        </div>
+
+    </header>
+
+
+    <main class="cart-content">
+
+        <!-- BUSINESS -->
+
+        <div class="business-mini">
+
+            {% if business.logo_url %}
+
+                <img
+                    src="{{ business.logo_url }}"
+                    alt="{{ business.business_name }}"
+                >
+
+            {% else %}
+
+                <div class="business-logo">
+                    {{ business.business_name[:1]|upper }}
+                </div>
+
+            {% endif %}
+
+            <div>
+                <small>Ordering from</small>
+
+                <strong>
+                    {{ business.business_name }}
+                </strong>
+
+                {% if business.city %}
+                    <span>{{ business.city }}</span>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <!-- CART -->
+
+        <section class="cart-section">
+
+            <div class="section-title">
+
+                <div>
+
+                    <span>YOUR SELECTION</span>
+
+                    <h2>
+                        Order Items
+                    </h2>
+
+                </div>
+
+                <small id="totalItems">
+                    0 items
+                </small>
+
+            </div>
+
+
+            <div id="cartItems"></div>
+
+
+            <!-- EMPTY CART -->
+
+            <div
+                class="empty-cart"
+                id="emptyCart"
+            >
+
+                <div class="empty-icon">
+                    🛒
+                </div>
+
+                <h2>
+                    Your cart is empty
+                </h2>
+
+                <p>
+                    Add something delicious from the menu.
+                </p>
+
+                <a
+                    href="{{ url_for('customer_menu') }}"
+                >
+                    Explore Menu
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- BILL -->
+
+        <section
+            class="bill-card"
+            id="billCard"
+        >
+
+            <div class="bill-title">
+
+                <span>
+                    ORDER SUMMARY
+                </span>
+
+                <strong>
+                    Bill Details
+                </strong>
+
+            </div>
+
+
+            <div class="bill-row">
+
+                <span>
+                    Items Total
+                </span>
+
+                <strong id="subtotal">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="bill-row">
+
+                <span>
+                    Delivery / Service
+                </span>
+
+                <strong>
+                    ₹0.00
+                </strong>
+
+            </div>
+
+
+            <div class="bill-divider"></div>
+
+
+            <div class="bill-total">
+
+                <span>
+                    Total
+                </span>
+
+                <strong id="grandTotal">
+                    ₹0.00
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- CHECKOUT -->
+
+        <button
+            class="checkout-btn"
+            id="checkoutBtn"
+            type="button"
+        >
+
+            <span>
+                Proceed to Order
+            </span>
+
+            <b id="checkoutTotal">
+                ₹0.00
+            </b>
+
+            <i>
+                →
+            </i>
+
+        </button>
+
+    </main>
+
+
+    <!-- BOTTOM NAV -->
+
+    <nav class="customer-cart-nav">
+
+        <a
+            href="{{ url_for('customer_dashboard') }}"
+        >
+
+            <span>⌂</span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('customer_menu') }}"
+        >
+
+            <span>🍴</span>
+
+            <small>
+                Menu
+            </small>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('customer_cart') }}"
+            class="active"
+        >
+
+            <span>🛒</span>
+
+            <b id="navCartCount">
+                0
+            </b>
+
+            <small>
+                Cart
+            </small>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('customer_rewards') }}"
+        >
+
+            <span>🎁</span>
+
+            <small>
+                Rewards
+            </small>
+
+        </a>
+
+
+        <!-- Profile temporarily removed
+             because customer_profile route is not confirmed -->
+
+        <a
+            href="{{ url_for('customer_orders') }}"
+        >
+
+            <span>📋</span>
+
+            <small>
+                Orders
+            </small>
+
+        </a>
+
+    </nav>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+    window.LOYALLOOP_BUSINESS_ID =
+        "{{ business.id }}";
+
+    window.CUSTOMER_ORDER_URL =
+        "{{ url_for('customer_checkout') }}";
+
+</script>
+
+
+<script src="{{ url_for('static', filename='js/customer-cart.js') }}"></script>
+
+{% endblock %}

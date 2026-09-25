@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Reminder Settings | LoyalLoop{% endblock %}
+{% block content %}
+<div class="owner-app">
+{% include "owner/components/sidebar.html" %}
+<main class="owner-main">
+{% set header_section="CUSTOMER RETENTION" %}
+{% set header_title="Reminder Settings" %}
+{% include "owner/components/header.html" %}
+<div class="dashboard-content reminders-page">
+<div class="reminders-hero">
+<div>
+<span>RETENTION CONFIGURATION</span>
+<h2>Reminder Settings</h2>
+<p>Configure how customer reminders should work for your business.</p>
+</div>
+<a href="{{ url_for('owner_reminders') }}" class="reminder-settings-btn">← Back to Reminders</a>
+</div>
+<div class="panel reminder-settings-panel">
+<div class="panel-head"><div><h3>General Settings</h3><p>Control your reminder preferences.</p></div></div>
+<form method="POST" class="settings-form">
+<div class="setting-toggle">
+<div><strong>Enable Reminders</strong><span>Allow customer reminders to be created and managed.</span></div>
+<label class="switch"><input type="checkbox" name="is_enabled" value="1" {% if settings.is_enabled %}checked{% endif %}><span></span></label>
+</div>
+<div class="settings-divider"></div>
+<div class="reminder-form-grid">
+<div class="reminder-field"><label>Default Days After Visit</label><input type="number" name="default_days_after_visit" min="1" max="365" value="{{ settings.default_days_after_visit }}"></div>
+<div class="reminder-field"><label>Daily Reminder Limit</label><input type="number" name="daily_limit" min="1" max="10000" value="{{ settings.daily_limit }}"></div>
+<div class="reminder-field full"><label>Default Reminder Message</label><textarea name="default_message" rows="5" maxlength="1000">{{ settings.default_message }}</textarea></div>
+</div>
+<div class="settings-actions"><a href="{{ url_for('owner_reminders') }}" class="reminder-secondary-btn">Cancel</a><button type="submit" class="reminder-primary-btn">Save Settings</button></div>
+</form>
+</div>
+<div class="panel reminder-settings-info">
+<div class="panel-head"><div><h3>How it works</h3><p>LoyalLoop reminder workflow.</p></div></div>
+<div class="settings-step"><span>1</span><div><strong>Select a customer</strong><p>Choose any customer from your business customer list.</p></div></div>
+<div class="settings-step"><span>2</span><div><strong>Create a reminder</strong><p>Choose the reminder type, message and scheduled time.</p></div></div>
+<div class="settings-step"><span>3</span><div><strong>Manage status</strong><p>Mark reminders as sent or cancel them whenever required.</p></div></div>
+</div>
+</div>
+{% include "owner/components/footer.html" %}
+</main>
+</div>
+{% endblock %}

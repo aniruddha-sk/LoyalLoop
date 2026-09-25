@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}{{ business.business_name }} | LoyalLoop{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-business.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-business-page">
+
+    <div class="business-bg-orb orb-one"></div>
+    <div class="business-bg-orb orb-two"></div>
+
+    <header class="customer-business-header">
+        <div class="brand-mark">L</div>
+        <span>LoyalLoop</span>
+    </header>
+
+    <main class="business-main">
+
+        <section class="business-hero">
+
+<div class="business-logo">
+    {% if business.logo_url %}
+        <img src="{{ business.logo_url }}" alt="{{ business.business_name }}">
+    {% else %}
+        {{ business.business_name[:1]|upper }}
+    {% endif %}
+</div>
+
+            <div class="business-badge">
+                <span>●</span> Welcome
+            </div>
+
+            <h1>{{ business.business_name }}</h1>
+
+            {% if business.city %}
+            <p class="business-location">
+                📍 {{ business.city }}{% if business.state %}, {{ business.state }}{% endif %}
+            </p>
+            {% endif %}
+
+            {% if business.description %}
+            <p class="business-description">
+                {{ business.description }}
+            </p>
+            {% else %}
+            <p class="business-description">
+                Your digital loyalty experience starts here.
+            </p>
+            {% endif %}
+
+            <div class="business-actions">
+
+                <a href="{{ url_for('customer_register', qr_token=qr_token) }}"
+                   class="business-primary-btn">
+                    <span>✨</span>
+                    Join & Start Earning
+                    <b>→</b>
+                </a>
+
+                <a href="{{ url_for('customer_login', qr_token=qr_token) }}"
+                   class="business-secondary-btn">
+                    Already a member? <strong>Login</strong>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <section class="business-features">
+
+            <div class="feature-card">
+                <div class="feature-icon">🎁</div>
+                <div>
+                    <strong>Earn Rewards</strong>
+                    <span>Collect loyalty stamps with eligible orders.</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🍽️</div>
+                <div>
+                    <strong>Explore Menu</strong>
+                    <span>Discover items and order directly.</span>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div>
+                    <strong>Exclusive Benefits</strong>
+                    <span>Unlock special rewards and offers.</span>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="business-links">
+
+            <div class="section-label">CONNECT WITH US</div>
+
+            <div class="social-grid">
+
+                {% if business.google_review_url %}
+                <a href="{{ business.google_review_url }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="social-card review">
+                    <span>⭐</span>
+                    <div>
+                        <strong>Google Review</strong>
+                        <small>Share your experience</small>
+                    </div>
+                    <b>↗</b>
+                </a>
+                {% endif %}
+
+                {% if business.instagram_url %}
+                <a href="{{ business.instagram_url }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="social-card instagram">
+                    <span>📸</span>
+                    <div>
+                        <strong>Instagram</strong>
+                        <small>Follow us</small>
+                    </div>
+                    <b>↗</b>
+                </a>
+                {% endif %}
+
+                {% if business.whatsapp_number %}
+                <a href="https://wa.me/{{ business.whatsapp_number }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="social-card whatsapp">
+                    <span>💬</span>
+                    <div>
+                        <strong>WhatsApp</strong>
+                        <small>Chat with us</small>
+                    </div>
+                    <b>↗</b>
+                </a>
+                {% endif %}
+
+                {% if business.phone %}
+                <a href="tel:{{ business.phone }}"
+                   class="social-card phone">
+                    <span>📞</span>
+                    <div>
+                        <strong>Call Us</strong>
+                        <small>{{ business.phone }}</small>
+                    </div>
+                    <b>↗</b>
+                </a>
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        {% if business.address %}
+        <section class="business-address">
+            <div class="address-icon">📍</div>
+            <div>
+                <span>VISIT US</span>
+                <strong>{{ business.address }}</strong>
+                <small>
+                    {{ business.city }}
+                    {% if business.state %}, {{ business.state }}{% endif %}
+                    {% if business.pincode %} - {{ business.pincode }}{% endif %}
+                </small>
+            </div>
+        </section>
+        {% endif %}
+
+    </main>
+
+
+    <footer class="customer-business-footer">
+        <div class="footer-logo">L</div>
+        <span>Powered by <strong>LoyalLoop</strong></span>
+    </footer>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customer-business.js') }}"></script>
+{% endblock %}

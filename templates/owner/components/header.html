@@ -1,0 +1,33 @@
+<header class="owner-header">
+
+<div class="header-left">
+
+<button class="mobile-menu-btn" id="menuBtn" type="button">☰</button>
+
+<div class="header-title">
+<span>{{ header_section|default('LOYALLOOP') }}</span>
+<h1>{{ header_title|default('Dashboard') }}</h1>
+</div>
+
+</div>
+
+<div class="header-actions">
+
+{% block header_actions %}{% endblock %}
+
+<div class="owner-profile">
+
+<div class="profile-avatar">
+{{ session.get("owner_name","O")[:1]|upper }}
+</div>
+
+<div>
+<strong>{{ session.get("owner_name","Owner") }}</strong>
+<span>Owner</span>
+</div>
+
+</div>
+
+</div>
+
+</header>

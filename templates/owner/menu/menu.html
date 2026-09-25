@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Menu Management | LoyalLoop{% endblock %}
+
+{% block content %}
+
+{% set header_section = "BUSINESS" %}
+{% set header_title = "Menu Management" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+
+<div class="menu-page-head">
+
+<div>
+
+<span>
+MENU MANAGEMENT
+</span>
+
+<h2>
+Your Menu
+</h2>
+
+<p>
+Create categories and manage your food or service items.
+</p>
+
+</div>
+
+
+<a
+href="{{ url_for('add_menu_item') }}"
+class="btn-primary"
+>
+＋ Add Menu Item
+</a>
+
+</div>
+
+
+<div class="menu-layout">
+
+
+<!-- CATEGORIES -->
+
+<section class="panel">
+
+<div class="panel-heading">
+
+<div>
+
+<span>
+CATEGORIES
+</span>
+
+<h3>
+Menu Categories
+</h3>
+
+</div>
+
+</div>
+
+
+<form
+method="POST"
+action="{{ url_for('add_menu_category') }}"
+class="category-form"
+>
+
+<input
+type="text"
+name="name"
+placeholder="Category name"
+required
+>
+
+<input
+type="text"
+name="description"
+placeholder="Short description"
+>
+
+<button
+type="submit"
+class="btn-primary"
+>
+＋ Add
+</button>
+
+</form>
+
+
+<div class="category-list">
+
+{% if categories %}
+
+{% for category in categories %}
+
+<div class="category-card">
+
+
+<div class="category-symbol">
+▦
+</div>
+
+
+<div class="category-card-info">
+
+<strong>
+{{ category[1] }}
+</strong>
+
+<small>
+{{ category[2] or 'No description' }}
+</small>
+
+</div>
+
+
+<div class="category-actions">
+
+
+<a
+href="{{ url_for('edit_menu_category',category_id=category[0]) }}"
+class="mini-btn"
+title="Edit Category"
+>
+✎
+</a>
+
+
+<form
+method="POST"
+action="{{ url_for('delete_menu_category',category_id=category[0]) }}"
+onsubmit="return confirm('Delete this category and its items?')"
+>
+
+<button
+type="submit"
+class="mini-btn delete-btn"
+title="Delete Category"
+>
+🗑
+</button>
+
+</form>
+
+
+</div>
+
+</div>
+
+{% endfor %}
+
+
+{% else %}
+
+
+<div class="empty-menu">
+
+No categories yet.
+
+<br>
+
+<small>
+Create your first category above.
+</small>
+
+</div>
+
+
+{% endif %}
+
+</div>
+
+</section>
+
+
+<!-- MENU ITEMS -->
+
+<section class="panel menu-items-panel">
+
+<div class="panel-heading">
+
+<div>
+
+<span>
+MENU ITEMS
+</span>
+
+<h3>
+Food & Services
+</h3>
+
+</div>
+
+<span class="menu-count">
+{{ items|length }} items
+</span>
+
+</div>
+
+
+<div class="menu-item-list">
+
+{% if items %}
+
+{% for item in items %}
+
+
+<div class="menu-item-card">
+
+
+<div class="menu-item-icon">
+{{ item[1][:1]|upper }}
+</div>
+
+
+<div class="menu-item-info">
+
+<strong>
+{{ item[1] }}
+</strong>
+
+<small>
+{{ item[6] or 'Uncategorized' }}
+</small>
+
+{% if item[2] %}
+
+<p>
+{{ item[2] }}
+</p>
+
+{% endif %}
+
+</div>
+
+
+<div class="menu-item-price">
+
+₹{{ "{:,.2f}".format(item[3] or 0) }}
+
+</div>
+
+
+<div
+class="availability {{ 'available' if item[5] else 'unavailable' }}"
+>
+
+{{ 'Available' if item[5] else 'Unavailable' }}
+
+</div>
+
+
+<div class="menu-item-actions">
+
+
+<a
+href="{{ url_for('edit_menu_item',item_id=item[0]) }}"
+class="mini-btn"
+title="Edit Item"
+>
+✎
+</a>
+
+
+<form
+method="POST"
+action="{{ url_for('toggle_menu_item',item_id=item[0]) }}"
+>
+
+<button
+type="submit"
+class="mini-btn"
+title="Change availability"
+>
+↻
+</button>
+
+</form>
+
+
+<form
+method="POST"
+action="{{ url_for('delete_menu_item',item_id=item[0]) }}"
+onsubmit="return confirm('Delete this menu item?')"
+>
+
+<button
+type="submit"
+class="mini-btn delete-btn"
+title="Delete Item"
+>
+×
+</button>
+
+</form>
+
+
+</div>
+
+</div>
+
+
+{% endfor %}
+
+
+{% else %}
+
+
+<div class="empty-menu large">
+
+🍽️
+
+<strong>
+Your menu is empty
+</strong>
+
+<small>
+Add your first menu item to get started.
+</small>
+
+<a
+href="{{ url_for('add_menu_item') }}"
+class="btn-primary"
+>
+＋ Add Menu Item
+</a>
+
+</div>
+
+
+{% endif %}
+
+</div>
+
+</section>
+
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

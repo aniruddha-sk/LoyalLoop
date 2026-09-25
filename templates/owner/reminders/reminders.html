@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Reminders | LoyalLoop{% endblock %}
+{% block content %}
+<div class="owner-app">
+{% include "owner/components/sidebar.html" %}
+<main class="owner-main">
+{% set header_section="CUSTOMER RETENTION" %}
+{% set header_title="Reminders" %}
+{% include "owner/components/header.html" %}
+<div class="dashboard-content reminders-page">
+<div class="reminders-hero">
+<div>
+<span>RETENTION TOOLS</span>
+<h2>Customer Reminders</h2>
+<p>Schedule follow-ups and bring customers back to your business.</p>
+</div>
+<a href="{{ url_for('reminder_settings') }}" class="reminder-settings-btn">⚙ Reminder Settings</a>
+</div>
+<div class="reminder-stats">
+<div class="reminder-stat-card"><div class="reminder-stat-icon purple">◷</div><div><span>Total Reminders</span><strong>{{ stats.total }}</strong></div></div>
+<div class="reminder-stat-card"><div class="reminder-stat-icon orange">◉</div><div><span>Pending</span><strong>{{ stats.pending }}</strong></div></div>
+<div class="reminder-stat-card"><div class="reminder-stat-icon green">✓</div><div><span>Sent</span><strong>{{ stats.sent }}</strong></div></div>
+<div class="reminder-stat-card"><div class="reminder-stat-icon red">×</div><div><span>Cancelled</span><strong>{{ stats.cancelled }}</strong></div></div>
+</div>
+<div class="reminders-layout">
+<div class="panel reminder-create-panel">
+<div class="panel-head"><div><h3>Create Reminder</h3><p>Send a follow-up reminder to a customer.</p></div></div>
+<form method="POST" action="{{ url_for('create_reminder') }}" class="reminder-form">
+<div class="reminder-form-grid">
+<div class="reminder-field full"><label>Customer *</label><select name="customer_id" required><option value="">Select customer</option>{% for customer in customers %}<option value="{{ customer[0] }}">{{ customer[1] }} — {{ customer[2] }}</option>{% endfor %}</select></div>
+<div class="reminder-field"><label>Reminder Type</label><select name="reminder_type"><option value="revisit">Revisit Reminder</option><option value="offer">Special Offer</option><option value="reward">Reward Reminder</option><option value="followup">Follow-up</option><option value="custom">Custom</option></select></div>
+<div class="reminder-field"><label>Schedule Date & Time *</label><input type="datetime-local" name="scheduled_at" required></div>
+<div class="reminder-field full"><label>Title *</label><input type="text" name="title" maxlength="150" placeholder="e.g. We miss you! Come back soon" required></div>
+<div class="reminder-field full"><label>Message *</label><textarea name="message" rows="5" maxlength="1000" placeholder="Write your reminder message..." required></textarea></div>
+</div>
+<button type="submit" class="reminder-primary-btn">＋ Schedule Reminder</button>
+</form>
+</div>
+<div class="panel reminder-info-panel">
+<div class="panel-head"><div><h3>Reminder Tips</h3><p>Simple ways to improve repeat visits.</p></div></div>
+<div class="reminder-tip"><span>01</span><div><strong>Follow up after visits</strong><p>Remind customers to visit again after their last purchase.</p></div></div>
+<div class="reminder-tip"><span>02</span><div><strong>Promote rewards</strong><p>Let customers know when they are close to a loyalty reward.</p></div></div>
+<div class="reminder-tip"><span>03</span><div><strong>Use personal messages</strong><p>Personalized messages create a better customer experience.</p></div></div>
+</div>
+</div>
+<div class="panel reminders-list-panel">
+<div class="panel-head"><div><h3>Scheduled Reminders</h3><p>{{ reminders|length }} reminder{% if reminders|length != 1 %}s{% endif %} found.</p></div></div>
+{% if reminders %}
+<div class="reminders-table-wrap">
+<table class="reminders-table">
+<thead><tr><th>Customer</th><th>Reminder</th><th>Scheduled</th><th>Status</th><th>Action</th></tr></thead>
+<tbody>
+{% for reminder in reminders %}
+<tr>
+<td><div class="reminder-customer"><div class="reminder-avatar">{{ reminder[2][:1]|upper }}</div><div><strong>{{ reminder[2] }}</strong><span>{{ reminder[3] }}</span></div></div></td>
+<td><div class="reminder-message"><strong>{{ reminder[5] }}</strong><span>{{ reminder[6] }}</span></div></td>
+<td><div class="reminder-date"><strong>{{ reminder[7].strftime('%d %b %Y') }}</strong><span>{{ reminder[7].strftime('%I:%M %p') }}</span></div></td>
+<td><span class="reminder-status {{ reminder[8] }}">{{ reminder[8]|title }}</span></td>
+<td>
+<div class="reminder-actions">
+{% if reminder[8]=='pending' %}
+<form method="POST" action="{{ url_for('update_reminder_status',reminder_id=reminder[0]) }}"><input type="hidden" name="status" value="sent"><button class="reminder-action sent" title="Mark as sent">✓</button></form>
+<form method="POST" action="{{ url_for('update_reminder_status',reminder_id=reminder[0]) }}"><input type="hidden" name="status" value="cancelled"><button class="reminder-action cancel" title="Cancel reminder">×</button></form>
+{% endif %}
+<form method="POST" action="{{ url_for('delete_reminder',reminder_id=reminder[0]) }}" onsubmit="return confirm('Delete this reminder?')"><button class="reminder-action delete" title="Delete">⌫</button></form>
+</div>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% else %}
+<div class="reminders-empty"><div>◷</div><h3>No Reminders Yet</h3><p>Create your first customer reminder using the form above.</p></div>
+{% endif %}
+</div>
+</div>
+{% include "owner/components/footer.html" %}
+</main>
+</div>
+{% endblock %}

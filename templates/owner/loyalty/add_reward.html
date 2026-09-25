@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Add Reward | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% set header_section = "LOYALTY" %}
+{% set header_title = "Add Reward" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="page-head">
+
+<div>
+<span>NEW REWARD</span>
+<h2>Create Reward</h2>
+<p>Create a reward customers can unlock using loyalty stamps.</p>
+</div>
+
+<a
+href="{{ url_for('owner_rewards') }}"
+class="btn-secondary"
+>
+← Back to Rewards
+</a>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-head">
+
+<div>
+<h3>Reward Information</h3>
+<p>Enter the details of your new customer reward.</p>
+</div>
+
+</div>
+
+
+<form
+method="POST"
+action="{{ url_for('add_reward') }}"
+>
+
+
+<div class="profile-form-grid">
+
+
+<div class="profile-form-group">
+
+<label>
+Reward Name *
+</label>
+
+<input
+type="text"
+name="reward_name"
+placeholder="Example: Free Coffee"
+maxlength="150"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Required Stamps *
+</label>
+
+<input
+type="number"
+name="required_stamps"
+min="1"
+step="1"
+placeholder="10"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Reward Value (₹)
+</label>
+
+<input
+type="number"
+name="reward_value"
+min="0"
+step="0.01"
+placeholder="100"
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Validity (Days)
+</label>
+
+<input
+type="number"
+name="validity_days"
+min="1"
+step="1"
+placeholder="30"
+>
+
+</div>
+
+
+<div
+class="profile-form-group"
+style="grid-column:1/-1;"
+>
+
+<label>
+Description
+</label>
+
+<textarea
+name="description"
+rows="5"
+maxlength="2000"
+placeholder="Describe what the customer receives..."
+></textarea>
+
+</div>
+
+</div>
+
+
+<div class="reward-preview">
+
+<div class="reward-preview-icon">
+🎁
+</div>
+
+<div>
+
+<strong>
+Reward Preview
+</strong>
+
+<p>
+Customers can unlock this reward after collecting the required number of stamps.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_rewards') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+🎁 Create Reward
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

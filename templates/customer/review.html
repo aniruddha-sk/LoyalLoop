@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Share Your Experience | LoyalLoop{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-review.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="review-page">
+
+    <div class="review-bg-orb orb-one"></div>
+    <div class="review-bg-orb orb-two"></div>
+    <div class="review-bg-orb orb-three"></div>
+
+    <header class="review-topbar">
+        <a href="{{ url_for('customer_dashboard') }}" class="back-btn">
+            <span>←</span>
+        </a>
+
+        <div class="top-title">
+            <span class="mini-logo">L</span>
+            <span>LoyalLoop</span>
+        </div>
+
+        <div class="top-spacer"></div>
+    </header>
+
+    <main class="review-container">
+
+        <section class="review-hero">
+
+            <div class="review-icon-wrap">
+                <div class="review-icon">
+                    ★
+                </div>
+
+                <span class="spark spark-1">✦</span>
+                <span class="spark spark-2">✧</span>
+                <span class="spark spark-3">✦</span>
+            </div>
+
+            <span class="review-badge">
+                💜 YOUR EXPERIENCE MATTERS
+            </span>
+
+            <h1>
+                Loved Your<br>
+                <span>Experience?</span>
+            </h1>
+
+            <p>
+                Your feedback helps
+                <strong>{{ business.business_name }}</strong>
+                grow and serve you even better.
+            </p>
+
+        </section>
+
+        <section class="review-card">
+
+            <div class="business-preview">
+
+                <div class="business-avatar">
+                    {% if business.logo_url %}
+                        <img src="{{ business.logo_url }}"
+                             alt="{{ business.business_name }}">
+                    {% else %}
+                        {{ business.business_name[:1]|upper }}
+                    {% endif %}
+                </div>
+
+                <div class="business-info">
+                    <h2>{{ business.business_name }}</h2>
+
+                    {% if business.city %}
+                        <p>
+                            📍 {{ business.city }}
+                            {% if business.state %}
+                                , {{ business.state }}
+                            {% endif %}
+                        </p>
+                    {% endif %}
+                </div>
+
+                <div class="verified-badge">
+                    ✓
+                </div>
+
+            </div>
+
+            <div class="rating-preview">
+
+                <span class="rating-star">★</span>
+                <span class="rating-star">★</span>
+                <span class="rating-star">★</span>
+                <span class="rating-star">★</span>
+                <span class="rating-star">★</span>
+
+            </div>
+
+            <p class="rating-text">
+                Share your honest experience with us
+            </p>
+
+            {% if business.google_review_url %}
+
+            <a
+                href="{{ business.google_review_url }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="google-review-btn"
+                id="googleReviewBtn"
+            >
+                <span class="google-icon">G</span>
+
+                <span class="review-btn-text">
+                    <strong>Write a Google Review</strong>
+                    <small>It takes less than a minute</small>
+                </span>
+
+                <span class="arrow">→</span>
+            </a>
+
+            {% else %}
+
+            <div class="review-unavailable">
+                <div class="unavailable-icon">💬</div>
+
+                <h3>Reviews are coming soon</h3>
+
+                <p>
+                    Google review link has not been configured
+                    for this business yet.
+                </p>
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="thank-section">
+
+            <div class="thank-icon">
+                💜
+            </div>
+
+            <div>
+                <h3>Thank you!</h3>
+
+                <p>
+                    Every review helps us improve your next visit.
+                </p>
+            </div>
+
+        </section>
+
+        <section class="review-benefits">
+
+            <div class="benefit">
+                <span>⭐</span>
+                <div>
+                    <strong>Share your experience</strong>
+                    <small>Tell others what you loved</small>
+                </div>
+            </div>
+
+            <div class="benefit">
+                <span>🚀</span>
+                <div>
+                    <strong>Support the business</strong>
+                    <small>Help us grow our community</small>
+                </div>
+            </div>
+
+            <div class="benefit">
+                <span>💜</span>
+                <div>
+                    <strong>Keep coming back</strong>
+                    <small>Your loyalty means everything</small>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <nav class="customer-bottom-nav">
+
+        <a href="{{ url_for('customer_dashboard') }}">
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+        <a href="{{ url_for('customer_menu') }}">
+            <span>☰</span>
+            <small>Menu</small>
+        </a>
+
+        <a href="{{ url_for('customer_loyalty') }}">
+            <span>★</span>
+            <small>Loyalty</small>
+        </a>
+
+        <a href="{{ url_for('customer_rewards') }}">
+            <span>🎁</span>
+            <small>Rewards</small>
+        </a>
+
+        <a href="{{ url_for('customer_profile') }}">
+            <span>●</span>
+            <small>Profile</small>
+        </a>
+
+    </nav>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customer-review.js') }}"></script>
+{% endblock %}

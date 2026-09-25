@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-order-details.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-order-details">
+
+    <header class="order-details-header">
+        <a href="{{ url_for('customer_orders') }}" class="back-btn">←</a>
+
+        <div>
+            <span>ORDER DETAILS</span>
+            <h1>#{{ order.order_number }}</h1>
+        </div>
+
+        <div class="header-status">
+            {{ order.status|replace("_"," ")|title }}
+        </div>
+    </header>
+
+    <main class="order-details-content">
+
+        <section class="live-status-card">
+
+            <div class="live-top">
+                <div>
+                    <span>LIVE ORDER STATUS</span>
+                    <h2>
+                        {% if order.status == "pending" %}
+                            Order Received
+                        {% elif order.status == "confirmed" %}
+                            Order Confirmed
+                        {% elif order.status == "preparing" %}
+                            Being Prepared
+                        {% elif order.status == "ready" %}
+                            Ready to Collect
+                        {% elif order.status == "delivered" %}
+                            Order Delivered
+                        {% elif order.status == "cancelled" %}
+                            Order Cancelled
+                        {% else %}
+                            {{ order.status|replace("_"," ")|title }}
+                        {% endif %}
+                    </h2>
+                </div>
+
+                <div class="live-dot"></div>
+            </div>
+
+            {% if order.status != "cancelled" %}
+
+            <div class="status-timeline">
+
+                <div class="timeline-line"></div>
+
+                <div class="timeline-step
+                    {% if order.status in ['pending','confirmed','preparing','ready','delivered'] %}
+                        completed
+                    {% endif %}">
+
+                    <div class="step-icon">✓</div>
+
+                    <div>
+                        <strong>Order Received</strong>
+                        <small>Your order has been received</small>
+                    </div>
+
+                </div>
+
+                <div class="timeline-step
+                    {% if order.status in ['confirmed','preparing','ready','delivered'] %}
+                        completed
+                    {% endif %}
+                    {% if order.status == 'confirmed' %}
+                        current
+                    {% endif %}">
+
+                    <div class="step-icon">
+                        {% if order.status in ['confirmed','preparing','ready','delivered'] %}
+                            ✓
+                        {% else %}
+                            2
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <strong>Confirmed</strong>
+                        <small>Business confirmed your order</small>
+                    </div>
+
+                </div>
+
+                <div class="timeline-step
+                    {% if order.status in ['preparing','ready','delivered'] %}
+                        completed
+                    {% endif %}
+                    {% if order.status == 'preparing' %}
+                        current
+                    {% endif %}">
+
+                    <div class="step-icon">
+                        {% if order.status in ['preparing','ready','delivered'] %}
+                            ✓
+                        {% else %}
+                            3
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <strong>Preparing</strong>
+                        <small>Your food is being prepared</small>
+                    </div>
+
+                </div>
+
+                <div class="timeline-step
+                    {% if order.status in ['ready','delivered'] %}
+                        completed
+                    {% endif %}
+                    {% if order.status == 'ready' %}
+                        current
+                    {% endif %}">
+
+                    <div class="step-icon">
+                        {% if order.status in ['ready','delivered'] %}
+                            ✓
+                        {% else %}
+                            4
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <strong>Ready</strong>
+                        <small>Your order is ready</small>
+                    </div>
+
+                </div>
+
+                <div class="timeline-step
+                    {% if order.status == 'delivered' %}
+                        completed current
+                    {% endif %}">
+
+                    <div class="step-icon">
+                        {% if order.status == 'delivered' %}
+                            ✓
+                        {% else %}
+                            5
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <strong>Delivered</strong>
+                        <small>Enjoy your order!</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="cancelled-box">
+                <div>✕</div>
+                <strong>This order was cancelled</strong>
+                <span>Please contact the business if you need assistance.</span>
+            </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="details-card">
+
+            <div class="card-heading">
+                <div class="heading-icon">🛍️</div>
+
+                <div>
+                    <span>YOUR ORDER</span>
+                    <h2>Items</h2>
+                </div>
+            </div>
+
+            <div class="detail-items">
+
+                {% for item in items %}
+
+                <div class="detail-item">
+
+                    <div class="item-number">
+                        {{ loop.index }}
+                    </div>
+
+                    <div class="item-info">
+                        <h3>{{ item.item_name }}</h3>
+
+                        <span>
+                            ₹{{ "%.2f"|format(item.unit_price) }}
+                            × {{ item.quantity }}
+                        </span>
+                    </div>
+
+                    <strong>
+                        ₹{{ "%.2f"|format(item.total_price) }}
+                    </strong>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <section class="details-card">
+
+            <div class="card-heading">
+                <div class="heading-icon">🧾</div>
+
+                <div>
+                    <span>PAYMENT</span>
+                    <h2>Bill Details</h2>
+                </div>
+            </div>
+
+            <div class="bill-row">
+                <span>Subtotal</span>
+                <strong>
+                    ₹{{ "%.2f"|format(order.subtotal) }}
+                </strong>
+            </div>
+
+            <div class="bill-row">
+                <span>Discount</span>
+                <strong>
+                    - ₹{{ "%.2f"|format(order.discount_amount) }}
+                </strong>
+            </div>
+
+            <div class="bill-row">
+                <span>Tax</span>
+                <strong>
+                    ₹{{ "%.2f"|format(order.tax_amount) }}
+                </strong>
+            </div>
+
+            <div class="bill-row">
+                <span>Delivery / Service</span>
+                <strong>
+                    ₹{{ "%.2f"|format(order.delivery_charge) }}
+                </strong>
+            </div>
+
+            <div class="bill-line"></div>
+
+            <div class="bill-total">
+                <span>Total Amount</span>
+                <strong>
+                    ₹{{ "%.2f"|format(order.total_amount) }}
+                </strong>
+            </div>
+
+            <div class="payment-status">
+                <span>Payment Status</span>
+
+                <b class="payment-{{ order.payment_status }}">
+                    {{ order.payment_status|replace("_"," ")|title }}
+                </b>
+            </div>
+
+        </section>
+
+        {% if order.customer_note %}
+
+        <section class="note-card">
+
+            <div class="note-icon">📝</div>
+
+            <div>
+                <span>Your Note</span>
+                <p>{{ order.customer_note }}</p>
+            </div>
+
+        </section>
+
+        {% endif %}
+
+        <section class="order-time">
+
+            <div>
+                <span>ORDERED ON</span>
+                <strong>
+                    {{ order.created_at.strftime("%d %b %Y") }}
+                </strong>
+            </div>
+
+            <div>
+                <span>TIME</span>
+                <strong>
+                    {{ order.created_at.strftime("%I:%M %p") }}
+                </strong>
+            </div>
+
+        </section>
+
+        <a
+            href="{{ url_for('customer_menu') }}"
+            class="order-again">
+            Order Something Again
+            <span>→</span>
+        </a>
+
+    </main>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.ORDER_STATUS = "{{ order.status }}";
+</script>
+
+<script src="{{ url_for('static', filename='js/customer-order-details.js') }}"></script>
+{% endblock %}

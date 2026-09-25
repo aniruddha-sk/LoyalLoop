@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Reward Claim Details | LoyalLoop{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/reward_claims.css') }}">
+{% endblock %}
+{% block content %}
+<div class="owner-app">
+{% include "owner/components/sidebar.html" %}
+<main class="owner-main">
+{% set header_section="CUSTOMER RETENTION" %}
+{% set header_title="Reward Details" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content reward-claims-page">
+
+<div class="claims-hero">
+<div>
+<span>CLAIM DETAILS</span>
+<h2>Reward Claim</h2>
+<p>View customer, reward and redemption information.</p>
+</div>
+<a href="{{ url_for('owner_reward_claims') }}" class="claims-back-btn">← All Claims</a>
+</div>
+
+<div class="claim-details-grid">
+
+<div class="panel claim-detail-panel">
+<div class="panel-head">
+<div>
+<h3>Claim Information</h3>
+<p>Reward claim and redemption details.</p>
+</div>
+</div>
+
+<div class="detail-list">
+
+<div class="detail-item">
+<span>Claim Code</span>
+<strong class="detail-code">{{ claim[1] }}</strong>
+</div>
+
+<div class="detail-item">
+<span>Status</span>
+<strong><span class="claim-status {{ claim[2] }}">{{ claim[2]|title }}</span></strong>
+</div>
+
+<div class="detail-item">
+<span>Claimed At</span>
+<strong>{{ claim[3].strftime('%d %b %Y, %I:%M %p') if claim[3] else '—' }}</strong>
+</div>
+
+<div class="detail-item">
+<span>Redeemed At</span>
+<strong>{{ claim[4].strftime('%d %b %Y, %I:%M %p') if claim[4] else 'Not redeemed' }}</strong>
+</div>
+
+<div class="detail-item">
+<span>Expires At</span>
+<strong>{{ claim[5].strftime('%d %b %Y, %I:%M %p') if claim[5] else 'No expiry' }}</strong>
+</div>
+
+</div>
+
+{% if claim[2]=='claimed' %}
+<div class="detail-actions">
+<form method="POST" action="{{ url_for('update_reward_claim_status',claim_id=claim[0]) }}">
+<input type="hidden" name="status" value="redeemed">
+<button class="claim-primary-btn" type="submit">✓ Mark as Redeemed</button>
+</form>
+<form method="POST" action="{{ url_for('update_reward_claim_status',claim_id=claim[0]) }}">
+<input type="hidden" name="status" value="cancelled">
+<button class="claim-secondary-btn danger" type="submit">Cancel Claim</button>
+</form>
+</div>
+{% elif claim[2]=='redeemed' %}
+<div class="claim-success-box">
+<strong>✓ Reward Redeemed</strong>
+<span>This reward claim has already been redeemed.</span>
+</div>
+{% endif %}
+
+</div>
+
+<div class="panel claim-detail-panel">
+<div class="panel-head">
+<div>
+<h3>Customer Information</h3>
+<p>Customer connected with this reward claim.</p>
+</div>
+</div>
+
+<div class="customer-detail-head">
+<div class="customer-detail-avatar">{{ claim[14][:1]|upper }}</div>
+<div>
+<strong>{{ claim[14] }}</strong>
+<span>{{ claim[15] }}</span>
+</div>
+</div>
+
+<div class="detail-list">
+<div class="detail-item">
+<span>Email</span>
+<strong>{{ claim[16] or 'Not provided' }}</strong>
+</div>
+<div class="detail-item">
+<span>Total Visits</span>
+<strong>{{ claim[17] }}</strong>
+</div>
+<div class="detail-item">
+<span>Total Orders</span>
+<strong>{{ claim[18] }}</strong>
+</div>
+<div class="detail-item">
+<span>Total Spent</span>
+<strong>₹{{ "%.2f"|format(claim[19] or 0) }}</strong>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<div class="panel reward-information-panel">
+<div class="panel-head">
+<div>
+<h3>Reward Information</h3>
+<p>Details of the claimed reward.</p>
+</div>
+</div>
+
+<div class="reward-detail-card">
+<div class="reward-detail-icon">🎁</div>
+<div>
+<span>REWARD</span>
+<h3>{{ claim[8] }}</h3>
+<p>{{ claim[9] or 'No reward description available.' }}</p>
+</div>
+</div>
+
+<div class="reward-meta-grid">
+<div>
+<span>Reward Value</span>
+<strong>₹{{ "%.2f"|format(claim[10] or 0) }}</strong>
+</div>
+<div>
+<span>Required Stamps</span>
+<strong>{{ claim[11] }} ⭐</strong>
+</div>
+<div>
+<span>Validity</span>
+<strong>{{ claim[12] or 'No expiry' }}{% if claim[12] %} days{% endif %}</strong>
+</div>
+</div>
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+</main>
+</div>
+{% endblock %}

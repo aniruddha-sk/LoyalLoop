@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#080812"
+    >
+
+    <title>
+        Join LoyalLoop | Customer
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/customer-auth.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<div class="customer-auth">
+
+    <!-- BACKGROUND ORBS -->
+
+    <div class="auth-orb one"></div>
+    <div class="auth-orb two"></div>
+    <div class="auth-orb three"></div>
+
+
+    <div class="auth-container">
+
+
+        <!-- BRAND -->
+
+        <div class="auth-brand">
+
+            <div class="brand-logo">
+                L
+            </div>
+
+            <h1>
+                LoyalLoop
+            </h1>
+
+            <p>
+                Customer Experience
+            </p>
+
+        </div>
+
+
+        <!-- REGISTER CARD -->
+
+        <div class="auth-card">
+
+
+            <span class="auth-badge">
+                ✨ JOIN LOYALLOOP
+            </span>
+
+
+            <h2>
+                Let's get started!
+            </h2>
+
+
+            <p>
+                Create your customer profile and start earning rewards.
+            </p>
+
+
+            <!-- ERROR MESSAGE -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    <div class="flash-container">
+
+                        {% for category, message in messages %}
+
+                            <div class="flash-message {{ category }}">
+
+                                <span>
+                                    {{ message }}
+                                </span>
+
+                                <button
+                                    type="button"
+                                    onclick="this.parentElement.remove()"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- REGISTER FORM -->
+
+            <form
+                method="POST"
+                action="{{ url_for('customer_register', qr_token=qr_token) }}"
+                class="auth-form"
+                id="customerRegisterForm"
+            >
+
+
+                <!-- FULL NAME -->
+
+                <div class="form-group">
+
+                    <label for="full_name">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="full_name"
+                        name="full_name"
+                        placeholder="Enter your full name"
+                        value="{{ request.form.get('full_name', '') }}"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- MOBILE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Mobile Number
+                    </label>
+
+                    <div class="phone-input">
+
+                        <span class="phone-prefix">
+                            +91
+                        </span>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="10 digit mobile number"
+                            value="{{ request.form.get('phone', '') }}"
+                            inputmode="numeric"
+                            maxlength="10"
+                            autocomplete="tel"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+
+                        Email
+
+                        <span class="optional">
+                            Optional
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="you@example.com"
+                        value="{{ request.form.get('email', '') }}"
+                        autocomplete="email"
+                    >
+
+                </div>
+
+
+                <!-- TERMS -->
+
+                <label class="terms">
+
+                    <input
+                        type="checkbox"
+                        name="terms"
+                        id="terms"
+                        required
+                    >
+
+                    <span>
+                        I agree to the customer experience
+                        and loyalty program.
+                    </span>
+
+                </label>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                    id="registerBtn"
+                >
+
+                    <span id="registerBtnText">
+                        Create Account →
+                    </span>
+
+                </button>
+
+
+            </form>
+
+
+            <!-- LOGIN -->
+
+            <div class="auth-divider">
+                <span>ALREADY A CUSTOMER?</span>
+            </div>
+
+
+            <div class="auth-login">
+
+                <a
+                    href="{{ url_for('customer_login', qr_token=qr_token) }}"
+                >
+                    Login instead →
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <div class="auth-footer">
+
+            Powered by
+            <strong>LoyalLoop</strong>
+            • Loyalty & Retention
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const form = document.getElementById("customerRegisterForm");
+    const button = document.getElementById("registerBtn");
+    const buttonText = document.getElementById("registerBtnText");
+    const phone = document.getElementById("phone");
+
+    if(phone){
+
+        phone.addEventListener("input", function(){
+
+            this.value = this.value
+                .replace(/\D/g, "")
+                .slice(0, 10);
+
+        });
+
+    }
+
+
+    if(form){
+
+        form.addEventListener("submit", function(){
+
+            if(button){
+
+                button.disabled = true;
+
+                buttonText.innerText = "Creating Account...";
+
+            }
+
+        });
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>

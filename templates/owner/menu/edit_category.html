@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Category | LoyalLoop{% endblock %}
+
+{% block content %}
+
+{% set header_section = "MENU MANAGEMENT" %}
+{% set header_title = "Edit Category" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="menu-page-head">
+
+<div>
+
+<span>
+MENU MANAGEMENT
+</span>
+
+<h2>
+Edit Category
+</h2>
+
+<p>
+Update your menu category details.
+</p>
+
+</div>
+
+<a
+href="{{ url_for('owner_menu') }}"
+class="btn-secondary"
+>
+← Back to Menu
+</a>
+
+</div>
+
+
+<form
+method="POST"
+class="menu-form"
+>
+
+<section class="menu-form-section">
+
+<h3>
+Category Details
+</h3>
+
+<div class="menu-form-grid">
+
+
+<div class="menu-form-group">
+
+<label>
+Category Name *
+</label>
+
+<input
+type="text"
+name="name"
+value="{{ category[1] }}"
+placeholder="Category name"
+required
+>
+
+</div>
+
+
+<div class="menu-form-group full">
+
+<label>
+Description
+</label>
+
+<textarea
+name="description"
+rows="4"
+placeholder="Describe this category..."
+>{{ category[2] or '' }}</textarea>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_menu') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+Save Changes
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

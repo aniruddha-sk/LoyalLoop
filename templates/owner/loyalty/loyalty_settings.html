@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Loyalty Settings | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% set header_section = "LOYALTY" %}
+{% set header_title = "Loyalty Settings" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="page-head">
+
+<div>
+<span>LOYALTY PROGRAM</span>
+<h2>Loyalty Settings</h2>
+<p>Configure how customers earn loyalty stamps.</p>
+</div>
+
+<a href="{{ url_for('owner_rewards') }}" class="btn-primary">
+View Rewards
+</a>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-head">
+<div>
+<h3>Stamp Program</h3>
+<p>Define the rules for earning loyalty stamps.</p>
+</div>
+</div>
+
+
+<form method="POST" action="{{ url_for('owner_loyalty_settings') }}">
+
+<div class="profile-form-grid">
+
+<div class="profile-form-group">
+
+<label>
+Minimum Order Amount (₹)
+</label>
+
+<input
+type="number"
+name="minimum_order_amount"
+min="0"
+step="0.01"
+value="{{ settings[0] if settings else 100 }}"
+required
+>
+
+<small>
+Customer must spend at least this amount to earn stamps.
+</small>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Stamps Per Eligible Order
+</label>
+
+<input
+type="number"
+name="stamps_per_eligible_order"
+min="1"
+step="1"
+value="{{ settings[1] if settings else 1 }}"
+required
+>
+
+<small>
+Number of stamps given for each eligible delivered order.
+</small>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Reward Required Stamps
+</label>
+
+<input
+type="number"
+name="reward_stamps_required"
+min="1"
+step="1"
+value="{{ settings[2] if settings else 10 }}"
+required
+>
+
+<small>
+Recommended number of stamps needed to unlock a reward.
+</small>
+
+</div>
+
+</div>
+
+
+<div class="settings-toggle">
+
+<label>
+
+<input
+type="checkbox"
+name="is_active"
+{% if not settings or settings[3] %}checked{% endif %}
+>
+
+<strong>
+Enable Loyalty Program
+</strong>
+
+</label>
+
+<p>
+When enabled, eligible delivered orders automatically earn loyalty stamps.
+</p>
+
+</div>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_dashboard') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+💾 Save Loyalty Settings
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-head">
+
+<div>
+<h3>How Loyalty Works</h3>
+<p>Automatic stamp workflow</p>
+</div>
+
+</div>
+
+<div class="loyalty-flow">
+
+<div class="loyalty-flow-item">
+<strong>01</strong>
+<span>Customer places an order</span>
+</div>
+
+<div class="loyalty-flow-item">
+<strong>02</strong>
+<span>Owner marks order as delivered</span>
+</div>
+
+<div class="loyalty-flow-item">
+<strong>03</strong>
+<span>Minimum order amount is checked</span>
+</div>
+
+<div class="loyalty-flow-item">
+<strong>04</strong>
+<span>Loyalty stamps are added automatically</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

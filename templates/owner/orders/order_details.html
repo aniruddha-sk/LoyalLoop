@@ -1,0 +1,590 @@
+{% extends "base.html" %}
+
+{% block title %}
+Order #{{ order[1] }} - LoyalLoop
+{% endblock %}
+
+{% block content %}
+
+{% set header_section = "ORDER MANAGEMENT" %}
+{% set header_title = "Order #" ~ order[1] %}
+
+<div class="owner-app">
+
+    {% include "owner/components/sidebar.html" %}
+
+    <main class="owner-main">
+
+        {% include "owner/components/header.html" %}
+
+        <div class="dashboard-content">
+
+
+            <!-- ORDER DETAIL TOP -->
+
+            <div class="order-detail-top">
+
+                <div>
+
+                    <a
+                        href="{{ url_for('owner_orders') }}"
+                        class="back-link"
+                    >
+                        ← Back to Orders
+                    </a>
+
+                    <h2>
+                        Order #{{ order[1] }}
+                    </h2>
+
+                    <p>
+                        Placed on
+                        {{ order[15].strftime('%d %B %Y at %I:%M %p') }}
+                    </p>
+
+                </div>
+
+
+                <span class="order-status {{ order[2] }}">
+
+                    {{ order[2]|title }}
+
+                </span>
+
+            </div>
+
+
+
+            <!-- ORDER DETAIL GRID -->
+
+            <div class="order-detail-grid">
+
+
+                <!-- MAIN CONTENT -->
+
+                <div class="order-detail-main">
+
+
+                    <!-- ORDER ITEMS -->
+
+                    <div class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+
+                                <h3>
+                                    Order Items
+                                </h3>
+
+                                <p>
+                                    {{ items|length }}
+                                    item{% if items|length != 1 %}s{% endif %}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="order-items-list">
+
+                            {% for item in items %}
+
+                            <div class="order-item-row">
+
+
+                                <div class="order-item-number">
+                                    {{ loop.index }}
+                                </div>
+
+
+                                <div class="order-item-info">
+
+                                    <strong>
+                                        {{ item[1] }}
+                                    </strong>
+
+                                    <span>
+                                        ₹{{ "{:,.2f}".format(item[2]) }}
+                                        ×
+                                        {{ item[3] }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="order-item-total">
+
+                                    ₹{{ "{:,.2f}".format(item[4]) }}
+
+                                </div>
+
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+
+                        <!-- ORDER SUMMARY -->
+
+                        <div class="order-summary">
+
+
+                            <div class="order-total-row">
+
+                                <span>
+                                    Subtotal
+                                </span>
+
+                                <strong>
+                                    ₹{{ "{:,.2f}".format(order[3]) }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-total-row">
+
+                                <span>
+                                    Discount
+                                </span>
+
+                                <strong>
+                                    - ₹{{ "{:,.2f}".format(order[4]) }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-total-row">
+
+                                <span>
+                                    Tax
+                                </span>
+
+                                <strong>
+                                    ₹{{ "{:,.2f}".format(order[5]) }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-total-row">
+
+                                <span>
+                                    Delivery Charge
+                                </span>
+
+                                <strong>
+                                    ₹{{ "{:,.2f}".format(order[6]) }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="order-total-row total">
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <strong>
+                                    ₹{{ "{:,.2f}".format(order[7]) }}
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CUSTOMER NOTE -->
+
+                    {% if order[9] %}
+
+                    <div class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+
+                                <h3>
+                                    Customer Note
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="customer-note">
+
+                            {{ order[9] }}
+
+                        </div>
+
+                    </div>
+
+                    {% endif %}
+
+
+
+                    <!-- ORDER TIMELINE -->
+
+                    <div class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+
+                                <h3>
+                                    Order Timeline
+                                </h3>
+
+                                <p>
+                                    Status history
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="timeline">
+
+                            {% for event in history %}
+
+                            <div class="timeline-item">
+
+
+                                <div class="timeline-dot {{ event[2] }}">
+                                </div>
+
+
+                                <div class="timeline-content">
+
+                                    <strong>
+                                        {{ event[2]|title }}
+                                    </strong>
+
+                                    <span>
+                                        {{ event[3].strftime('%d %b %Y · %I:%M %p') }}
+                                    </span>
+
+
+                                    {% if event[4] %}
+
+                                    <p>
+                                        {{ event[4] }}
+                                    </p>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- SIDE CONTENT -->
+
+                <div class="order-detail-side">
+
+
+                    <!-- CUSTOMER -->
+
+                    <div class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+
+                                <h3>
+                                    Customer
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="customer-detail">
+
+
+                            <div class="customer-big-avatar">
+
+                                {{ order[18][:1]|upper }}
+
+                            </div>
+
+
+                            <strong>
+                                {{ order[18] }}
+                            </strong>
+
+
+                            <a href="tel:{{ order[20] }}">
+                                {{ order[20] }}
+                            </a>
+
+
+                            {% if order[19] %}
+
+                            <a href="mailto:{{ order[19] }}">
+                                {{ order[19] }}
+                            </a>
+
+                            {% endif %}
+
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- PAYMENT -->
+
+                    <div class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+
+                                <h3>
+                                    Payment
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="payment-detail">
+
+                            <span class="payment-badge {{ order[8] }}">
+
+                                {{ order[8]|title }}
+
+                            </span>
+
+
+                            <strong>
+                                ₹{{ "{:,.2f}".format(order[7]) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- UPDATE STATUS -->
+
+                    {% if order[2] not in ['delivered','cancelled'] %}
+
+                    <div class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+
+                                <h3>
+                                    Update Status
+                                </h3>
+
+                                <p>
+                                    Move order to the next stage
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('update_order_status', order_id=order[0]) }}"
+                            class="status-update-form"
+                        >
+
+
+                            {% if order[2] == 'pending' %}
+
+
+                            <button
+                                name="status"
+                                value="confirmed"
+                                class="status-action confirmed"
+                                data-confirm="Confirm this order?"
+                            >
+
+                                <span>
+                                    ✓
+                                </span>
+
+                                Confirm Order
+
+                            </button>
+
+
+                            <button
+                                name="status"
+                                value="cancelled"
+                                class="status-action cancelled"
+                                data-confirm="Cancel this order? This order will not earn a loyalty stamp."
+                            >
+
+                                <span>
+                                    ×
+                                </span>
+
+                                Cancel Order
+
+                            </button>
+
+
+                            {% elif order[2] == 'confirmed' %}
+
+
+                            <button
+                                name="status"
+                                value="preparing"
+                                class="status-action preparing"
+                            >
+
+                                <span>
+                                    ◉
+                                </span>
+
+                                Start Preparing
+
+                            </button>
+
+
+                            <button
+                                name="status"
+                                value="cancelled"
+                                class="status-action cancelled"
+                                data-confirm="Cancel this order? This order will not earn a loyalty stamp."
+                            >
+
+                                <span>
+                                    ×
+                                </span>
+
+                                Cancel Order
+
+                            </button>
+
+
+                            {% elif order[2] == 'preparing' %}
+
+
+                            <button
+                                name="status"
+                                value="ready"
+                                class="status-action ready"
+                            >
+
+                                <span>
+                                    ✓
+                                </span>
+
+                                Mark Ready
+
+                            </button>
+
+
+                            <button
+                                name="status"
+                                value="cancelled"
+                                class="status-action cancelled"
+                                data-confirm="Cancel this order? This order will not earn a loyalty stamp."
+                            >
+
+                                <span>
+                                    ×
+                                </span>
+
+                                Cancel Order
+
+                            </button>
+
+
+                            {% elif order[2] == 'ready' %}
+
+
+                            <button
+                                name="status"
+                                value="delivered"
+                                class="status-action delivered"
+                                data-confirm="Mark this order as delivered? If eligible, the customer will earn a loyalty stamp."
+                            >
+
+                                <span>
+                                    ★
+                                </span>
+
+                                Mark Delivered
+
+                            </button>
+
+
+                            <button
+                                name="status"
+                                value="cancelled"
+                                class="status-action cancelled"
+                                data-confirm="Cancel this order?"
+                            >
+
+                                <span>
+                                    ×
+                                </span>
+
+                                Cancel Order
+
+                            </button>
+
+
+                            {% endif %}
+
+
+                        </form>
+
+                    </div>
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+        {% include "owner/components/footer.html" %}
+
+    </main>
+
+</div>
+
+{% endblock %}

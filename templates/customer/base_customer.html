@@ -1,0 +1,177 @@
+{% block title %}{{ page_title|default('LoyalLoop') }}{% endblock %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<meta name="theme-color" content="#6c5ce7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<title>{% block head_title %}{{ page_title|default('LoyalLoop') }}{% endblock %}</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/customer/customer-base.css') }}">
+
+{% block page_css %}{% endblock %}
+
+</head>
+
+<body class="customer-body">
+
+<div class="customer-app" id="customerApp">
+
+    <div class="customer-bg-orb orb-one"></div>
+    <div class="customer-bg-orb orb-two"></div>
+    <div class="customer-bg-orb orb-three"></div>
+
+    <main class="customer-main" id="customerMain">
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <nav class="customer-bottom-nav" id="customerBottomNav">
+
+        <a href="#"
+           class="customer-nav-item {% if active_nav == 'home' %}active{% endif %}"
+           data-nav="home">
+
+            <span class="customer-nav-icon">
+                <span class="nav-icon">⌂</span>
+            </span>
+
+            <span class="customer-nav-label">Home</span>
+
+        </a>
+
+        <a href="#"
+           class="customer-nav-item {% if active_nav == 'menu' %}active{% endif %}"
+           data-nav="menu">
+
+            <span class="customer-nav-icon">
+                <span class="nav-icon">☷</span>
+            </span>
+
+            <span class="customer-nav-label">Menu</span>
+
+        </a>
+
+        <a href="#"
+           class="customer-nav-item {% if active_nav == 'orders' %}active{% endif %}"
+           data-nav="orders">
+
+            <span class="customer-nav-icon nav-cart-icon">
+
+                <span class="nav-icon">🛍</span>
+
+                <span class="customer-cart-badge"
+                      id="customerCartBadge">0</span>
+
+            </span>
+
+            <span class="customer-nav-label">Orders</span>
+
+        </a>
+
+        <a href="#"
+           class="customer-nav-item {% if active_nav == 'rewards' %}active{% endif %}"
+           data-nav="rewards">
+
+            <span class="customer-nav-icon">
+                <span class="nav-icon">◇</span>
+            </span>
+
+            <span class="customer-nav-label">Rewards</span>
+
+        </a>
+
+        <a href="#"
+           class="customer-nav-item {% if active_nav == 'profile' %}active{% endif %}"
+           data-nav="profile">
+
+            <span class="customer-nav-icon">
+                <span class="nav-icon">◉</span>
+            </span>
+
+            <span class="customer-nav-label">You</span>
+
+        </a>
+
+    </nav>
+
+</div>
+
+
+<div class="customer-toast-container"
+     id="customerToastContainer"></div>
+
+
+<div class="customer-modal-layer"
+     id="customerModalLayer">
+
+    <div class="customer-modal-backdrop"
+         id="customerModalBackdrop"></div>
+
+    <div class="customer-modal"
+         id="customerModal">
+
+        <button type="button"
+                class="customer-modal-close"
+                id="customerModalClose">
+            ×
+        </button>
+
+        <div id="customerModalContent"></div>
+
+    </div>
+
+</div>
+
+
+<div class="customer-celebration"
+     id="customerCelebration">
+
+    <div class="celebration-glow"></div>
+
+    <div class="celebration-content">
+
+        <div class="celebration-icon"
+             id="celebrationIcon">
+            🎉
+        </div>
+
+        <h2 id="celebrationTitle">
+            Amazing!
+        </h2>
+
+        <p id="celebrationMessage">
+            You just unlocked something special.
+        </p>
+
+        <button type="button"
+                class="celebration-close"
+                id="celebrationClose">
+            Continue
+        </button>
+
+    </div>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/customer/customer-base.js') }}"></script>
+
+{% block page_js %}{% endblock %}
+
+</body>
+</html>

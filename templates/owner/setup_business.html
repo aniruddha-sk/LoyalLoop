@@ -1,0 +1,362 @@
+{% extends "base.html" %}
+
+{% block title %}Set Up Your Business | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<div class="setup-page">
+
+<div class="setup-container">
+
+
+<div class="setup-brand">
+
+<div class="setup-logo">
+L
+</div>
+
+<div>
+<strong>LoyalLoop</strong>
+<span>Business Setup</span>
+</div>
+
+</div>
+
+
+<div class="setup-header">
+
+<div class="setup-step">
+STEP 01 • BUSINESS PROFILE
+</div>
+
+<h1>
+Let's set up your business 🚀
+</h1>
+
+<p>
+This information will power your customer experience.
+</p>
+
+</div>
+
+
+<form
+method="POST"
+action="{{ url_for('setup_business') }}"
+class="setup-form"
+>
+
+
+<div class="form-section">
+
+<div class="section-title">
+
+<span>
+01
+</span>
+
+<div>
+
+<h3>
+Business Information
+</h3>
+
+<p>
+Tell us about your business.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="form-grid">
+
+<div class="field full">
+
+<label>
+Business Name <b>*</b>
+</label>
+
+<input
+type="text"
+name="business_name"
+placeholder="e.g. ABC Cafe"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Business Type <b>*</b>
+</label>
+
+<select
+name="business_type"
+required
+>
+
+<option value="">
+Select type
+</option>
+
+<option value="Cafe">
+Cafe
+</option>
+
+<option value="Restaurant">
+Restaurant
+</option>
+
+<option value="Bakery">
+Bakery
+</option>
+
+<option value="Salon">
+Salon
+</option>
+
+<option value="Retail Store">
+Retail Store
+</option>
+
+<option value="Other">
+Other
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Business Phone
+</label>
+
+<input
+type="tel"
+name="phone"
+placeholder="+91 98765 43210"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Business Email
+</label>
+
+<input
+type="email"
+name="email"
+placeholder="hello@business.com"
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="form-section">
+
+<div class="section-title">
+
+<span>
+02
+</span>
+
+<div>
+
+<h3>
+Location
+</h3>
+
+<p>
+Help customers find you easily.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="form-grid">
+
+<div class="field full">
+
+<label>
+Address
+</label>
+
+<textarea
+name="address"
+rows="3"
+placeholder="Enter complete business address"
+></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label>
+City <b>*</b>
+</label>
+
+<input
+type="text"
+name="city"
+placeholder="Kolhapur"
+required
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+State
+</label>
+
+<input
+type="text"
+name="state"
+placeholder="Maharashtra"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Pincode
+</label>
+
+<input
+type="text"
+name="pincode"
+placeholder="416001"
+maxlength="10"
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="form-section">
+
+<div class="section-title">
+
+<span>
+03
+</span>
+
+<div>
+
+<h3>
+Social & Customer Links
+</h3>
+
+<p>
+Connect your digital presence.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="form-grid">
+
+<div class="field">
+
+<label>
+Instagram URL
+</label>
+
+<input
+type="url"
+name="instagram_url"
+placeholder="https://instagram.com/..."
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+Google Review URL
+</label>
+
+<input
+type="url"
+name="google_review_url"
+placeholder="Google review link"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>
+WhatsApp Number
+</label>
+
+<input
+type="tel"
+name="whatsapp_number"
+placeholder="+91 98765 43210"
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="setup-bottom">
+
+<div class="secure-note">
+🔒 Your business data is securely stored.
+</div>
+
+<button
+type="submit"
+class="primary-action"
+>
+
+Create My Business
+
+<span>
+→
+</span>
+
+</button>
+
+</div>
+
+
+</form>
+
+</div>
+
+</div>
+
+{% endblock %}

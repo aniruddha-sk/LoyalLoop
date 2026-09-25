@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Rewards | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% set header_section = "LOYALTY" %}
+{% set header_title = "Rewards" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="page-head">
+
+<div>
+<span>CUSTOMER REWARDS</span>
+<h2>Rewards</h2>
+<p>Create rewards that encourage customers to return.</p>
+</div>
+
+<div class="page-actions">
+
+<a
+href="{{ url_for('owner_reward_claims') }}"
+class="btn-secondary"
+>
+◇ Reward Claims
+</a>
+
+<a
+href="{{ url_for('add_reward') }}"
+class="btn-primary"
+>
+＋ Add Reward
+</a>
+
+</div>
+
+</div>
+
+<div class="customer-stats">
+
+<div class="customer-stat">
+<div class="customer-stat-icon">🎁</div>
+<div>
+<strong>{{ total_rewards }}</strong>
+<span>Total Rewards</span>
+</div>
+</div>
+
+<div class="customer-stat">
+<div class="customer-stat-icon">✓</div>
+<div>
+<strong>{{ active_rewards }}</strong>
+<span>Active Rewards</span>
+</div>
+</div>
+
+<div class="customer-stat">
+<div class="customer-stat-icon">★</div>
+<div>
+<strong>{{ loyalty_required }}</strong>
+<span>Stamps Required</span>
+</div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<div class="panel-head">
+
+<div>
+<h3>Your Rewards</h3>
+<p>Rewards available in your loyalty program.</p>
+</div>
+
+</div>
+
+{% if rewards %}
+
+<div class="reward-list">
+
+{% for reward in rewards %}
+
+<div class="reward-card">
+
+<div class="reward-icon">
+🎁
+</div>
+
+<div class="reward-info">
+
+<div class="reward-top">
+
+<h3>
+{{ reward[1] }}
+</h3>
+
+<span class="reward-status {{ reward[6] }}">
+{{ reward[6]|title }}
+</span>
+
+</div>
+
+{% if reward[2] %}
+
+<p>
+{{ reward[2] }}
+</p>
+
+{% endif %}
+
+<div class="reward-meta">
+
+<span>
+★ {{ reward[4] }} stamps
+</span>
+
+{% if reward[3] is not none %}
+
+<span>
+₹{{ "{:,.2f}".format(reward[3]) }} value
+</span>
+
+{% endif %}
+
+{% if reward[5] %}
+
+<span>
+{{ reward[5] }} days validity
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="reward-actions">
+
+<a
+href="{{ url_for('edit_reward', reward_id=reward[0]) }}"
+class="btn-secondary"
+>
+Edit
+</a>
+
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="customer-empty">
+
+<div style="font-size:40px;">
+🎁
+</div>
+
+<h3>
+No rewards created yet
+</h3>
+
+<p>
+Create your first reward and give customers a reason to come back.
+</p>
+
+<a
+href="{{ url_for('add_reward') }}"
+class="btn-primary"
+>
+＋ Create First Reward
+</a>
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

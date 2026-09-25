@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-checkout.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-checkout">
+
+    <header class="checkout-header">
+        <a href="{{ url_for('customer_cart') }}" class="back-btn">←</a>
+        <div>
+            <span>FINAL STEP</span>
+            <h1>Checkout</h1>
+        </div>
+        <div class="secure-icon">✓</div>
+    </header>
+
+    <main class="checkout-content">
+
+        <section class="checkout-card customer-card">
+            <div class="card-heading">
+                <div class="heading-icon">👤</div>
+                <div>
+                    <span>CUSTOMER</span>
+                    <h2>Your Details</h2>
+                </div>
+            </div>
+
+            <div class="customer-info">
+                <div class="info-row">
+                    <span>Name</span>
+                    <strong>{{ customer.full_name }}</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Mobile</span>
+                    <strong>{{ customer.phone }}</strong>
+                </div>
+
+                {% if customer.email %}
+                <div class="info-row">
+                    <span>Email</span>
+                    <strong>{{ customer.email }}</strong>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="checkout-card">
+            <div class="card-heading">
+                <div class="heading-icon">🛍️</div>
+                <div>
+                    <span>YOUR SELECTION</span>
+                    <h2>Order Summary</h2>
+                </div>
+            </div>
+
+            <div id="checkoutItems"></div>
+        </section>
+
+        <section class="checkout-card note-card">
+            <div class="card-heading">
+                <div class="heading-icon">📝</div>
+                <div>
+                    <span>OPTIONAL</span>
+                    <h2>Special Note</h2>
+                </div>
+            </div>
+
+            <textarea
+                id="customerNote"
+                maxlength="500"
+                placeholder="Any special request for your order?"></textarea>
+
+            <small>
+                <span id="noteCount">0</span>/500
+            </small>
+        </section>
+
+        <section class="total-card">
+
+            <div class="total-heading">
+                <span>PAYMENT SUMMARY</span>
+                <strong>Order Total</strong>
+            </div>
+
+            <div class="total-row">
+                <span>Subtotal</span>
+                <b id="checkoutSubtotal">₹0.00</b>
+            </div>
+
+            <div class="total-row">
+                <span>Service / Delivery</span>
+                <b>₹0.00</b>
+            </div>
+
+            <div class="total-line"></div>
+
+            <div class="grand-total">
+                <span>Total Amount</span>
+                <strong id="checkoutGrandTotal">₹0.00</strong>
+            </div>
+
+        </section>
+
+        <div class="order-info">
+            <span>🔒</span>
+            <p>Your order details are securely processed by LoyalLoop.</p>
+        </div>
+
+        <button id="placeOrderBtn" class="place-order-btn">
+            <span>Place Order</span>
+            <b id="placeOrderTotal">₹0.00</b>
+            <i>→</i>
+        </button>
+
+    </main>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    window.LOYALLOOP_BUSINESS_ID = "{{ business.id }}";
+    window.CUSTOMER_ORDER_SUBMIT_URL = "{{ url_for('place_customer_order') }}";
+</script>
+<script src="{{ url_for('static', filename='js/customer-checkout.js') }}"></script>
+{% endblock %}

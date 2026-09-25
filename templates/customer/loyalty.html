@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-loyalty.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="customer-loyalty">
+
+    <header class="loyalty-header">
+        <div class="loyalty-top">
+            <a href="{{ url_for('customer_dashboard') }}" class="back-btn">←</a>
+
+            <div>
+                <span>LOYALTY PROGRAM</span>
+                <h1>My Loyalty</h1>
+            </div>
+
+            <div class="star-icon">⭐</div>
+        </div>
+    </header>
+
+    <main class="loyalty-content">
+
+        <section class="stamp-hero">
+
+            <div class="hero-glow"></div>
+
+            <div class="hero-top">
+                <div>
+                    <span>YOUR STAMPS</span>
+                    <h2>{{ total_stamps }}</h2>
+                </div>
+
+                <div class="stamp-circle">
+                    ⭐
+                </div>
+            </div>
+
+            <div class="progress-area">
+
+                <div class="progress-labels">
+                    <span>Progress to reward</span>
+                    <strong>
+                        {{ total_stamps }} / {{ required_stamps }}
+                    </strong>
+                </div>
+
+                <div class="progress-track">
+                    <div
+                        class="progress-fill"
+                        data-progress="{{ progress }}">
+                    </div>
+                </div>
+
+                <p>
+                    {% if remaining_stamps > 0 %}
+                        {{ remaining_stamps }} more
+                        {{ "stamp" if remaining_stamps == 1 else "stamps" }}
+                        to unlock your reward 🎁
+                    {% else %}
+                        Your reward is ready to claim! 🎉
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </section>
+
+        <section class="next-reward-card">
+
+            <div class="reward-icon">🎁</div>
+
+            <div class="reward-info">
+
+                <span>NEXT REWARD</span>
+
+                {% if next_reward %}
+
+                    <h2>{{ next_reward.reward_name }}</h2>
+
+                    {% if next_reward.description %}
+                    <p>{{ next_reward.description }}</p>
+                    {% endif %}
+
+                    <div class="reward-requirement">
+                        <strong>
+                            {{ next_reward.required_stamps }} stamps
+                        </strong>
+
+                        <small>required</small>
+                    </div>
+
+                {% else %}
+
+                    <h2>More Rewards Coming</h2>
+                    <p>Keep collecting stamps and stay tuned.</p>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div>⭐</div>
+                <strong>{{ total_stamps }}</strong>
+                <span>Total Stamps</span>
+            </div>
+
+            <div class="stat-card">
+                <div>🎁</div>
+                <strong>{{ claimed_rewards }}</strong>
+                <span>Rewards Claimed</span>
+            </div>
+
+            <div class="stat-card">
+                <div>🔥</div>
+                <strong>{{ eligible_orders }}</strong>
+                <span>Eligible Orders</span>
+            </div>
+
+        </section>
+
+        <section class="stamp-history">
+
+            <div class="section-heading">
+                <div>
+                    <span>YOUR ACTIVITY</span>
+                    <h2>Recent Stamps</h2>
+                </div>
+            </div>
+
+            <div class="history-list">
+
+                {% for stamp in recent_stamps %}
+
+                <div class="history-item">
+
+                    <div class="history-icon">
+                        ⭐
+                    </div>
+
+                    <div class="history-info">
+
+                        <h3>
+                            {% if stamp.reason %}
+                                {{ stamp.reason }}
+                            {% else %}
+                                Loyalty Stamp
+                            {% endif %}
+                        </h3>
+
+                        <span>
+                            {{ stamp.created_at.strftime("%d %b %Y, %I:%M %p") }}
+                        </span>
+
+                    </div>
+
+                    <strong>
+                        +{{ stamp.stamp_count }}
+                    </strong>
+
+                </div>
+
+                {% else %}
+
+                <div class="empty-history">
+                    <div>⭐</div>
+                    <h3>No stamps yet</h3>
+                    <p>
+                        Place eligible orders to start your loyalty journey.
+                    </p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        <section class="loyalty-tip">
+
+            <div class="tip-icon">💡</div>
+
+            <div>
+                <strong>How it works</strong>
+                <p>
+                    Place an eligible order, collect your stamp and unlock
+                    exciting rewards.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <nav class="customer-loyalty-nav">
+
+        <a href="{{ url_for('customer_dashboard') }}">
+            <span>⌂</span>
+            <small>Home</small>
+        </a>
+
+        <a href="{{ url_for('customer_menu') }}">
+            <span>🍴</span>
+            <small>Menu</small>
+        </a>
+
+        <a href="{{ url_for('customer_cart') }}">
+            <span>🛒</span>
+            <small>Cart</small>
+        </a>
+
+        <a href="{{ url_for('customer_loyalty') }}" class="active">
+            <span>⭐</span>
+            <small>Loyalty</small>
+        </a>
+
+        <a href="{{ url_for('customer_profile') }}">
+            <span>👤</span>
+            <small>Profile</small>
+        </a>
+
+    </nav>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/customer-loyalty.js') }}"></script>
+{% endblock %}

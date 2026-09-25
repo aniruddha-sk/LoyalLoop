@@ -1,0 +1,529 @@
+/* =========================================
+   LOYALLOOP QR CODE PAGE
+   ========================================= */
+
+.qr-layout{
+    display:grid;
+    grid-template-columns:minmax(0,1.45fr) minmax(320px,.85fr);
+    gap:24px;
+    align-items:start;
+}
+
+.qr-main-panel{
+    min-width:0;
+}
+
+.qr-header{
+    padding:24px 26px 0;
+}
+
+.qr-label{
+    display:inline-block;
+    margin-bottom:7px;
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:1.2px;
+    color:#6c5ce7;
+}
+
+.qr-header h3{
+    margin:0 0 8px;
+    font-size:23px;
+    line-height:1.3;
+    font-weight:800;
+    color:#17152b;
+}
+
+.qr-header p{
+    max-width:650px;
+    margin:0;
+    color:#77738b;
+    font-size:14px;
+    line-height:1.7;
+}
+
+.qr-display-area{
+    display:flex;
+    justify-content:center;
+    padding:30px;
+}
+
+.qr-card{
+    width:100%;
+    max-width:430px;
+    padding:30px 28px;
+    border:1px solid #e9e6f5;
+    border-radius:24px;
+    background:#fff;
+    text-align:center;
+    box-shadow:0 18px 45px rgba(54,42,120,.09);
+}
+
+.qr-brand{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:24px;
+}
+
+.qr-logo{
+    width:44px;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+    background:linear-gradient(135deg,#6755e8,#8d7cff);
+    color:#fff;
+    font-size:22px;
+    font-weight:900;
+    box-shadow:0 8px 20px rgba(103,85,232,.22);
+}
+
+.qr-brand strong{
+    display:block;
+    color:#17152b;
+    font-size:19px;
+    font-weight:850;
+    text-align:left;
+}
+
+.qr-brand span{
+    display:block;
+    margin-top:3px;
+    color:#89859a;
+    font-size:12px;
+    text-align:left;
+}
+
+.qr-image-wrap{
+    width:100%;
+    min-height:300px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    border-radius:20px;
+    background:#faf9ff;
+    border:1px solid #eeeaf9;
+}
+
+.business-qr-image{
+    display:block;
+    width:280px;
+    height:280px;
+    max-width:100%;
+    object-fit:contain;
+    image-rendering:auto;
+}
+
+.qr-placeholder{
+    width:280px;
+    height:280px;
+    max-width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border:2px dashed #d9d3f5;
+    border-radius:18px;
+    color:#7165d8;
+    background:#f8f7ff;
+}
+
+.qr-placeholder div{
+    margin-bottom:10px;
+    font-size:65px;
+    line-height:1;
+}
+
+.qr-placeholder span{
+    font-size:17px;
+    font-weight:800;
+}
+
+.qr-placeholder small{
+    margin-top:6px;
+    color:#918ca2;
+    font-size:12px;
+}
+
+.qr-card-text{
+    margin-top:22px;
+}
+
+.qr-card-text strong{
+    display:block;
+    color:#201d35;
+    font-size:17px;
+    font-weight:800;
+}
+
+.qr-card-text span{
+    display:block;
+    margin-top:7px;
+    color:#858096;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.qr-business-name{
+    margin-top:20px;
+    color:#5f52d8;
+    font-size:15px;
+    font-weight:800;
+}
+
+.qr-business-code{
+    margin-top:5px;
+    color:#9994a8;
+    font-size:11px;
+}
+
+
+/* =========================================
+   HOW IT WORKS
+   ========================================= */
+
+.qr-info-panel{
+    min-width:0;
+}
+
+.qr-info-panel .panel-head,
+.qr-usage-panel .panel-head{
+    padding:22px 24px;
+}
+
+.qr-info-panel .panel-head h3,
+.qr-usage-panel .panel-head h3{
+    margin:0 0 5px;
+    color:#201d35;
+    font-size:17px;
+    font-weight:800;
+}
+
+.qr-info-panel .panel-head p,
+.qr-usage-panel .panel-head p{
+    margin:0;
+    color:#858096;
+    font-size:12px;
+    line-height:1.6;
+}
+
+.qr-steps{
+    padding:0 24px 24px;
+}
+
+.qr-step{
+    display:flex;
+    gap:14px;
+    padding:17px 0;
+    border-top:1px solid #eeeaf5;
+}
+
+.qr-step:first-child{
+    border-top:0;
+}
+
+.qr-step-number{
+    flex:0 0 42px;
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:#f0edff;
+    color:#6755e8;
+    font-size:11px;
+    font-weight:900;
+}
+
+.qr-step strong{
+    display:block;
+    margin-bottom:5px;
+    color:#27243b;
+    font-size:14px;
+    font-weight:800;
+}
+
+.qr-step p{
+    margin:0;
+    color:#888397;
+    font-size:12px;
+    line-height:1.6;
+}
+
+
+/* =========================================
+   QR USAGE
+   ========================================= */
+
+.qr-usage-panel{
+    grid-column:1 / -1;
+}
+
+.qr-usage-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    padding:0 24px 24px;
+}
+
+.qr-usage-item{
+    padding:20px;
+    border:1px solid #ece9f6;
+    border-radius:16px;
+    background:#fbfaff;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.qr-usage-item:hover{
+    transform:translateY(-3px);
+    border-color:#dcd6ff;
+    box-shadow:0 12px 25px rgba(70,55,150,.08);
+}
+
+.qr-usage-item > div{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:13px;
+    border-radius:12px;
+    background:#eeeaff;
+    font-size:20px;
+}
+
+.qr-usage-item strong{
+    display:block;
+    margin-bottom:5px;
+    color:#27243b;
+    font-size:14px;
+    font-weight:800;
+}
+
+.qr-usage-item span{
+    display:block;
+    color:#898499;
+    font-size:12px;
+    line-height:1.6;
+}
+
+
+/* =========================================
+   PAGE ACTIONS
+   ========================================= */
+
+.page-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.page-actions .btn-primary,
+.page-actions .btn-secondary{
+    min-height:44px;
+}
+
+
+/* =========================================
+   PRINT
+   ========================================= */
+
+@media print{
+
+    body{
+        background:#fff !important;
+    }
+
+    body *{
+        visibility:hidden;
+    }
+
+    #qrPrintArea,
+    #qrPrintArea *{
+        visibility:visible;
+    }
+
+    #qrPrintArea{
+        position:absolute;
+        left:50%;
+        top:20px;
+        transform:translateX(-50%);
+        width:430px;
+        box-shadow:none;
+        border:1px solid #ddd;
+    }
+
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width:1100px){
+
+    .qr-layout{
+        grid-template-columns:1fr;
+    }
+
+    .qr-info-panel{
+        width:100%;
+    }
+
+    .qr-usage-panel{
+        grid-column:auto;
+    }
+
+    .qr-usage-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width:700px){
+
+    .qr-layout{
+        gap:16px;
+    }
+
+    .qr-header{
+        padding:20px 18px 0;
+    }
+
+    .qr-header h3{
+        font-size:20px;
+    }
+
+    .qr-header p{
+        font-size:13px;
+    }
+
+    .qr-display-area{
+        padding:20px 14px;
+    }
+
+    .qr-card{
+        padding:24px 18px;
+        border-radius:20px;
+    }
+
+    .qr-image-wrap{
+        min-height:250px;
+        padding:12px;
+    }
+
+    .business-qr-image{
+        width:230px;
+        height:230px;
+    }
+
+    .qr-placeholder{
+        width:230px;
+        height:230px;
+    }
+
+    .qr-placeholder div{
+        font-size:52px;
+    }
+
+    .qr-info-panel .panel-head,
+    .qr-usage-panel .panel-head{
+        padding:19px 18px;
+    }
+
+    .qr-steps{
+        padding:0 18px 18px;
+    }
+
+    .qr-step{
+        gap:11px;
+        padding:15px 0;
+    }
+
+    .qr-step-number{
+        flex-basis:38px;
+        width:38px;
+        height:38px;
+    }
+
+    .qr-usage-grid{
+        grid-template-columns:1fr;
+        padding:0 18px 18px;
+    }
+
+    .page-actions{
+        width:100%;
+        justify-content:flex-start;
+    }
+
+    .page-actions .btn-primary,
+    .page-actions .btn-secondary{
+        flex:1;
+    }
+
+}
+
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width:420px){
+
+    .qr-card{
+        padding:20px 14px;
+    }
+
+    .qr-brand{
+        gap:9px;
+    }
+
+    .qr-logo{
+        width:40px;
+        height:40px;
+    }
+
+    .qr-brand strong{
+        font-size:17px;
+    }
+
+    .qr-image-wrap{
+        min-height:220px;
+    }
+
+    .business-qr-image{
+        width:200px;
+        height:200px;
+    }
+
+    .qr-placeholder{
+        width:200px;
+        height:200px;
+    }
+
+    .page-actions{
+        flex-direction:column;
+    }
+
+    .page-actions .btn-primary,
+    .page-actions .btn-secondary{
+        width:100%;
+        flex:none;
+    }
+
+}

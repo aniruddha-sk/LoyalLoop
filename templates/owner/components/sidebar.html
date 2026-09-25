@@ -1,0 +1,205 @@
+<aside class="owner-sidebar" id="ownerSidebar">
+
+<div class="sidebar-brand">
+
+<div class="brand-icon">
+L
+</div>
+
+<div>
+
+<strong>
+LoyalLoop
+</strong>
+
+<small>
+Business OS
+</small>
+
+</div>
+
+</div>
+
+
+<div class="business-mini">
+
+<div class="business-avatar">
+{{ (business_name|default('Business', true))[:1]|upper }}
+</div>
+
+<div>
+
+<strong>
+{{ business_name|default('Your Business', true) }}
+</strong>
+
+<span>
+{{ city|default('Business Account', true) }}
+</span>
+
+</div>
+
+</div>
+
+
+<nav class="sidebar-nav">
+
+
+<p class="nav-label">
+MAIN
+</p>
+
+
+<a
+class="nav-link {% if request.endpoint == 'owner_dashboard' %}active{% endif %}"
+href="{{ url_for('owner_dashboard') }}"
+>
+
+<span>
+⌂
+</span>
+
+Dashboard
+
+</a>
+
+
+<a
+class="nav-link {% if request.endpoint in ['owner_orders','order_details'] %}active{% endif %}"
+href="{{ url_for('owner_orders') }}"
+>
+
+<span>
+◉
+</span>
+
+Orders
+
+</a>
+
+
+<a
+class="nav-link {% if request.endpoint in ['owner_customers','customer_details'] %}active{% endif %}"
+href="{{ url_for('owner_customers') }}"
+>
+
+<span>
+♙
+</span>
+
+Customers
+
+</a>
+
+
+<a
+class="nav-link {% if request.endpoint in ['owner_menu','add_menu_item','edit_menu_item','edit_menu_category'] %}active{% endif %}"
+href="{{ url_for('owner_menu') }}"
+>
+
+<span>
+▦
+</span>
+
+Menu
+
+</a>
+
+
+<p class="nav-label">
+GROWTH
+</p>
+
+
+<a
+class="nav-link {% if request.endpoint == 'owner_loyalty_settings' %}active{% endif %}"
+href="{{ url_for('owner_loyalty_settings') }}"
+>
+<span>★</span> Loyalty
+</a>
+
+<a
+class="nav-link {% if request.endpoint in ['owner_rewards','add_reward','edit_reward'] %}active{% endif %}"
+href="{{ url_for('owner_rewards') }}"
+>
+<span>◇</span> Rewards
+</a>
+
+
+<a
+class="nav-link {% if request.endpoint == 'analytics' %}active{% endif %}"
+href="{{ url_for('analytics') }}"
+>
+<span>↗</span> Analytics
+</a>
+
+<a class="nav-link {% if request.endpoint in ['owner_reminders','reminder_settings','create_reminder','update_reminder_status','delete_reminder'] %}active{% endif %}" href="{{ url_for('owner_reminders') }}">
+<span>◷</span> Reminders
+</a>
+
+
+<p class="nav-label">
+BUSINESS
+</p>
+
+
+<a
+class="nav-link {% if request.endpoint == 'business_profile' %}active{% endif %}"
+href="{{ url_for('business_profile') }}"
+>
+
+<span>
+🏪
+</span>
+
+Business Profile
+
+</a>
+
+
+<a
+class="nav-link {% if request.endpoint == 'business_settings' %}active{% endif %}"
+href="{{ url_for('business_settings') }}"
+>
+
+<span>
+⚙
+</span>
+
+Settings
+
+</a>
+
+
+<a class="nav-link {% if request.endpoint == 'qr_code' %}active{% endif %}" href="{{ url_for('qr_code') }}">
+<span>▣</span> QR Code
+</a>
+
+
+</nav>
+
+
+<div class="sidebar-bottom">
+
+<a
+href="{{ url_for('owner_logout') }}"
+class="logout-link"
+>
+
+<span>
+↪
+</span>
+
+Logout
+
+</a>
+
+</div>
+
+</aside>
+
+
+<div
+class="owner-overlay"
+id="ownerOverlay"
+></div>

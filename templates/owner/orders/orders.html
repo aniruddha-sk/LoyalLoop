@@ -1,0 +1,494 @@
+{% extends "base.html" %}
+
+{% block title %}Orders - LoyalLoop{% endblock %}
+
+{% block content %}
+
+{% set header_section = "ORDERS" %}
+{% set header_title = "Order Management" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+
+<div class="orders-page-head">
+
+<div>
+
+<span>
+ORDER MANAGEMENT
+</span>
+
+<h2>
+Orders
+</h2>
+
+<p>
+Manage customer orders and track their status.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="order-stats">
+
+
+<a
+href="{{ url_for('owner_orders',status='all') }}"
+class="order-stat-card {% if status=='all' %}active{% endif %}"
+>
+
+<span class="order-stat-icon all">
+▣
+</span>
+
+<div>
+
+<strong>
+{{ counts[0] }}
+</strong>
+
+<small>
+All Orders
+</small>
+
+</div>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders',status='pending') }}"
+class="order-stat-card {% if status=='pending' %}active{% endif %}"
+>
+
+<span class="order-stat-icon pending">
+◷
+</span>
+
+<div>
+
+<strong>
+{{ counts[1] }}
+</strong>
+
+<small>
+Pending
+</small>
+
+</div>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders',status='confirmed') }}"
+class="order-stat-card {% if status=='confirmed' %}active{% endif %}"
+>
+
+<span class="order-stat-icon confirmed">
+✓
+</span>
+
+<div>
+
+<strong>
+{{ counts[2] }}
+</strong>
+
+<small>
+Confirmed
+</small>
+
+</div>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders',status='preparing') }}"
+class="order-stat-card {% if status=='preparing' %}active{% endif %}"
+>
+
+<span class="order-stat-icon preparing">
+◉
+</span>
+
+<div>
+
+<strong>
+{{ counts[3] }}
+</strong>
+
+<small>
+Preparing
+</small>
+
+</div>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders',status='ready') }}"
+class="order-stat-card {% if status=='ready' %}active{% endif %}"
+>
+
+<span class="order-stat-icon ready">
+✓
+</span>
+
+<div>
+
+<strong>
+{{ counts[4] }}
+</strong>
+
+<small>
+Ready
+</small>
+
+</div>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders',status='delivered') }}"
+class="order-stat-card {% if status=='delivered' %}active{% endif %}"
+>
+
+<span class="order-stat-icon delivered">
+★
+</span>
+
+<div>
+
+<strong>
+{{ counts[5] }}
+</strong>
+
+<small>
+Delivered
+</small>
+
+</div>
+
+</a>
+
+
+<a
+href="{{ url_for('owner_orders',status='cancelled') }}"
+class="order-stat-card {% if status=='cancelled' %}active{% endif %}"
+>
+
+<span class="order-stat-icon cancelled">
+×
+</span>
+
+<div>
+
+<strong>
+{{ counts[6] }}
+</strong>
+
+<small>
+Cancelled
+</small>
+
+</div>
+
+</a>
+
+
+</div>
+
+
+<div class="panel orders-panel">
+
+
+<div class="panel-head">
+
+<div>
+
+<h3>
+All Orders
+</h3>
+
+<p>
+{{ orders|length }}
+order{% if orders|length != 1 %}s{% endif %} found
+</p>
+
+</div>
+
+
+<form
+method="GET"
+action="{{ url_for('owner_orders') }}"
+class="order-search-form"
+>
+
+<input
+type="hidden"
+name="status"
+value="{{ status }}"
+>
+
+<input
+type="text"
+name="search"
+value="{{ search }}"
+placeholder="Search order, customer or mobile..."
+autocomplete="off"
+>
+
+<button type="submit">
+Search
+</button>
+
+{% if search %}
+
+<a
+href="{{ url_for('owner_orders',status=status) }}"
+class="clear-search"
+>
+Clear
+</a>
+
+{% endif %}
+
+</form>
+
+</div>
+
+
+{% if orders %}
+
+<div class="orders-table-wrap">
+
+<table class="orders-table">
+
+<thead>
+
+<tr>
+
+<th>
+Order
+</th>
+
+<th>
+Customer
+</th>
+
+<th>
+Items
+</th>
+
+<th>
+Total
+</th>
+
+<th>
+Payment
+</th>
+
+<th>
+Status
+</th>
+
+<th>
+Date
+</th>
+
+<th>
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for order in orders %}
+
+<tr>
+
+
+<td>
+
+<a
+href="{{ url_for('order_details',order_id=order[0]) }}"
+class="order-number"
+>
+
+#{{ order[1] }}
+
+</a>
+
+</td>
+
+
+<td>
+
+<div class="order-customer">
+
+<strong>
+{{ order[7] }}
+</strong>
+
+<span>
+{{ order[8] }}
+</span>
+
+</div>
+
+</td>
+
+
+<td>
+
+{{ order[9] }}
+
+item{% if order[9] != 1 %}s{% endif %}
+
+</td>
+
+
+<td>
+
+<strong>
+₹{{ "{:,.2f}".format(order[3]) }}
+</strong>
+
+</td>
+
+
+<td>
+
+<span class="payment-badge {{ order[4] }}">
+{{ order[4]|title }}
+</span>
+
+</td>
+
+
+<td>
+
+<span class="order-status {{ order[2] }}">
+{{ order[2]|title }}
+</span>
+
+</td>
+
+
+<td>
+
+<div class="order-date">
+
+<strong>
+{{ order[5].strftime('%d %b %Y') }}
+</strong>
+
+<span>
+{{ order[5].strftime('%I:%M %p') }}
+</span>
+
+</div>
+
+</td>
+
+
+<td>
+
+<a
+href="{{ url_for('order_details',order_id=order[0]) }}"
+class="mini-btn"
+title="View Order"
+>
+→
+</a>
+
+</td>
+
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% else %}
+
+
+<div class="empty-state">
+
+<div class="empty-icon">
+▣
+</div>
+
+<h3>
+No Orders Found
+</h3>
+
+<p>
+
+{% if search %}
+
+No orders match your search.
+
+{% elif status != 'all' %}
+
+No {{ status }} orders available.
+
+{% else %}
+
+Customer orders will appear here.
+
+{% endif %}
+
+</p>
+
+
+{% if search %}
+
+<a
+href="{{ url_for('owner_orders',status=status) }}"
+class="primary-btn"
+>
+View All Orders
+</a>
+
+{% endif %}
+
+</div>
+
+
+{% endif %}
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

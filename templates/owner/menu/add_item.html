@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Add Menu Item | LoyalLoop{% endblock %}
+
+{% block content %}
+
+{% set header_section = "MENU" %}
+{% set header_title = "Add Menu Item" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="menu-page-head">
+
+<div>
+
+<span>
+NEW ITEM
+</span>
+
+<h2>
+Add Menu Item
+</h2>
+
+<p>
+Add a food, product or service to your customer menu.
+</p>
+
+</div>
+
+<a
+href="{{ url_for('owner_menu') }}"
+class="btn-secondary"
+>
+← Back to Menu
+</a>
+
+</div>
+
+
+<form
+method="POST"
+class="menu-form"
+>
+
+<div class="menu-form-section">
+
+<h3>
+🍽️ Item Information
+</h3>
+
+<div class="menu-form-grid">
+
+
+<div class="menu-form-group full">
+
+<label>
+Item Name *
+</label>
+
+<input
+type="text"
+name="name"
+placeholder="e.g. Masala Cheese Sandwich"
+required
+>
+
+</div>
+
+
+<div class="menu-form-group">
+
+<label>
+Category
+</label>
+
+<select name="category_id">
+
+<option value="">
+Uncategorized
+</option>
+
+{% for category in categories %}
+
+<option value="{{ category[0] }}">
+{{ category[1] }}
+</option>
+
+{% endfor %}
+
+</select>
+
+</div>
+
+
+<div class="menu-form-group">
+
+<label>
+Price *
+</label>
+
+<input
+type="number"
+name="price"
+min="0"
+step="0.01"
+placeholder="199.00"
+required
+>
+
+</div>
+
+
+<div class="menu-form-group full">
+
+<label>
+Description
+</label>
+
+<textarea
+name="description"
+rows="4"
+placeholder="Describe your item..."
+></textarea>
+
+</div>
+
+
+<div class="menu-form-group full">
+
+<label>
+Image URL
+</label>
+
+<input
+type="url"
+name="image_url"
+placeholder="https://..."
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_menu') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+＋ Add Item
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

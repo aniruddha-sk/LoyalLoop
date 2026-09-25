@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Reward | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% set header_section = "LOYALTY" %}
+{% set header_title = "Edit Reward" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="page-head">
+
+<div>
+<span>REWARD MANAGEMENT</span>
+<h2>Edit Reward</h2>
+<p>Update the reward details for your customers.</p>
+</div>
+
+<a
+href="{{ url_for('owner_rewards') }}"
+class="btn-secondary"
+>
+← Back to Rewards
+</a>
+
+</div>
+
+
+<div class="panel">
+
+<div class="panel-head">
+
+<div>
+<h3>Reward Information</h3>
+<p>Modify the reward details below.</p>
+</div>
+
+</div>
+
+
+<form
+method="POST"
+action="{{ url_for('edit_reward', reward_id=reward[0]) }}"
+>
+
+
+<div class="profile-form-grid">
+
+
+<div class="profile-form-group">
+
+<label>
+Reward Name *
+</label>
+
+<input
+type="text"
+name="reward_name"
+value="{{ reward[1] }}"
+maxlength="150"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Required Stamps *
+</label>
+
+<input
+type="number"
+name="required_stamps"
+value="{{ reward[4] }}"
+min="1"
+step="1"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Reward Value (₹)
+</label>
+
+<input
+type="number"
+name="reward_value"
+value="{{ reward[3] if reward[3] is not none else '' }}"
+min="0"
+step="0.01"
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Validity (Days)
+</label>
+
+<input
+type="number"
+name="validity_days"
+value="{{ reward[5] if reward[5] else '' }}"
+min="1"
+step="1"
+>
+
+</div>
+
+
+<div
+class="profile-form-group"
+style="grid-column:1/-1;"
+>
+
+<label>
+Description
+</label>
+
+<textarea
+name="description"
+rows="5"
+maxlength="2000"
+>{{ reward[2] or '' }}</textarea>
+
+</div>
+
+</div>
+
+
+<div class="reward-current-status">
+
+<span>
+Current Status
+</span>
+
+<strong class="reward-status {{ reward[6] }}">
+{{ reward[6]|title }}
+</strong>
+
+</div>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_rewards') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+💾 Save Reward
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

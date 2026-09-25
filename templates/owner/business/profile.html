@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Business Profile | LoyalLoop{% endblock %}
+
+{% block content %}
+
+{% set header_section = "BUSINESS" %}
+{% set header_title = "Business Profile" %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="profile-page-header">
+
+<div>
+
+<span>
+BUSINESS PROFILE
+</span>
+
+<h2>
+Manage your business information
+</h2>
+
+<p>
+Keep your business details updated for your customers.
+</p>
+
+</div>
+
+<a
+href="{{ url_for('business_settings') }}"
+class="profile-settings-btn"
+>
+⚙ Settings
+</a>
+
+</div>
+
+
+<div class="profile-header-card">
+
+<div class="profile-avatar">
+🏪
+</div>
+
+<div>
+
+<h2>
+{{ business[1] }}
+</h2>
+
+<p>
+{{ business[12] }}
+</p>
+
+<span class="status-badge {{ business[14] }}">
+{{ business[14]|capitalize }}
+</span>
+
+</div>
+
+</div>
+
+
+<form
+method="POST"
+class="business-form"
+>
+
+
+<div class="profile-form-section">
+
+<h3>
+🏪 Basic Information
+</h3>
+
+<div class="profile-form-grid">
+
+<div class="profile-form-group full">
+
+<label>
+Business Name *
+</label>
+
+<input
+type="text"
+name="business_name"
+value="{{ business[1] }}"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Phone Number *
+</label>
+
+<input
+type="tel"
+name="phone"
+value="{{ business[3] }}"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Email
+</label>
+
+<input
+type="email"
+name="email"
+value="{{ business[4] or '' }}"
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="profile-form-section">
+
+<h3>
+📍 Business Location
+</h3>
+
+<div class="profile-form-grid">
+
+<div class="profile-form-group full">
+
+<label>
+Address
+</label>
+
+<textarea
+name="address"
+rows="3"
+>{{ business[5] or '' }}</textarea>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+City *
+</label>
+
+<input
+type="text"
+name="city"
+value="{{ business[6] }}"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+State *
+</label>
+
+<input
+type="text"
+name="state"
+value="{{ business[7] }}"
+required
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Pincode *
+</label>
+
+<input
+type="text"
+name="pincode"
+value="{{ business[8] }}"
+required
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="profile-form-section">
+
+<h3>
+🔗 Social & Customer Links
+</h3>
+
+<div class="profile-form-grid">
+
+<div class="profile-form-group">
+
+<label>
+Instagram URL
+</label>
+
+<input
+type="url"
+name="instagram_url"
+value="{{ business[9] or '' }}"
+placeholder="https://instagram.com/..."
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+Google Review URL
+</label>
+
+<input
+type="url"
+name="google_review_url"
+value="{{ business[10] or '' }}"
+placeholder="https://g.page/..."
+>
+
+</div>
+
+
+<div class="profile-form-group">
+
+<label>
+WhatsApp Number
+</label>
+
+<input
+type="tel"
+name="whatsapp_number"
+value="{{ business[11] or '' }}"
+placeholder="91XXXXXXXXXX"
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="profile-form-actions">
+
+<a
+href="{{ url_for('owner_dashboard') }}"
+class="btn-secondary"
+>
+Cancel
+</a>
+
+<button
+type="submit"
+class="btn-primary"
+>
+💾 Save Changes
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}

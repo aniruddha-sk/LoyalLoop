@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}My Orders | LoyalLoop{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-orders.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="customer-orders-page">
+
+    <header class="orders-header">
+
+        <div class="orders-top">
+
+            <a
+                href="{{ url_for('customer_dashboard') }}"
+                class="back-btn"
+            >
+                ←
+            </a>
+
+            <div>
+                <span>YOUR ACTIVITY</span>
+                <h1>My Orders</h1>
+            </div>
+
+            <div class="orders-icon">
+                🛍️
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main class="orders-content">
+
+        <!-- SUMMARY -->
+
+        <section class="orders-summary">
+
+            <div class="summary-card">
+
+                <span>TOTAL ORDERS</span>
+
+                <strong>
+                    {{ orders|length }}
+                </strong>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span>TOTAL SPENT</span>
+
+                <strong>
+                    ₹{{ "%.2f"|format(total_spent|float) }}
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <!-- ORDERS -->
+
+        <section class="orders-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>ORDER HISTORY</span>
+
+                    <h2>
+                        Recent Orders
+                    </h2>
+
+                </div>
+
+                <a
+                    href="{{ url_for('customer_menu') }}"
+                    class="order-again-btn"
+                >
+                    + Order
+                </a>
+
+            </div>
+
+
+            <div class="orders-list">
+
+                {% for order in orders %}
+
+                <a
+                    href="{{ url_for('customer_order_details', order_id=order.id) }}"
+                    class="order-card"
+                >
+
+                    <div class="order-card-top">
+
+                        <div class="order-number">
+
+                            <span>ORDER</span>
+
+                            <strong>
+                                #{{ order.order_number }}
+                            </strong>
+
+                        </div>
+
+
+                        <span
+                            class="order-status {{ order.status }}"
+                        >
+                            {{ order.status|replace("_", " ")|title }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="order-card-middle">
+
+                        <div>
+
+                            <span>Items</span>
+
+                            <strong>
+                                {{ order.item_count }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>Date</span>
+
+                            <strong>
+                                {{ order.created_at.strftime("%d %b %Y") }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>Total</span>
+
+                            <strong>
+                                ₹{{ "%.2f"|format(order.total_amount|float) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="order-card-footer">
+
+                        <span>
+                            {{ order.created_at.strftime("%I:%M %p") }}
+                        </span>
+
+                        <b>
+                            View Details →
+                        </b>
+
+                    </div>
+
+                </a>
+
+
+                {% else %}
+
+                <div class="empty-orders">
+
+                    <div class="empty-icon">
+                        🛍️
+                    </div>
+
+                    <h2>
+                        No orders yet
+                    </h2>
+
+                    <p>
+                        Your delicious journey starts here.
+                    </p>
+
+                    <a
+                        href="{{ url_for('customer_menu') }}"
+                        class="start-order-btn"
+                    >
+                        Explore Menu →
+                    </a>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- BOTTOM NAV -->
+
+    <nav class="customer-orders-nav">
+
+        <a href="{{ url_for('customer_dashboard') }}">
+
+            <span>⌂</span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
+
+
+        <a href="{{ url_for('customer_menu') }}">
+
+            <span>🍴</span>
+
+            <small>
+                Menu
+            </small>
+
+        </a>
+
+
+        <a href="{{ url_for('customer_cart') }}">
+
+            <span>🛒</span>
+
+            <small>
+                Cart
+            </small>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('customer_orders') }}"
+            class="active"
+        >
+
+            <span>📋</span>
+
+            <small>
+                Orders
+            </small>
+
+        </a>
+
+
+        <a href="{{ url_for('customer_rewards') }}">
+
+            <span>🎁</span>
+
+            <small>
+                Rewards
+            </small>
+
+        </a>
+
+    </nav>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/customer-orders.js') }}"></script>
+
+{% endblock %}

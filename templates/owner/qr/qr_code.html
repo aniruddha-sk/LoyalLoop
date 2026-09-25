@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}QR Code | LoyalLoop{% endblock %}
+
+{% block content %}
+
+<div class="owner-app">
+
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% set header_section = "BUSINESS" %}
+{% set header_title = "QR Code" %}
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content">
+
+<div class="page-head">
+<div>
+<span>LOYALLOOP QR</span>
+<h2>Your Business QR Code</h2>
+<p>Let customers scan this QR code to access your LoyalLoop experience.</p>
+</div>
+
+<div class="page-actions">
+<button type="button" class="btn-secondary" onclick="printQRCode()">
+🖨 Print QR
+</button>
+<button type="button" class="btn-primary" onclick="downloadQRCode()">
+↓ Download QR
+</button>
+</div>
+</div>
+
+
+<div class="qr-layout">
+
+<div class="panel qr-main-panel">
+
+<div class="qr-header">
+<div>
+<span class="qr-label">CUSTOMER ACCESS</span>
+<h3>Scan to Visit {{ business_name }}</h3>
+<p>
+Customers can scan this QR code using their phone camera
+to open your LoyalLoop customer page.
+</p>
+</div>
+</div>
+
+<div class="qr-display-area">
+
+<div class="qr-card" id="qrPrintArea">
+
+<div class="qr-brand">
+<div class="qr-logo">L</div>
+
+<div>
+<strong>LoyalLoop</strong>
+<span>{{ business_name }}</span>
+</div>
+</div>
+
+<div class="qr-image-wrap">
+
+{% if qr_code %}
+<img
+src="{{ qr_code }}"
+alt="LoyalLoop QR Code"
+id="businessQRCode"
+class="business-qr-image"
+>
+{% else %}
+
+<div class="qr-placeholder">
+<div>▦</div>
+<span>QR Code</span>
+<small>QR code will appear here</small>
+</div>
+
+{% endif %}
+
+</div>
+
+<div class="qr-card-text">
+<strong>Scan to connect with us</strong>
+<span>
+View menu • Order • Earn stamps • Claim rewards
+</span>
+</div>
+
+<div class="qr-business-name">
+{{ business_name }}
+</div>
+
+{% if business_code %}
+<div class="qr-business-code">
+Business ID: {{ business_code }}
+</div>
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel qr-info-panel">
+
+<div class="panel-head">
+<div>
+<h3>How it works</h3>
+<p>Your customers can use one QR code for the complete experience.</p>
+</div>
+</div>
+
+<div class="qr-steps">
+
+<div class="qr-step">
+<div class="qr-step-number">01</div>
+<div>
+<strong>Customer scans QR</strong>
+<p>
+Customer scans your LoyalLoop QR code from their phone.
+</p>
+</div>
+</div>
+
+<div class="qr-step">
+<div class="qr-step-number">02</div>
+<div>
+<strong>Customer opens your page</strong>
+<p>
+Your business page opens with menu, loyalty and other options.
+</p>
+</div>
+</div>
+
+<div class="qr-step">
+<div class="qr-step-number">03</div>
+<div>
+<strong>Customer places an order</strong>
+<p>
+Customers can browse your menu and place orders.
+</p>
+</div>
+</div>
+
+<div class="qr-step">
+<div class="qr-step-number">04</div>
+<div>
+<strong>Customer earns rewards</strong>
+<p>
+Eligible completed orders can generate loyalty stamps.
+</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="panel qr-usage-panel">
+
+<div class="panel-head">
+<div>
+<h3>Where to place your QR</h3>
+<p>Use the QR code at customer touchpoints.</p>
+</div>
+</div>
+
+<div class="qr-usage-grid">
+
+<div class="qr-usage-item">
+<div>📱</div>
+<strong>Counter</strong>
+<span>Place it near the billing counter.</span>
+</div>
+
+<div class="qr-usage-item">
+<div>🍽</div>
+<strong>Tables</strong>
+<span>Keep the QR visible on dining tables.</span>
+</div>
+
+<div class="qr-usage-item">
+<div>🧾</div>
+<strong>Receipts</strong>
+<span>Add the QR to printed receipts.</span>
+</div>
+
+<div class="qr-usage-item">
+<div>📦</div>
+<strong>Packaging</strong>
+<span>Print the QR on takeaway packaging.</span>
+</div>
+
+</div>
+
+</div>
+
+
+</div>
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+function downloadQRCode(){
+
+const qr=document.getElementById("businessQRCode");
+
+if(!qr){
+
+alert("QR Code is not available yet.");
+
+return;
+
+}
+
+const link=document.createElement("a");
+
+link.href=qr.src;
+
+link.download="{{ business_code|default('loyalloop') }}-qr.png";
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
+
+}
+
+
+function printQRCode(){
+
+const printArea=document.getElementById("qrPrintArea");
+
+if(!printArea){
+
+alert("QR Code is not available yet.");
+
+return;
+
+}
+
+const printWindow=window.open(
+"",
+"_blank",
+"width=700,height=800"
+);
+
+printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ business_name }} - LoyalLoop QR</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+padding:40px;
+font-family:Arial,sans-serif;
+display:flex;
+justify-content:center;
+align-items:flex-start;
+background:#fff;
+}
+
+.qr-card{
+width:420px;
+padding:32px;
+border:1px solid #ddd;
+border-radius:20px;
+text-align:center;
+}
+
+.qr-brand{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:12px;
+margin-bottom:25px;
+}
+
+.qr-logo{
+width:42px;
+height:42px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#111;
+color:#fff;
+font-size:22px;
+font-weight:800;
+}
+
+.qr-brand strong{
+display:block;
+font-size:20px;
+}
+
+.qr-brand span{
+display:block;
+font-size:12px;
+color:#777;
+margin-top:3px;
+}
+
+.qr-image-wrap{
+display:flex;
+justify-content:center;
+margin:20px 0;
+}
+
+.business-qr-image{
+width:260px;
+height:260px;
+object-fit:contain;
+}
+
+.qr-card-text strong{
+display:block;
+font-size:18px;
+margin-bottom:8px;
+}
+
+.qr-card-text span{
+font-size:13px;
+color:#666;
+}
+
+.qr-business-name{
+font-size:16px;
+font-weight:700;
+margin-top:20px;
+}
+
+.qr-business-code{
+font-size:11px;
+color:#888;
+margin-top:5px;
+}
+
+@media print{
+
+body{
+padding:0;
+}
+
+.qr-card{
+border:none;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+${printArea.outerHTML}
+
+</body>
+
+</html>
+`);
+
+printWindow.document.close();
+
+printWindow.focus();
+
+setTimeout(()=>{
+printWindow.print();
+},500);
+
+}
+
+</script>
+
+{% endblock %}

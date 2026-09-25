@@ -1,0 +1,508 @@
+{% extends "base.html" %}
+
+{% block title %}Home | {{ business.business_name }}{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/customer-home.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="customer-home">
+
+    <header class="customer-header">
+
+        <div class="business-info">
+
+            <div class="business-logo">
+
+                {% if business.logo_url %}
+                    <img
+                        src="{{ business.logo_url }}"
+                        alt="{{ business.business_name }}"
+                    >
+                {% else %}
+                    {{ business.business_name[:1]|upper }}
+                {% endif %}
+
+            </div>
+
+            <div>
+                <h2>{{ business.business_name }}</h2>
+                <span>{{ business.city or "Welcome" }}</span>
+            </div>
+
+        </div>
+
+        <a
+            href="{{ url_for('customer_profile') }}"
+            class="profile-avatar"
+        >
+            {{ customer.full_name[:1]|upper }}
+        </a>
+
+    </header>
+
+
+    <main class="customer-main">
+
+
+        <!-- WELCOME -->
+
+        <section class="welcome-card">
+
+            <div class="welcome-content">
+
+                <span class="welcome-label">
+                    WELCOME BACK 👋
+                </span>
+
+                <h1>
+                    Hi, {{ customer.full_name.split()[0] }}!
+                </h1>
+
+                <p>
+                    Keep visiting, keep earning rewards.
+                </p>
+
+            </div>
+
+            <div class="welcome-art">
+                ✨
+            </div>
+
+        </section>
+
+
+        <!-- LOYALTY PROGRESS -->
+
+        <section class="loyalty-card">
+
+            <div class="loyalty-top">
+
+                <div>
+
+                    <span class="card-label">
+                        LOYALTY PROGRESS
+                    </span>
+
+                    <div class="stamp-number">
+
+                        {{ total_stamps }}
+
+                        <small>
+                            / {{ required_stamps }}
+                        </small>
+
+                    </div>
+
+                    <p>
+                        {{ stamps_remaining }}
+                        more stamps to unlock your reward
+                    </p>
+
+                </div>
+
+                <div class="stamp-circle">
+                    ⭐
+                </div>
+
+            </div>
+
+
+            <div class="progress-area">
+
+                <div class="progress-track">
+
+                    <div
+                        class="progress-fill"
+                        data-progress="{{ progress_percentage }}"
+                    ></div>
+
+                </div>
+
+                <div class="progress-info">
+
+                    <span>
+                        {{ total_stamps }} stamps
+                    </span>
+
+                    <strong>
+                        {{ progress_percentage }}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <section class="quick-section">
+
+            <div class="section-title">
+
+                <span>
+                    EXPLORE
+                </span>
+
+                <h2>
+                    What would you like to do?
+                </h2>
+
+            </div>
+
+
+            <div class="quick-grid">
+
+
+                <!-- MENU -->
+
+                <a
+                    href="{{ url_for('customer_menu') }}"
+                    class="quick-card menu"
+                >
+
+                    <div class="quick-icon">
+                        🍔
+                    </div>
+
+                    <div>
+                        <strong>
+                            Order Food
+                        </strong>
+
+                        <span>
+                            Browse our menu
+                        </span>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <!-- REWARDS -->
+
+                <a
+                    href="{{ url_for('customer_rewards') }}"
+                    class="quick-card rewards"
+                >
+
+                    <div class="quick-icon">
+                        🎁
+                    </div>
+
+                    <div>
+                        <strong>
+                            Rewards
+                        </strong>
+
+                        <span>
+                            View your rewards
+                        </span>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <!-- LOYALTY -->
+
+                <a
+                    href="{{ url_for('customer_loyalty') }}"
+                    class="quick-card loyalty"
+                >
+
+                    <div class="quick-icon">
+                        ⭐
+                    </div>
+
+                    <div>
+                        <strong>
+                            My Loyalty
+                        </strong>
+
+                        <span>
+                            Track your stamps
+                        </span>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <!-- ORDERS -->
+
+                <a
+                    href="{{ url_for('customer_orders') }}"
+                    class="quick-card orders"
+                >
+
+                    <div class="quick-icon">
+                        🧾
+                    </div>
+
+                    <div>
+                        <strong>
+                            My Orders
+                        </strong>
+
+                        <span>
+                            View order history
+                        </span>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+                <!-- REVIEW -->
+
+                <a
+                    href="{{ url_for('customer_review') }}"
+                    class="quick-card review"
+                >
+
+                    <div class="quick-icon">
+                        ⭐
+                    </div>
+
+                    <div>
+                        <strong>
+                            Review Us
+                        </strong>
+
+                        <span>
+                            Share your experience
+                        </span>
+                    </div>
+
+                    <b>
+                        →
+                    </b>
+
+                </a>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- RECENT ORDERS -->
+
+        {% if recent_orders %}
+
+        <section class="recent-section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span>
+                        RECENT ACTIVITY
+                    </span>
+
+                    <h2>
+                        Recent Orders
+                    </h2>
+
+                </div>
+
+                <a href="{{ url_for('customer_orders') }}">
+                    View All
+                </a>
+
+            </div>
+
+
+            <div class="orders-list">
+
+                {% for order in recent_orders %}
+
+                <a
+                    href="{{ url_for('customer_order_details', order_id=order.id) }}"
+                    class="order-card"
+                >
+
+                    <div class="order-icon">
+                        🛍️
+                    </div>
+
+
+                    <div class="order-details">
+
+                        <strong>
+                            Order #{{ order.order_number }}
+                        </strong>
+
+                        <span>
+                            {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="order-right">
+
+                        <strong>
+                            ₹{{ "%.2f"|format(order.total_amount) }}
+                        </strong>
+
+                        <span class="order-status {{ order.status }}">
+                            {{ order.status|replace('_',' ')|title }}
+                        </span>
+
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+        <!-- LOYALTY BANNER -->
+
+        <section class="loyalty-banner">
+
+            <div class="banner-content">
+
+                <span>
+                    YOUR NEXT REWARD IS WAITING ✨
+                </span>
+
+                <h2>
+                    Every eligible order
+                    gets you closer.
+                </h2>
+
+                <a href="{{ url_for('customer_menu') }}">
+                    Order Now →
+                </a>
+
+            </div>
+
+            <div class="banner-art">
+                🎁
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- CUSTOMER BOTTOM NAVIGATION -->
+
+    <nav class="customer-bottom-nav">
+
+
+        <!-- HOME -->
+
+        <a
+            href="{{ url_for('customer_dashboard') }}"
+            class="active"
+        >
+
+            <span>
+                ⌂
+            </span>
+
+            <small>
+                Home
+            </small>
+
+        </a>
+
+
+        <!-- MENU -->
+
+        <a href="{{ url_for('customer_menu') }}">
+
+            <span>
+                ▦
+            </span>
+
+            <small>
+                Menu
+            </small>
+
+        </a>
+
+
+        <!-- LOYALTY -->
+
+        <a href="{{ url_for('customer_loyalty') }}">
+
+            <span>
+                ★
+            </span>
+
+            <small>
+                Loyalty
+            </small>
+
+        </a>
+
+
+        <!-- REWARDS -->
+
+        <a href="{{ url_for('customer_rewards') }}">
+
+            <span>
+                🎁
+            </span>
+
+            <small>
+                Rewards
+            </small>
+
+        </a>
+
+
+        <!-- PROFILE -->
+
+        <a href="{{ url_for('customer_profile') }}">
+
+            <span>
+                ♙
+            </span>
+
+            <small>
+                Profile
+            </small>
+
+        </a>
+
+
+    </nav>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script src="{{ url_for('static', filename='js/customer-home.js') }}"></script>
+
+{% endblock %}

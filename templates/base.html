@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#0f172a"
+    >
+
+
+    <!-- =====================================================
+         PAGE TITLE
+    ====================================================== -->
+
+    <title>
+        {% block title %}LoyalLoop{% endblock %}
+    </title>
+
+
+    <!-- =====================================================
+         GOOGLE FONT
+    ====================================================== -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- =====================================================
+         GLOBAL CSS
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/animations.css') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/responsive.css') }}"
+    >
+
+
+    <!-- =====================================================
+         AUTH CSS
+    ====================================================== -->
+
+    {% if request.path.startswith('/owner/login')
+       or request.path.startswith('/owner/register') %}
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/auth.css') }}"
+        >
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         OWNER CSS
+         
+         Owner pages:
+         /owner/...
+         
+         Analytics:
+         /analytics
+    ====================================================== -->
+
+    {% if request.path.startswith('/owner')
+       or request.path == '/analytics' %}
+
+
+        <!-- Owner Base -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/owner.css') }}"
+        >
+
+
+        <!-- Dashboard -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/dashboard.css') }}"
+        >
+
+
+        <!-- Menu -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/menu.css') }}"
+        >
+
+
+        <!-- Orders -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/order.css') }}"
+        >
+
+
+        <!-- Loyalty -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/loyalty.css') }}"
+        >
+
+
+        <!-- Analytics -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/analytics.css') }}"
+        >
+
+
+        <!-- Reminders -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/reminders.css') }}"
+        >
+
+
+        <!-- QR -->
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/qr.css') }}"
+        >
+
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         CUSTOMER CSS
+    ====================================================== -->
+
+    {% if request.path.startswith('/customer')
+       or request.path.startswith('/business/') %}
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/customer.css') }}"
+        >
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         PAGE SPECIFIC HEAD
+         
+         Individual pages can add CSS/meta/etc.
+    ====================================================== -->
+
+    {% block head %}{% endblock %}
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         FLASH MESSAGES
+    ====================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div class="flash-message {{ category }}">
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                        <button
+                            type="button"
+                            onclick="this.parentElement.remove()"
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main>
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+
+
+    <!-- =====================================================
+         GLOBAL JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/main.js') }}"
+    ></script>
+
+
+
+    <!-- =====================================================
+         OWNER JAVASCRIPT
+         
+         Loaded for:
+         /owner/...
+         /analytics
+    ====================================================== -->
+
+    {% if request.path.startswith('/owner')
+       or request.path == '/analytics' %}
+
+
+        <!-- Owner JS -->
+
+        <script
+            src="{{ url_for('static', filename='js/owner.js') }}"
+        ></script>
+
+
+        <!-- Analytics JS -->
+
+        <script
+            src="{{ url_for('static', filename='js/analytics.js') }}"
+        ></script>
+
+
+        <!-- QR JS -->
+
+        <script
+            src="{{ url_for('static', filename='js/qr.js') }}"
+        ></script>
+
+
+        <!-- Reminders JS -->
+
+        <script
+            src="{{ url_for('static', filename='js/reminders.js') }}"
+        ></script>
+
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         CUSTOMER JAVASCRIPT
+    ====================================================== -->
+
+    {% if request.path.startswith('/customer')
+       or request.path.startswith('/business/') %}
+
+
+        <script
+            src="{{ url_for('static', filename='js/customer.js') }}"
+        ></script>
+
+
+        <script
+            src="{{ url_for('static', filename='js/cart.js') }}"
+        ></script>
+
+
+        <script
+            src="{{ url_for('static', filename='js/loyalty.js') }}"
+        ></script>
+
+
+        <script
+            src="{{ url_for('static', filename='js/menu.js') }}"
+        ></script>
+
+
+        <script
+            src="{{ url_for('static', filename='js/orders.js') }}"
+        ></script>
+
+
+        <script
+            src="{{ url_for('static', filename='js/rewards.js') }}"
+        ></script>
+
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         PAGE SPECIFIC JAVASCRIPT
+    ====================================================== -->
+
+    {% block scripts %}{% endblock %}
+
+
+</body>
+
+</html>

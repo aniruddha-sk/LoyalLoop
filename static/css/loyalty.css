@@ -1,0 +1,801 @@
+/* ============================================================
+   LOYALLOOP - LOYALTY & REWARDS
+   ============================================================ */
+
+.loyalty-page,
+.dashboard-content{
+    min-width:0;
+}
+
+/* ============================================================
+   PAGE HEADER
+   ============================================================ */
+
+.dashboard-content .page-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:28px;
+    min-width:0;
+}
+
+.page-head > div{
+    min-width:0;
+}
+
+.page-head > div > span{
+    display:block;
+    margin-bottom:5px;
+    color:#7d8799;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+}
+
+.page-head h2{
+    margin:0;
+    color:#172033;
+    font-size:29px;
+    line-height:1.2;
+    font-weight:750;
+}
+
+.page-head p{
+    margin:7px 0 0;
+    color:#7c8799;
+    font-size:14px;
+    line-height:1.5;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.loyalty-page .btn-primary,
+.dashboard-content .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    min-height:42px;
+    padding:0 18px;
+    border:0;
+    border-radius:11px;
+    background:linear-gradient(135deg,#635bff,#8755ef);
+    color:#fff;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+    cursor:pointer;
+    box-shadow:0 9px 22px rgba(103,83,239,.20);
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+}
+
+.dashboard-content .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 13px 28px rgba(103,83,239,.28);
+    filter:brightness(1.03);
+}
+
+.dashboard-content .btn-secondary{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    min-height:42px;
+    padding:0 18px;
+    border:1px solid #e2e6ee;
+    border-radius:11px;
+    background:#f7f8fb;
+    color:#435066;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+    cursor:pointer;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.dashboard-content .btn-secondary:hover{
+    background:#fff;
+    border-color:#cfd5e0;
+    transform:translateY(-1px);
+}
+
+/* ============================================================
+   PANELS
+   ============================================================ */
+
+.dashboard-content .panel{
+    width:100%;
+    min-width:0;
+    margin-bottom:22px;
+    padding:27px 28px;
+    background:#fff;
+    border:1px solid #e3e7ee;
+    border-radius:20px;
+    box-shadow:0 8px 28px rgba(25,35,55,.035);
+    overflow:hidden;
+}
+
+.dashboard-content .panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.dashboard-content .panel-head h3{
+    margin:0;
+    color:#172033;
+    font-size:21px;
+    font-weight:750;
+}
+
+.dashboard-content .panel-head p{
+    margin:6px 0 0;
+    color:#8791a2;
+    font-size:13px;
+}
+
+/* ============================================================
+   FORM GRID
+   ============================================================ */
+
+.dashboard-content .profile-form-grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:22px;
+    width:100%;
+    min-width:0;
+}
+
+.dashboard-content .profile-form-group{
+    width:100%;
+    min-width:0;
+}
+
+.dashboard-content .profile-form-group label{
+    display:block;
+    margin-bottom:8px;
+    color:#344055;
+    font-size:13px;
+    font-weight:700;
+}
+
+.dashboard-content .profile-form-group input,
+.dashboard-content .profile-form-group textarea,
+.dashboard-content .profile-form-group select{
+    display:block;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
+    padding:13px 14px;
+    border:1px solid #dce2eb;
+    border-radius:11px;
+    background:#fff;
+    color:#172033;
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.dashboard-content .profile-form-group textarea{
+    resize:vertical;
+    min-height:120px;
+    line-height:1.5;
+}
+
+.dashboard-content .profile-form-group input:hover,
+.dashboard-content .profile-form-group textarea:hover,
+.dashboard-content .profile-form-group select:hover{
+    border-color:#c8cfdb;
+}
+
+.dashboard-content .profile-form-group input:focus,
+.dashboard-content .profile-form-group textarea:focus,
+.dashboard-content .profile-form-group select:focus{
+    border-color:#7163ee;
+    box-shadow:0 0 0 4px rgba(113,99,238,.10);
+    background:#fff;
+}
+
+.dashboard-content .profile-form-group small{
+    display:block;
+    margin-top:7px;
+    color:#8993a3;
+    font-size:11px;
+    line-height:1.45;
+}
+
+/* ============================================================
+   SETTINGS TOGGLE
+   ============================================================ */
+
+.settings-toggle{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-top:25px;
+    padding:17px 18px;
+    border:1px solid #e7e9f0;
+    border-radius:14px;
+    background:#fafaff;
+}
+
+.settings-toggle label{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:#202b3d;
+    cursor:pointer;
+}
+
+.settings-toggle input[type="checkbox"]{
+    width:17px;
+    height:17px;
+    margin:0;
+    accent-color:#6658e8;
+    cursor:pointer;
+}
+
+.settings-toggle strong{
+    font-size:14px;
+}
+
+.settings-toggle p{
+    margin:0 0 0 auto;
+    color:#8a94a5;
+    font-size:12px;
+}
+
+/* ============================================================
+   FORM ACTIONS
+   ============================================================ */
+
+.dashboard-content .profile-form-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:10px;
+    width:100%;
+    min-width:0;
+    margin-top:27px;
+    padding-top:22px;
+    border-top:1px solid #edf0f4;
+}
+
+/* ============================================================
+   LOYALTY WORKFLOW
+   ============================================================ */
+
+.loyalty-flow{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+}
+
+.loyalty-flow-item{
+    position:relative;
+    min-width:0;
+    padding:19px 17px;
+    border:1px solid #e7e9f0;
+    border-radius:15px;
+    background:linear-gradient(145deg,#fff,#fafaff);
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.loyalty-flow-item:hover{
+    transform:translateY(-3px);
+    border-color:#d9d4ff;
+    box-shadow:0 12px 25px rgba(70,60,130,.08);
+}
+
+.loyalty-flow-item strong{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    margin-bottom:12px;
+    border-radius:10px;
+    background:#eeeaff;
+    color:#6558df;
+    font-size:12px;
+}
+
+.loyalty-flow-item span{
+    display:block;
+    color:#465267;
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* ============================================================
+   REWARD STATS
+   ============================================================ */
+
+.dashboard-content .customer-stats{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:18px;
+    width:100%;
+    min-width:0;
+    margin-bottom:28px;
+}
+
+.dashboard-content .customer-stat{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+    padding:19px 20px;
+    border:1px solid #e1e5ed;
+    border-radius:17px;
+    background:#fff;
+    box-shadow:0 7px 24px rgba(25,35,55,.035);
+}
+
+.dashboard-content .customer-stat-icon{
+    display:grid;
+    place-items:center;
+    flex:0 0 42px;
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:#f1efff;
+    font-size:20px;
+}
+
+.dashboard-content .customer-stat strong{
+    display:block;
+    color:#172033;
+    font-size:23px;
+    line-height:1.1;
+}
+
+.dashboard-content .customer-stat span{
+    display:block;
+    margin-top:5px;
+    color:#8993a3;
+    font-size:11px;
+}
+
+/* ============================================================
+   REWARD LIST
+   ============================================================ */
+
+.reward-list{
+    display:flex;
+    flex-direction:column;
+    gap:13px;
+    width:100%;
+}
+
+.reward-card{
+    display:flex;
+    align-items:center;
+    gap:17px;
+    width:100%;
+    min-width:0;
+    padding:18px;
+    border:1px solid #e6e9ef;
+    border-radius:16px;
+    background:#fff;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.reward-card:hover{
+    transform:translateY(-2px);
+    border-color:#dcd8ff;
+    box-shadow:0 12px 28px rgba(45,40,100,.07);
+}
+
+.reward-icon{
+    display:grid;
+    place-items:center;
+    flex:0 0 52px;
+    width:52px;
+    height:52px;
+    border-radius:15px;
+    background:linear-gradient(145deg,#fff4db,#fff9ed);
+    font-size:25px;
+}
+
+.reward-info{
+    flex:1;
+    min-width:0;
+}
+
+.reward-top{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+}
+
+.reward-top h3{
+    min-width:0;
+    margin:0;
+    color:#172033;
+    font-size:16px;
+    font-weight:750;
+}
+
+.reward-status{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:10px;
+    font-weight:700;
+    line-height:1;
+}
+
+.reward-status.active{
+    background:#eaf9f0;
+    color:#21844d;
+}
+
+.reward-status.inactive{
+    background:#f0f2f5;
+    color:#737d8c;
+}
+
+.reward-status.archived{
+    background:#fff0f0;
+    color:#bd5555;
+}
+
+.reward-info > p{
+    margin:6px 0 10px;
+    color:#7e8899;
+    font-size:12px;
+    line-height:1.5;
+}
+
+.reward-meta{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:7px;
+}
+
+.reward-meta span{
+    display:inline-flex;
+    align-items:center;
+    padding:6px 9px;
+    border-radius:8px;
+    background:#f6f7fa;
+    color:#647084;
+    font-size:10px;
+    font-weight:600;
+}
+
+.reward-actions{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:0 0 auto;
+}
+
+/* ============================================================
+   EMPTY STATE
+   ============================================================ */
+
+.dashboard-content .customer-empty{
+    display:flex;
+    align-items:flex-start;
+    flex-direction:column;
+    padding:35px 12px 28px;
+    text-align:left;
+}
+
+.customer-empty > div{
+    margin-bottom:10px;
+}
+
+.customer-empty h3{
+    margin:0 0 5px;
+    color:#172033;
+    font-size:20px;
+}
+
+.customer-empty p{
+    margin:0 0 18px;
+    color:#7d8798;
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* ============================================================
+   REWARD PREVIEW
+   ============================================================ */
+
+.reward-preview{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-top:25px;
+    padding:17px 18px;
+    border:1px solid #e5e1ff;
+    border-radius:15px;
+    background:linear-gradient(135deg,#faf9ff,#f5f2ff);
+}
+
+.reward-preview-icon{
+    display:grid;
+    place-items:center;
+    flex:0 0 45px;
+    width:45px;
+    height:45px;
+    border-radius:12px;
+    background:#fff;
+    box-shadow:0 5px 15px rgba(80,65,160,.08);
+    font-size:22px;
+}
+
+.reward-preview strong{
+    display:block;
+    color:#37325f;
+    font-size:13px;
+}
+
+.reward-preview p{
+    margin:4px 0 0;
+    color:#7c7898;
+    font-size:11px;
+    line-height:1.45;
+}
+
+/* ============================================================
+   CURRENT STATUS
+   ============================================================ */
+
+.reward-current-status{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:23px;
+    padding:15px 17px;
+    border:1px solid #e7e9ef;
+    border-radius:13px;
+    background:#fafbfc;
+}
+
+.reward-current-status > span{
+    color:#7b8596;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* ============================================================
+   RESPONSIVE - TABLET
+   ============================================================ */
+
+@media(max-width:1100px){
+
+    .loyalty-flow{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .dashboard-content .customer-stats{
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+
+    .settings-toggle{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:8px;
+    }
+
+    .settings-toggle p{
+        margin:0;
+    }
+
+}
+
+/* ============================================================
+   RESPONSIVE - MOBILE
+   ============================================================ */
+
+@media(max-width:700px){
+
+    .dashboard-content{
+        padding:25px 18px 35px;
+    }
+
+    .dashboard-content .page-head{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:15px;
+        margin-bottom:22px;
+    }
+
+    .page-head h2{
+        font-size:24px;
+    }
+
+    .page-head p{
+        font-size:13px;
+    }
+
+    .dashboard-content .page-head .btn-primary,
+    .dashboard-content .page-head .btn-secondary{
+        width:100%;
+    }
+
+    .dashboard-content .panel{
+        padding:21px 18px;
+        border-radius:16px;
+    }
+
+    .dashboard-content .profile-form-grid{
+        grid-template-columns:minmax(0,1fr);
+        gap:17px;
+    }
+
+    .dashboard-content .profile-form-actions{
+        align-items:stretch;
+        flex-direction:column-reverse;
+    }
+
+    .dashboard-content .profile-form-actions .btn-primary,
+    .dashboard-content .profile-form-actions .btn-secondary{
+        width:100%;
+    }
+
+    .loyalty-flow{
+        grid-template-columns:minmax(0,1fr);
+    }
+
+    .dashboard-content .customer-stats{
+        grid-template-columns:minmax(0,1fr);
+        gap:11px;
+    }
+
+    .reward-card{
+        align-items:flex-start;
+        flex-wrap:wrap;
+        padding:15px;
+    }
+
+    .reward-info{
+        width:calc(100% - 69px);
+        flex:1 1 calc(100% - 69px);
+    }
+
+    .reward-actions{
+        width:100%;
+        padding-top:4px;
+    }
+
+    .reward-actions .btn-secondary{
+        width:100%;
+    }
+
+    .reward-top{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:6px;
+    }
+
+    .reward-current-status{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:8px;
+    }
+
+}
+
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
+
+@media(max-width:480px){
+
+    .dashboard-content{
+        padding:20px 13px 30px;
+    }
+
+    .dashboard-content .panel{
+        padding:18px 15px;
+    }
+
+    .page-head h2{
+        font-size:22px;
+    }
+
+    .dashboard-content .panel-head h3{
+        font-size:18px;
+    }
+
+    .dashboard-content .profile-form-group input,
+    .dashboard-content .profile-form-group textarea,
+    .dashboard-content .profile-form-group select{
+        font-size:13px;
+    }
+
+    .loyalty-flow-item{
+        padding:15px;
+    }
+
+    .reward-card{
+        gap:12px;
+    }
+
+    .reward-icon{
+        flex-basis:45px;
+        width:45px;
+        height:45px;
+        font-size:21px;
+    }
+
+    .reward-info{
+        width:calc(100% - 57px);
+        flex-basis:calc(100% - 57px);
+    }
+
+    .reward-meta{
+        gap:5px;
+    }
+
+    .reward-meta span{
+        padding:5px 7px;
+        font-size:9px;
+    }
+
+}
+
+.page-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.claims-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:44px;
+    padding:0 16px;
+    border:1px solid #ddd9ff;
+    border-radius:11px;
+    background:#f7f5ff;
+    color:#6254e9;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:750;
+}
+
+.claims-btn:hover{
+    background:#eeeaff;
+    border-color:#c9c2ff;
+}
+
+.reward-empty-icon{
+    margin-bottom:12px;
+}
