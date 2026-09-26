@@ -7,6 +7,26 @@
 {% set header_section = "OVERVIEW" %}
 {% set header_title = "Good evening, " ~ session.get("owner_name") ~ " 👋" %}
 
+<style>
+.dashboard-date-filter{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;padding:16px 18px;background:#fff;border:1px solid #e7e7f2;border-radius:18px;box-shadow:0 8px 30px rgba(80,70,180,.05)}
+.dashboard-filter-left{display:flex;align-items:center;gap:10px}
+.dashboard-filter-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#f0edff;color:#6255f5;font-size:18px}
+.dashboard-filter-text span{display:block;font-size:11px;font-weight:700;letter-spacing:1px;color:#8b89a5;text-transform:uppercase}
+.dashboard-filter-text strong{display:block;margin-top:3px;color:#17152d;font-size:15px}
+.dashboard-filter-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dashboard-filter-form select,.dashboard-filter-form input{height:42px;border:1px solid #deddf0;border-radius:11px;background:#fff;padding:0 12px;color:#27243e;font-size:13px;outline:none}
+.dashboard-filter-form select:focus,.dashboard-filter-form input:focus{border-color:#6b5cff;box-shadow:0 0 0 3px rgba(107,92,255,.10)}
+.dashboard-filter-form .date-label{font-size:11px;font-weight:700;color:#8b89a5}
+.dashboard-custom-dates{display:none;align-items:center;gap:8px}
+.dashboard-custom-dates.show{display:flex}
+.dashboard-filter-loading{opacity:.55;pointer-events:none}
+.dashboard-refresh-dot{display:none;width:7px;height:7px;border-radius:50%;background:#6255f5;animation:dashPulse .8s infinite}
+.dashboard-filter-loading .dashboard-refresh-dot{display:inline-block}
+@keyframes dashPulse{50%{transform:scale(1.7);opacity:.3}}
+@media(max-width:900px){.dashboard-date-filter{align-items:flex-start;flex-direction:column}.dashboard-filter-form{width:100%}}
+@media(max-width:600px){.dashboard-filter-form{display:grid;grid-template-columns:1fr 1fr;width:100%}.dashboard-filter-form select{width:100%}.dashboard-custom-dates{grid-column:1/-1;display:none;grid-template-columns:1fr 1fr}.dashboard-custom-dates.show{display:grid}.dashboard-filter-form .date-label{display:none}}
+</style>
+
 <div class="owner-app">
 
 {% include "owner/components/sidebar.html" %}
@@ -30,21 +50,181 @@ Everything is looking good.
 </h2>
 
 <p>
-Manage your customers, orders and loyalty
-from one place.
+Manage your customers, orders and loyalty from one place.
 </p>
 
 </div>
 
 <div class="welcome-art">
-<div>↗</div>
-<span>Grow • Engage • Retain</span>
+
+<div>
+↗
+</div>
+
+<span>
+Grow • Engage • Retain
+</span>
+
+</div>
+
+</div>
+
+
+<div
+    class="dashboard-date-filter"
+    id="dashboardDateFilter"
+>
+
+<div class="dashboard-filter-left">
+
+<div class="dashboard-filter-icon">
+◷
+</div>
+
+<div class="dashboard-filter-text">
+
+<span>
+Dashboard Period
+</span>
+
+<strong id="dashboardFilterLabel">
+{{ filter_label }}
+</strong>
+
+</div>
+
+<span class="dashboard-refresh-dot"></span>
+
+</div>
+
+
+<div
+    class="dashboard-filter-form"
+    id="dashboardFilterForm"
+>
+
+<select
+    id="dashboardPreset"
+    aria-label="Dashboard period"
+>
+
+<option
+    value="7d"
+    {% if period=="7d" %}selected{% endif %}
+>
+Last 7 Days
+</option>
+
+<option
+    value="28d"
+    {% if period=="28d" %}selected{% endif %}
+>
+Last 28 Days
+</option>
+
+<option
+    value="90d"
+    {% if period=="90d" %}selected{% endif %}
+>
+Last 90 Days
+</option>
+
+<option
+    value="365d"
+    {% if period=="365d" %}selected{% endif %}
+>
+Last 365 Days
+</option>
+
+<option
+    value="lifetime"
+    {% if period=="lifetime" %}selected{% endif %}
+>
+Lifetime
+</option>
+
+<option
+    value="custom"
+    {% if period=="custom" %}selected{% endif %}
+>
+Custom
+</option>
+
+</select>
+
+
+<select
+    id="dashboardYear"
+    aria-label="Select year"
+>
+
+<option value="">
+Year
+</option>
+
+{% for option_year in year_options %}
+
+<option
+    value="{{ option_year }}"
+    {% if period=="year" and option_year|string==year|string %}selected{% endif %}
+>
+{{ option_year }}
+</option>
+
+{% endfor %}
+
+</select>
+
+
+<select
+    id="dashboardMonth"
+    aria-label="Select month"
+>
+
+<option value="">
+Month
+</option>
+
+{% for month in range(1,13) %}
+
+<option
+    value="{{ '%02d'|format(month) }}"
+    {% if period=="month" and month|string==month|string %}selected{% endif %}
+>
+{{ '%02d'|format(month) }}
+</option>
+
+{% endfor %}
+
+</select>
+
+
+<div
+    class="dashboard-custom-dates {% if period=='custom' %}show{% endif %}"
+    id="dashboardCustomDates"
+>
+
+<input
+    type="date"
+    id="dashboardFromDate"
+    value="{{ custom_from }}"
+>
+
+<input
+    type="date"
+    id="dashboardToDate"
+    value="{{ custom_to }}"
+>
+
+</div>
+
 </div>
 
 </div>
 
 
 <div class="stats-grid">
+
 
 <div class="stat-card">
 
@@ -60,12 +240,12 @@ Customers
 
 </div>
 
-<strong>
+<strong id="dashboardTotalCustomers">
 {{ total_customers }}
 </strong>
 
 <span>
-Total customers
+Customers in selected period
 </span>
 
 </div>
@@ -85,12 +265,12 @@ Orders
 
 </div>
 
-<strong>
+<strong id="dashboardTotalOrders">
 {{ total_orders }}
 </strong>
 
 <span>
-Total orders
+Orders in selected period
 </span>
 
 </div>
@@ -110,12 +290,12 @@ Revenue
 
 </div>
 
-<strong>
+<strong id="dashboardTotalRevenue">
 ₹{{ "{:,.0f}".format(total_revenue) }}
 </strong>
 
 <span>
-Delivered orders
+Delivered revenue
 </span>
 
 </div>
@@ -130,17 +310,17 @@ Delivered orders
 </span>
 
 <span class="stat-trend">
-{{ today_orders }} today
+Pending
 </span>
 
 </div>
 
-<strong>
+<strong id="dashboardPendingOrders">
 {{ pending_orders }}
 </strong>
 
 <span>
-Pending orders
+Pending orders in period
 </span>
 
 </div>
@@ -149,6 +329,7 @@ Pending orders
 
 
 <div class="dashboard-grid">
+
 
 <section class="panel quick-panel">
 
@@ -171,9 +352,10 @@ Manage your business
 
 <div class="quick-actions">
 
+
 <a
-href="{{ url_for('add_menu_item') }}"
-class="quick-action"
+    href="{{ url_for('add_menu_item') }}"
+    class="quick-action"
 >
 
 <div class="quick-icon purple">
@@ -192,14 +374,16 @@ Add food or service
 
 </div>
 
-<b>→</b>
+<b>
+→
+</b>
 
 </a>
 
 
 <a
-href="{{ url_for('owner_orders') }}"
-class="quick-action"
+    href="{{ url_for('owner_orders') }}"
+    class="quick-action"
 >
 
 <div class="quick-icon blue">
@@ -213,19 +397,24 @@ View Orders
 </strong>
 
 <span>
-{{ pending_orders }} pending
+<span id="dashboardPendingText">
+{{ pending_orders }}
+</span>
+pending
 </span>
 
 </div>
 
-<b>→</b>
+<b>
+→
+</b>
 
 </a>
 
 
 <a
-href="{{ url_for('owner_customers') }}"
-class="quick-action"
+    href="{{ url_for('owner_customers') }}"
+    class="quick-action"
 >
 
 <div class="quick-icon green">
@@ -239,19 +428,27 @@ Customers
 </strong>
 
 <span>
-{{ total_customers }} customers
+
+<span id="dashboardCustomersText">
+{{ total_customers }}
+</span>
+
+customers
+
 </span>
 
 </div>
 
-<b>→</b>
+<b>
+→
+</b>
 
 </a>
 
 
 <a
-href="#"
-class="quick-action"
+    href="{{ url_for('owner_loyalty_settings') }}"
+    class="quick-action"
 >
 
 <div class="quick-icon orange">
@@ -270,9 +467,12 @@ Manage rewards
 
 </div>
 
-<b>→</b>
+<b>
+→
+</b>
 
 </a>
+
 
 </div>
 
@@ -289,8 +489,8 @@ Manage rewards
 BUSINESS SNAPSHOT
 </span>
 
-<h3>
-At a glance
+<h3 id="dashboardSnapshotLabel">
+{{ filter_label }}
 </h3>
 
 </div>
@@ -314,12 +514,12 @@ Active customers
 </strong>
 
 <small>
-Visited in last 30 days
+Visited in selected period
 </small>
 
 </div>
 
-<b>
+<b id="dashboardActiveCustomers">
 {{ active_customers }}
 </b>
 
@@ -364,12 +564,12 @@ Reward claims
 </strong>
 
 <small>
-Waiting for redemption
+Claimed in selected period
 </small>
 
 </div>
 
-<b>
+<b id="dashboardRewardClaims">
 {{ pending_rewards }}
 </b>
 
@@ -413,9 +613,12 @@ Build your customer experience
 
 <div class="setup-tasks">
 
+
 <div class="task complete">
 
-<div>✓</div>
+<div>
+✓
+</div>
 
 <strong>
 Business profile
@@ -429,11 +632,13 @@ Completed
 
 
 <a
-href="{{ url_for('owner_menu') }}"
-class="task"
+    href="{{ url_for('owner_menu') }}"
+    class="task"
 >
 
-<div>2</div>
+<div>
+2
+</div>
 
 <strong>
 Add your menu
@@ -448,7 +653,9 @@ Next step
 
 <div class="task">
 
-<div>3</div>
+<div>
+3
+</div>
 
 <strong>
 Set loyalty
@@ -463,7 +670,9 @@ Configure rewards
 
 <div class="task">
 
-<div>4</div>
+<div>
+4
+</div>
 
 <strong>
 Generate QR
@@ -478,7 +687,9 @@ Get your QR code
 
 <div class="task">
 
-<div>5</div>
+<div>
+5
+</div>
 
 <strong>
 Go live
@@ -489,6 +700,7 @@ Invite customers
 </span>
 
 </div>
+
 
 </div>
 
@@ -501,5 +713,360 @@ Invite customers
 </main>
 
 </div>
+
+
+<script>
+(function(){
+
+const filter =
+    document.getElementById(
+        "dashboardDateFilter"
+    );
+
+const preset =
+    document.getElementById(
+        "dashboardPreset"
+    );
+
+const year =
+    document.getElementById(
+        "dashboardYear"
+    );
+
+const month =
+    document.getElementById(
+        "dashboardMonth"
+    );
+
+const custom =
+    document.getElementById(
+        "dashboardCustomDates"
+    );
+
+const from =
+    document.getElementById(
+        "dashboardFromDate"
+    );
+
+const to =
+    document.getElementById(
+        "dashboardToDate"
+    );
+
+
+function showCustom(show){
+
+    custom.classList.toggle(
+        "show",
+        show
+    );
+
+}
+
+
+function setLoading(loading){
+
+    filter.classList.toggle(
+        "dashboard-filter-loading",
+        loading
+    );
+
+}
+
+
+function updateUI(data){
+
+    document.getElementById(
+        "dashboardFilterLabel"
+    ).textContent =
+        data.filter_label;
+
+
+    document.getElementById(
+        "dashboardSnapshotLabel"
+    ).textContent =
+        data.filter_label;
+
+
+    document.getElementById(
+        "dashboardTotalCustomers"
+    ).textContent =
+        data.total_customers;
+
+
+    document.getElementById(
+        "dashboardTotalOrders"
+    ).textContent =
+        data.total_orders;
+
+
+    document.getElementById(
+        "dashboardTotalRevenue"
+    ).textContent =
+        "₹" +
+        Number(
+            data.total_revenue || 0
+        ).toLocaleString(
+            "en-IN",
+            {
+                maximumFractionDigits:0
+            }
+        );
+
+
+    document.getElementById(
+        "dashboardPendingOrders"
+    ).textContent =
+        data.pending_orders;
+
+
+    document.getElementById(
+        "dashboardPendingText"
+    ).textContent =
+        data.pending_orders;
+
+
+    document.getElementById(
+        "dashboardCustomersText"
+    ).textContent =
+        data.total_customers;
+
+
+    document.getElementById(
+        "dashboardActiveCustomers"
+    ).textContent =
+        data.active_customers;
+
+
+    document.getElementById(
+        "dashboardRewardClaims"
+    ).textContent =
+        data.pending_rewards;
+
+}
+
+
+async function loadDashboard(params){
+
+    setLoading(true);
+
+    try{
+
+        const response =
+            await fetch(
+                "{{ url_for('owner_dashboard_data') }}?" +
+                params.toString(),
+                {
+                    headers:{
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to load dashboard"
+            );
+
+        }
+
+
+        updateUI(data);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+    finally{
+
+        setLoading(false);
+
+    }
+
+}
+
+
+function loadPreset(value){
+
+    showCustom(
+        value === "custom"
+    );
+
+
+    if(
+        value === "custom"
+    ){
+
+        return;
+
+    }
+
+
+    const params =
+        new URLSearchParams({
+            period:value
+        });
+
+
+    year.value = "";
+
+    month.value = "";
+
+
+    loadDashboard(params);
+
+}
+
+
+preset.addEventListener(
+    "change",
+    () =>
+        loadPreset(
+            preset.value
+        )
+);
+
+
+year.addEventListener(
+    "change",
+    () => {
+
+        if(
+            !year.value
+        ){
+
+            return;
+
+        }
+
+
+        preset.value = "";
+
+        month.value = "";
+
+        showCustom(false);
+
+
+        loadDashboard(
+            new URLSearchParams({
+                period:"year",
+                year:year.value
+            })
+        );
+
+    }
+);
+
+
+month.addEventListener(
+    "change",
+    () => {
+
+        if(
+            !month.value
+        ){
+
+            return;
+
+        }
+
+
+        const selectedYear =
+            year.value ||
+            "{{ current_year }}";
+
+
+        if(
+            !selectedYear
+        ){
+
+            return;
+
+        }
+
+
+        preset.value = "";
+
+        showCustom(false);
+
+
+        loadDashboard(
+            new URLSearchParams({
+                period:"month",
+                year:selectedYear,
+                month:month.value
+            })
+        );
+
+    }
+);
+
+
+function customChanged(){
+
+    if(
+        preset.value !== "custom"
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !from.value ||
+        !to.value
+    ){
+
+        return;
+
+    }
+
+
+    loadDashboard(
+        new URLSearchParams({
+            period:"custom",
+            from_date:from.value,
+            to_date:to.value
+        })
+    );
+
+}
+
+
+from.addEventListener(
+    "change",
+    customChanged
+);
+
+to.addEventListener(
+    "change",
+    customChanged
+);
+
+
+showCustom(
+    preset.value === "custom"
+);
+
+})();
+</script>
+
 
 {% endblock %}

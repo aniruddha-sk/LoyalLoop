@@ -10,6 +10,7 @@ from flask import send_file
 from functools import wraps
 from flask import session, redirect, url_for, flash
 import secrets
+from datetime import date, timedelta
 load_dotenv()
 
 app=Flask(__name__)
@@ -265,62 +266,6 @@ def setup_business():
     finally:
         connection.close()
 
-@app.route("/owner/dashboard")
-@owner_required
-def owner_dashboard():
-    owner_id=session.get("owner_id")
-    connection=get_db_connection()
-
-    if not connection:
-        flash("Database connection failed.","error")
-        return redirect(url_for("owner_login"))
-
-    try:
-        with connection.cursor() as cursor:
-            cursor.execute("""SELECT id,business_name,business_code,city,state,status FROM businesses WHERE owner_id=%s ORDER BY created_at ASC LIMIT 1""",(owner_id,))
-            business=cursor.fetchone()
-
-            if not business:
-                return redirect(url_for("setup_business"))
-
-            business_id,business_name,business_code,city,state,business_status=business
-            session["business_id"]=str(business_id)
-            session["business_name"]=business_name
-
-            cursor.execute("SELECT COUNT(*) FROM customers WHERE business_id=%s",(business_id,))
-            total_customers=cursor.fetchone()[0]
-
-            cursor.execute("SELECT COUNT(*) FROM orders WHERE business_id=%s",(business_id,))
-            total_orders=cursor.fetchone()[0]
-
-            cursor.execute("SELECT COUNT(*) FROM orders WHERE business_id=%s AND created_at::DATE=CURRENT_DATE",(business_id,))
-            today_orders=cursor.fetchone()[0]
-
-            cursor.execute("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE business_id=%s AND status='delivered'",(business_id,))
-            total_revenue=cursor.fetchone()[0]
-
-            cursor.execute("SELECT COUNT(*) FROM orders WHERE business_id=%s AND status='pending'",(business_id,))
-            pending_orders=cursor.fetchone()[0]
-
-            cursor.execute("SELECT COUNT(*) FROM menu_items WHERE business_id=%s AND is_active=TRUE",(business_id,))
-            total_menu_items=cursor.fetchone()[0]
-
-            cursor.execute("""SELECT COUNT(*) FROM customers WHERE business_id=%s AND last_visit_at>=CURRENT_TIMESTAMP-INTERVAL '30 days'""",(business_id,))
-            active_customers=cursor.fetchone()[0]
-
-            cursor.execute("""SELECT COUNT(*) FROM reward_claims WHERE business_id=%s AND status='claimed'""",(business_id,))
-            pending_rewards=cursor.fetchone()[0]
-
-        return render_template("owner/dashboard.html",business_name=business_name,business_code=business_code,city=city,state=state,business_status=business_status,total_customers=total_customers,total_orders=total_orders,today_orders=today_orders,total_revenue=total_revenue,pending_orders=pending_orders,total_menu_items=total_menu_items,active_customers=active_customers,pending_rewards=pending_rewards)
-
-    except Exception as e:
-        print("\n================ DASHBOARD ERROR ================")
-        print(repr(e))
-        print("=================================================\n")
-        flash(f"Dashboard Error: {e}","error")
-        return redirect(url_for("owner_login"))
-    finally:
-        connection.close()
 
 
 
@@ -366,6 +311,725 @@ def business_settings():
     cur.execute("SELECT business_name,timezone,currency,status,business_code,slug FROM businesses WHERE id=%s",(session["business_id"],))
     business=cur.fetchone(); cur.close(); conn.close()
     return render_template("owner/business/settings.html",business=business)
+
+
+
+
+def resolve_report_period(request):
+    from datetime import date, timedelta
+
+    today = date.today()
+    period = (request.args.get("period") or "7d").strip()
+
+    if period == "7d":
+        start_date = today - timedelta(days=6)
+        end_date = today
+        label = "Last 7 Days"
+
+    elif period == "28d":
+        start_date = today - timedelta(days=27)
+        end_date = today
+        label = "Last 28 Days"
+
+    elif period == "90d":
+        start_date = today - timedelta(days=89)
+        end_date = today
+        label = "Last 90 Days"
+
+    elif period == "365d":
+        start_date = today - timedelta(days=364)
+        end_date = today
+        label = "Last 365 Days"
+
+    elif period == "lifetime":
+        start_date = None
+        end_date = None
+        label = "Lifetime"
+
+    elif period == "year":
+        try:
+            year = int(request.args.get("year", today.year))
+            start_date = date(year, 1, 1)
+            end_date = date(year, 12, 31)
+            label = str(year)
+        except (TypeError, ValueError):
+            start_date = today - timedelta(days=6)
+            end_date = today
+            period = "7d"
+            label = "Last 7 Days"
+
+    elif period == "month":
+        try:
+            year = int(request.args.get("year", today.year))
+            month = int(request.args.get("month", today.month))
+
+            start_date = date(year, month, 1)
+
+            if month == 12:
+                next_month = date(year + 1, 1, 1)
+            else:
+                next_month = date(year, month + 1, 1)
+
+            end_date = next_month - timedelta(days=1)
+            label = start_date.strftime("%B %Y")
+        except (TypeError, ValueError):
+            start_date = today - timedelta(days=6)
+            end_date = today
+            period = "7d"
+            label = "Last 7 Days"
+
+    elif period == "custom":
+        try:
+            start_date = date.fromisoformat(request.args.get("from_date", ""))
+            end_date = date.fromisoformat(request.args.get("to_date", ""))
+
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+
+            label = f"{start_date.strftime('%d %b %Y')} – {end_date.strftime('%d %b %Y')}"
+        except (TypeError, ValueError):
+            start_date = today - timedelta(days=6)
+            end_date = today
+            period = "7d"
+            label = "Last 7 Days"
+
+    else:
+        start_date = today - timedelta(days=6)
+        end_date = today
+        period = "7d"
+        label = "Last 7 Days"
+
+    return {
+        "period": period,
+        "start_date": start_date,
+        "end_date": end_date,
+        "label": label,
+        "year": request.args.get("year", str(today.year)),
+        "month": request.args.get("month", f"{today.month:02d}"),
+        "custom_from": request.args.get("from_date", ""),
+        "custom_to": request.args.get("to_date", ""),
+        "current_year": today.year,
+    }
+
+
+def get_report_years(connection, business_id):
+    from datetime import date
+
+    with connection.cursor() as cursor:
+        cursor.execute("""
+            SELECT EXTRACT(YEAR FROM MIN(created_at))::int
+            FROM orders
+            WHERE business_id=%s
+        """, (business_id,))
+
+        first_year = cursor.fetchone()[0]
+
+    current_year = date.today().year
+
+    if not first_year:
+        first_year = current_year
+
+    first_year = min(first_year, current_year)
+
+    return list(range(current_year, first_year - 1, -1))
+
+
+def report_date_sql(column, start_date, end_date):
+    if start_date is None or end_date is None:
+        return "", []
+    return f" AND {column} >= %s AND {column} < (%s::date + INTERVAL '1 day') ", [
+        start_date,
+        end_date,
+    ]
+
+
+@app.route("/owner/dashboard")
+@owner_required
+def owner_dashboard():
+    business_id = session.get("business_id")
+
+    if not business_id:
+        owner_id = session.get("owner_id")
+        return redirect(url_for("owner_login")) if not owner_id else redirect(url_for("setup_business"))
+
+    connection = get_db_connection()
+
+    if not connection:
+        flash("Database connection failed.", "error")
+        return redirect(url_for("owner_login"))
+
+    try:
+        report = resolve_report_period(request)
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT id,business_name,business_code,city,state,status
+                FROM businesses
+                WHERE id=%s
+                LIMIT 1
+            """, (business_id,))
+            business = cursor.fetchone()
+
+            if not business:
+                flash("Business not found.", "error")
+                return redirect(url_for("owner_login"))
+
+            business_id,business_name,business_code,city,state,business_status = business
+
+            session["business_id"] = str(business_id)
+            session["business_name"] = business_name
+
+            data = build_dashboard_data(cursor, business_id, report)
+
+        years = get_report_years(connection, business_id)
+
+        return render_template(
+            "owner/dashboard.html",
+            business_name=business_name,
+            business_code=business_code,
+            city=city,
+            state=state,
+            business_status=business_status,
+            year_options=years,
+            **report,
+            **data
+        )
+
+    except Exception as e:
+        connection.rollback()
+        app.logger.exception("Dashboard error")
+        flash(f"Dashboard Error: {e}", "error")
+        return redirect(url_for("owner_login"))
+
+    finally:
+        connection.close()
+
+
+def build_dashboard_data(cursor, business_id, report):
+    start_date = report["start_date"]
+    end_date = report["end_date"]
+
+    order_filter, order_params = report_date_sql(
+        "o.created_at",
+        start_date,
+        end_date
+    )
+
+    visit_filter, visit_params = report_date_sql(
+        "cv.visit_at",
+        start_date,
+        end_date
+    )
+
+    reward_filter, reward_params = report_date_sql(
+        "rc.claimed_at",
+        start_date,
+        end_date
+    )
+
+    cursor.execute(f"""
+        SELECT COUNT(DISTINCT customer_id)
+        FROM customer_visits cv
+        WHERE business_id=%s
+        {visit_filter}
+    """, (business_id, *visit_params))
+    total_customers = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM orders o
+        WHERE business_id=%s
+        {order_filter}
+    """, (business_id, *order_params))
+    total_orders = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COALESCE(SUM(total_amount),0)
+        FROM orders o
+        WHERE business_id=%s
+          AND status='delivered'
+        {order_filter}
+    """, (business_id, *order_params))
+    total_revenue = float(cursor.fetchone()[0] or 0)
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM orders o
+        WHERE business_id=%s
+          AND status='pending'
+        {order_filter}
+    """, (business_id, *order_params))
+    pending_orders = cursor.fetchone()[0] or 0
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM menu_items
+        WHERE business_id=%s
+          AND is_active=TRUE
+    """, (business_id,))
+    total_menu_items = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(DISTINCT cv.customer_id)
+        FROM customer_visits cv
+        WHERE cv.business_id=%s
+        {visit_filter}
+    """, (business_id, *visit_params))
+    active_customers = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM reward_claims rc
+        WHERE rc.business_id=%s
+          AND rc.status='claimed'
+        {reward_filter}
+    """, (business_id, *reward_params))
+    pending_rewards = cursor.fetchone()[0] or 0
+
+    return {
+        "total_customers": total_customers,
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "pending_orders": pending_orders,
+        "total_menu_items": total_menu_items,
+        "active_customers": active_customers,
+        "pending_rewards": pending_rewards,
+    }
+
+
+@app.route("/owner/dashboard/data")
+@owner_required
+def owner_dashboard_data():
+    business_id = session.get("business_id")
+
+    if not business_id:
+        return jsonify({"success": False, "message": "Business session not found."}), 401
+
+    connection = get_db_connection()
+
+    if not connection:
+        return jsonify({"success": False, "message": "Database connection failed."}), 500
+
+    try:
+        report = resolve_report_period(request)
+
+        with connection.cursor() as cursor:
+            data = build_dashboard_data(cursor, business_id, report)
+
+        return jsonify({
+            "success": True,
+            "filter_label": report["label"],
+            **data
+        })
+
+    except Exception as e:
+        connection.rollback()
+        app.logger.exception("Dashboard AJAX error")
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+    finally:
+        connection.close()
+
+
+@app.route("/analytics")
+@owner_required
+def analytics():
+    business_id = session.get("business_id")
+
+    if not business_id:
+        flash("Business not found.", "error")
+        return redirect(url_for("owner_dashboard"))
+
+    connection = get_db_connection()
+
+    if not connection:
+        flash("Database connection failed.", "error")
+        return redirect(url_for("owner_dashboard"))
+
+    try:
+        report = resolve_report_period(request)
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT business_name,city,business_code
+                FROM businesses
+                WHERE id=%s
+            """, (business_id,))
+
+            business = cursor.fetchone()
+
+            if not business:
+                flash("Business not found.", "error")
+                return redirect(url_for("owner_dashboard"))
+
+            business_name,city,business_code = business
+
+            data = build_analytics_data(
+                cursor,
+                business_id,
+                report
+            )
+
+        years = get_report_years(connection, business_id)
+
+        return render_template(
+            "owner/analytics/analytics.html",
+            business_name=business_name,
+            city=city,
+            business_code=business_code,
+            year_options=years,
+            **report,
+            **data
+        )
+
+    except Exception as e:
+        connection.rollback()
+        app.logger.exception("Analytics error")
+        flash("Unable to load analytics.", "error")
+        return redirect(url_for("owner_dashboard"))
+
+    finally:
+        connection.close()
+
+
+def build_analytics_data(cursor, business_id, report):
+    start_date = report["start_date"]
+    end_date = report["end_date"]
+
+    order_filter, order_params = report_date_sql(
+        "o.created_at",
+        start_date,
+        end_date
+    )
+
+    visit_filter, visit_params = report_date_sql(
+        "cv.visit_at",
+        start_date,
+        end_date
+    )
+
+    stamp_filter, stamp_params = report_date_sql(
+        "ls.created_at",
+        start_date,
+        end_date
+    )
+
+    reward_filter, reward_params = report_date_sql(
+        "rc.claimed_at",
+        start_date,
+        end_date
+    )
+
+    cursor.execute(f"""
+        SELECT COUNT(DISTINCT cv.customer_id)
+        FROM customer_visits cv
+        WHERE cv.business_id=%s
+        {visit_filter}
+    """, (business_id, *visit_params))
+    total_customers = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(DISTINCT cv.customer_id)
+        FROM customer_visits cv
+        WHERE cv.business_id=%s
+        {visit_filter}
+    """, (business_id, *visit_params))
+    active_customers = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM customers c
+        WHERE c.business_id=%s
+          AND (
+              SELECT COUNT(*)
+              FROM customer_visits cv
+              WHERE cv.business_id=%s
+                AND cv.customer_id=c.id
+                {visit_filter.replace("cv.", "cv.")}
+          ) >= 2
+    """, (business_id, business_id, *visit_params))
+    returning_customers = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM orders o
+        WHERE o.business_id=%s
+        {order_filter}
+    """, (business_id, *order_params))
+    total_orders = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM orders o
+        WHERE o.business_id=%s
+          AND o.status='delivered'
+        {order_filter}
+    """, (business_id, *order_params))
+    delivered_orders = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COALESCE(SUM(o.total_amount),0)
+        FROM orders o
+        WHERE o.business_id=%s
+          AND o.status='delivered'
+        {order_filter}
+    """, (business_id, *order_params))
+    total_revenue = float(cursor.fetchone()[0] or 0)
+
+    average_order_value = (
+        total_revenue / delivered_orders
+        if delivered_orders else 0
+    )
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM customer_visits cv
+        WHERE cv.business_id=%s
+        {visit_filter}
+    """, (business_id, *visit_params))
+    total_visits = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COALESCE(SUM(ls.stamp_count),0)
+        FROM loyalty_stamps ls
+        WHERE ls.business_id=%s
+        {stamp_filter}
+    """, (business_id, *stamp_params))
+    total_stamps = cursor.fetchone()[0] or 0
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM reward_claims rc
+        WHERE rc.business_id=%s
+          AND rc.status='claimed'
+        {reward_filter}
+    """, (business_id, *reward_params))
+    rewards_claimed = cursor.fetchone()[0] or 0
+
+    # Historical eligibility: stamps earned up to the end of the selected range.
+    if end_date:
+        eligibility_date_filter = " AND ls.created_at < (%s::date + INTERVAL '1 day') "
+        eligibility_params = [end_date]
+    else:
+        eligibility_date_filter = ""
+        eligibility_params = []
+
+    cursor.execute(f"""
+        SELECT COUNT(*)
+        FROM customers c
+        WHERE c.business_id=%s
+          AND c.is_active=TRUE
+          AND (
+              SELECT COALESCE(SUM(ls.stamp_count),0)
+              FROM loyalty_stamps ls
+              WHERE ls.business_id=%s
+                AND ls.customer_id=c.id
+                {eligibility_date_filter}
+          ) >= COALESCE((
+              SELECT reward_stamps_required
+              FROM loyalty_settings
+              WHERE business_id=%s
+              AND is_active=TRUE
+              LIMIT 1
+          ),999999)
+    """, (
+        business_id,
+        business_id,
+        *eligibility_params,
+        business_id
+    ))
+    eligible_customers = cursor.fetchone()[0] or 0
+
+    # Daily chart for <= 31 days, weekly for longer ranges.
+    if start_date and end_date and (end_date - start_date).days <= 31:
+        cursor.execute("""
+            SELECT
+                d.day::date,
+                COUNT(o.id),
+                COALESCE(SUM(
+                    CASE
+                        WHEN o.status='delivered'
+                        THEN o.total_amount
+                        ELSE 0
+                    END
+                ),0)
+            FROM generate_series(
+                %s::date,
+                %s::date,
+                INTERVAL '1 day'
+            ) d(day)
+            LEFT JOIN orders o
+                ON o.business_id=%s
+                AND o.created_at::date=d.day::date
+            GROUP BY d.day
+            ORDER BY d.day
+        """, (start_date, end_date, business_id))
+
+        rows = cursor.fetchall()
+
+        chart = [
+            {
+                "label": row[0].strftime("%d %b"),
+                "orders": int(row[1] or 0),
+                "revenue": float(row[2] or 0)
+            }
+            for row in rows
+        ]
+
+    elif start_date and end_date:
+        cursor.execute("""
+            SELECT
+                date_trunc('week', d.day)::date,
+                COUNT(o.id),
+                COALESCE(SUM(
+                    CASE
+                        WHEN o.status='delivered'
+                        THEN o.total_amount
+                        ELSE 0
+                    END
+                ),0)
+            FROM generate_series(
+                %s::date,
+                %s::date,
+                INTERVAL '1 day'
+            ) d(day)
+            LEFT JOIN orders o
+                ON o.business_id=%s
+                AND o.created_at::date=d.day::date
+            GROUP BY date_trunc('week', d.day)
+            ORDER BY date_trunc('week', d.day)
+        """, (start_date, end_date, business_id))
+
+        rows = cursor.fetchall()
+
+        chart = [
+            {
+                "label": row[0].strftime("%d %b"),
+                "orders": int(row[1] or 0),
+                "revenue": float(row[2] or 0)
+            }
+            for row in rows
+        ]
+
+    else:
+        cursor.execute("""
+            SELECT
+                date_trunc('month', o.created_at)::date,
+                COUNT(o.id),
+                COALESCE(SUM(
+                    CASE
+                        WHEN o.status='delivered'
+                        THEN o.total_amount
+                        ELSE 0
+                    END
+                ),0)
+            FROM orders o
+            WHERE o.business_id=%s
+            GROUP BY date_trunc('month', o.created_at)
+            ORDER BY date_trunc('month', o.created_at)
+        """, (business_id,))
+
+        rows = cursor.fetchall()
+
+        chart = [
+            {
+                "label": row[0].strftime("%b %Y"),
+                "orders": int(row[1] or 0),
+                "revenue": float(row[2] or 0)
+            }
+            for row in rows
+        ]
+
+    max_revenue = max(
+        [item["revenue"] for item in chart],
+        default=0
+    )
+
+    for item in chart:
+        item["percent"] = round(
+            (item["revenue"] / max_revenue) * 100,
+            2
+        ) if max_revenue else 0
+
+    cursor.execute(f"""
+        SELECT
+            oi.item_name,
+            SUM(oi.quantity),
+            SUM(oi.total_price)
+        FROM order_items oi
+        JOIN orders o ON o.id=oi.order_id
+        WHERE oi.business_id=%s
+          AND o.status='delivered'
+          {order_filter}
+        GROUP BY oi.item_name
+        ORDER BY SUM(oi.quantity) DESC
+        LIMIT 5
+    """, (business_id, *order_params))
+
+    top_items = cursor.fetchall()
+
+    return {
+        "total_customers": total_customers,
+        "active_customers": active_customers,
+        "inactive_customers": max(total_customers - active_customers, 0),
+        "returning_customers": returning_customers,
+        "total_orders": total_orders,
+        "delivered_orders": delivered_orders,
+        "total_revenue": total_revenue,
+        "average_order_value": average_order_value,
+        "total_visits": total_visits,
+        "total_stamps": total_stamps,
+        "rewards_claimed": rewards_claimed,
+        "eligible_customers": eligible_customers,
+        "chart": chart,
+        "top_items": top_items
+    }
+
+
+@app.route("/analytics/data")
+@owner_required
+def analytics_data():
+    business_id = session.get("business_id")
+
+    if not business_id:
+        return jsonify({"success": False, "message": "Business session not found."}), 401
+
+    connection = get_db_connection()
+
+    if not connection:
+        return jsonify({"success": False, "message": "Database connection failed."}), 500
+
+    try:
+        report = resolve_report_period(request)
+
+        with connection.cursor() as cursor:
+            data = build_analytics_data(
+                cursor,
+                business_id,
+                report
+            )
+
+        return jsonify({
+            "success": True,
+            "filter_label": report["label"],
+            **data
+        })
+
+    except Exception as e:
+        connection.rollback()
+        app.logger.exception("Analytics AJAX error")
+        return jsonify({
+            "success": False,
+            "message": str(e)
+        }), 500
+
+    finally:
+        connection.close()
+
+
 
 @app.route("/owner/menu")
 @owner_required
@@ -2416,227 +3080,7 @@ def update_reward_claim_status(claim_id):
         conn.close()
     return redirect(url_for("reward_claim_details",claim_id=claim_id))
 
-@app.route("/analytics")
-@owner_required
-def analytics():
 
-    business_id=session.get("business_id")
-
-    if not business_id:
-        flash("Business not found.","error")
-        return redirect(url_for("owner_dashboard"))
-
-    connection=get_db_connection()
-
-    if not connection:
-        flash("Database connection failed.","error")
-        return redirect(url_for("owner_dashboard"))
-
-    try:
-
-        with connection.cursor() as cursor:
-
-            cursor.execute("""
-                SELECT business_name,city,business_code
-                FROM businesses
-                WHERE id=%s
-            """,(business_id,))
-
-            business=cursor.fetchone()
-
-            if not business:
-                flash("Business not found.","error")
-                return redirect(url_for("owner_dashboard"))
-
-            business_name,city,business_code=business
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM customers
-                WHERE business_id=%s
-            """,(business_id,))
-            total_customers=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM customers
-                WHERE business_id=%s
-                AND is_active=TRUE
-            """,(business_id,))
-            active_customers=cursor.fetchone()[0] or 0
-
-            inactive_customers=total_customers-active_customers
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM customers
-                WHERE business_id=%s
-                AND total_visits>=2
-            """,(business_id,))
-            returning_customers=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM orders
-                WHERE business_id=%s
-            """,(business_id,))
-            total_orders=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM orders
-                WHERE business_id=%s
-                AND status='delivered'
-            """,(business_id,))
-            delivered_orders=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COALESCE(SUM(total_amount),0)
-                FROM orders
-                WHERE business_id=%s
-                AND status='delivered'
-            """,(business_id,))
-            total_revenue=float(cursor.fetchone()[0] or 0)
-
-            average_order_value=(
-                total_revenue/delivered_orders
-                if delivered_orders else 0
-            )
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM customer_visits
-                WHERE business_id=%s
-            """,(business_id,))
-            total_visits=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COALESCE(SUM(stamp_count),0)
-                FROM loyalty_stamps
-                WHERE business_id=%s
-            """,(business_id,))
-            total_stamps=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM reward_claims
-                WHERE business_id=%s
-                AND status='claimed'
-            """,(business_id,))
-            rewards_claimed=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT COUNT(*)
-                FROM customers c
-                WHERE c.business_id=%s
-                AND c.is_active=TRUE
-                AND (
-                    SELECT COALESCE(SUM(ls.stamp_count),0)
-                    FROM loyalty_stamps ls
-                    WHERE ls.customer_id=c.id
-                    AND ls.business_id=%s
-                ) >= COALESCE((
-                    SELECT reward_stamps_required
-                    FROM loyalty_settings
-                    WHERE business_id=%s
-                    LIMIT 1
-                ),999999)
-            """,(business_id,business_id,business_id))
-
-            eligible_customers=cursor.fetchone()[0] or 0
-
-            cursor.execute("""
-                SELECT
-                    d.day::date,
-                    COUNT(o.id),
-                    COALESCE(SUM(
-                        CASE
-                            WHEN o.status='delivered'
-                            THEN o.total_amount
-                            ELSE 0
-                        END
-                    ),0)
-                FROM generate_series(
-                    CURRENT_DATE-INTERVAL '6 days',
-                    CURRENT_DATE,
-                    INTERVAL '1 day'
-                ) d(day)
-                LEFT JOIN orders o
-                    ON o.business_id=%s
-                    AND o.created_at::date=d.day::date
-                GROUP BY d.day
-                ORDER BY d.day
-            """,(business_id,))
-
-            rows=cursor.fetchall()
-
-            max_revenue=max(
-                [float(row[2] or 0) for row in rows],
-                default=0
-            )
-
-            daily_stats=[
-                (
-                    row[0],
-                    row[1],
-                    float(row[2] or 0),
-                    round(
-                        (float(row[2] or 0)/max_revenue)*100,
-                        2
-                    ) if max_revenue else 0
-                )
-                for row in rows
-            ]
-
-            cursor.execute("""
-                SELECT
-                    oi.item_name,
-                    SUM(oi.quantity),
-                    SUM(oi.total_price)
-                FROM order_items oi
-                JOIN orders o
-                    ON o.id=oi.order_id
-                WHERE oi.business_id=%s
-                AND o.status='delivered'
-                GROUP BY oi.item_name
-                ORDER BY SUM(oi.quantity) DESC
-                LIMIT 5
-            """,(business_id,))
-
-            top_items=cursor.fetchall()
-
-        return render_template(
-            "owner/analytics/analytics.html",
-            business_name=business_name,
-            city=city,
-            business_code=business_code,
-            total_customers=total_customers,
-            active_customers=active_customers,
-            inactive_customers=inactive_customers,
-            returning_customers=returning_customers,
-            total_orders=total_orders,
-            delivered_orders=delivered_orders,
-            total_revenue=total_revenue,
-            average_order_value=average_order_value,
-            total_visits=total_visits,
-            total_stamps=total_stamps,
-            rewards_claimed=rewards_claimed,
-            eligible_customers=eligible_customers,
-            daily_stats=daily_stats,
-            top_items=top_items
-        )
-
-    except Exception as e:
-
-        connection.rollback()
-        print("Analytics error:",e)
-
-        flash("Unable to load analytics.","error")
-
-        return redirect(url_for("owner_dashboard"))
-
-    finally:
-        connection.close()
 
 
 @app.route("/owner/qr")

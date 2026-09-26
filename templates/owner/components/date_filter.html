@@ -1,0 +1,695 @@
+<div class="data-filter" id="{{ filter_prefix|default('data') }}DataFilter">
+
+    <div class="data-filter-card">
+
+        <!-- =====================================================
+             FILTER HEADER
+        ====================================================== -->
+
+        <div class="data-filter-header">
+
+            <div class="data-filter-title">
+
+                <span class="data-filter-icon">
+                    📅
+                </span>
+
+                <div>
+
+                    <div class="data-filter-heading">
+                        {{ filter_title|default('Date Filter') }}
+                    </div>
+
+                    <div class="data-filter-subtitle">
+                        Select a period to view data
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CURRENT FILTER -->
+            <div
+                class="data-filter-status"
+                id="{{ filter_prefix|default('data') }}FilterStatus"
+            >
+                All Data
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FILTER CONTROLS
+        ====================================================== -->
+
+        <div class="data-filter-controls">
+
+
+            <!-- =================================================
+                 QUICK PERIOD
+            ================================================== -->
+
+            <div class="data-filter-group data-filter-period-group">
+
+                <label
+                    for="{{ filter_prefix|default('data') }}QuickFilter"
+                >
+                    Period
+                </label>
+
+                <select
+                    id="{{ filter_prefix|default('data') }}QuickFilter"
+                    class="data-filter-select data-filter-period"
+                >
+
+                    <option value="">
+                        Select Period
+                    </option>
+
+                    <option value="7d">
+                        Last 7 Days
+                    </option>
+
+                    <option value="28d">
+                        Last 28 Days
+                    </option>
+
+                    <option value="90d">
+                        Last 90 Days
+                    </option>
+
+                    <option value="365d">
+                        Last 365 Days
+                    </option>
+
+                    <option value="lifetime">
+                        Lifetime
+                    </option>
+
+                    <option value="year">
+                        Select Year
+                    </option>
+
+                    <option value="month">
+                        Select Month
+                    </option>
+
+                    <option value="custom">
+                        Custom Date
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 YEAR
+            ================================================== -->
+
+            <div
+                class="data-filter-group data-filter-year-group"
+                id="{{ filter_prefix|default('data') }}YearGroup"
+                style="display:none;"
+            >
+
+                <label
+                    for="{{ filter_prefix|default('data') }}YearFilter"
+                >
+                    Year
+                </label>
+
+                <select
+                    id="{{ filter_prefix|default('data') }}YearFilter"
+                    class="data-filter-select data-filter-year"
+                    disabled
+                >
+
+                    <option value="">
+                        Select Year
+                    </option>
+
+                    {% for year in year_options|default([]) %}
+
+                        <option value="{{ year }}">
+                            {{ year }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- =================================================
+                 MONTH
+            ================================================== -->
+
+            <div
+                class="data-filter-group data-filter-month-group"
+                id="{{ filter_prefix|default('data') }}MonthGroup"
+                style="display:none;"
+            >
+
+                <label
+                    for="{{ filter_prefix|default('data') }}MonthFilter"
+                >
+                    Month
+                </label>
+
+                <select
+                    id="{{ filter_prefix|default('data') }}MonthFilter"
+                    class="data-filter-select data-filter-month"
+                    disabled
+                >
+
+                    <option value="">
+                        Select Month
+                    </option>
+
+                    <option value="1">
+                        January
+                    </option>
+
+                    <option value="2">
+                        February
+                    </option>
+
+                    <option value="3">
+                        March
+                    </option>
+
+                    <option value="4">
+                        April
+                    </option>
+
+                    <option value="5">
+                        May
+                    </option>
+
+                    <option value="6">
+                        June
+                    </option>
+
+                    <option value="7">
+                        July
+                    </option>
+
+                    <option value="8">
+                        August
+                    </option>
+
+                    <option value="9">
+                        September
+                    </option>
+
+                    <option value="10">
+                        October
+                    </option>
+
+                    <option value="11">
+                        November
+                    </option>
+
+                    <option value="12">
+                        December
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             CUSTOM DATE RANGE
+        ====================================================== -->
+
+        <div
+            class="data-filter-custom-dates"
+            id="{{ filter_prefix|default('data') }}CustomDates"
+            style="display:none;"
+        >
+
+
+            <!-- FROM DATE -->
+
+            <div class="data-filter-group">
+
+                <label
+                    for="{{ filter_prefix|default('data') }}FromDate"
+                >
+                    From Date
+                </label>
+
+                <input
+                    type="date"
+                    id="{{ filter_prefix|default('data') }}FromDate"
+                    class="data-filter-date"
+                >
+
+            </div>
+
+
+            <!-- SEPARATOR -->
+
+            <div class="custom-date-separator">
+                <span>to</span>
+            </div>
+
+
+            <!-- TO DATE -->
+
+            <div class="data-filter-group">
+
+                <label
+                    for="{{ filter_prefix|default('data') }}ToDate"
+                >
+                    To Date
+                </label>
+
+                <input
+                    type="date"
+                    id="{{ filter_prefix|default('data') }}ToDate"
+                    class="data-filter-date"
+                >
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             FILTER LOADING
+        ====================================================== -->
+
+        <div
+            class="data-filter-loading"
+            id="{{ filter_prefix|default('data') }}FilterLoading"
+            style="display:none;"
+        >
+
+            <span class="data-filter-spinner"></span>
+
+            <span>
+                Updating data...
+            </span>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     FILTER BEHAVIOUR
+     
+     This component:
+     - Shows Year when Year is selected
+     - Shows Month when Month is selected
+     - Shows custom dates when Custom Date is selected
+     - Automatically updates when values change
+     - No Apply button
+========================================================= -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    const prefix =
+        "{{ filter_prefix|default('data') }}";
+
+
+    const period =
+        document.getElementById(
+            prefix + "QuickFilter"
+        );
+
+    const year =
+        document.getElementById(
+            prefix + "YearFilter"
+        );
+
+    const month =
+        document.getElementById(
+            prefix + "MonthFilter"
+        );
+
+    const yearGroup =
+        document.getElementById(
+            prefix + "YearGroup"
+        );
+
+    const monthGroup =
+        document.getElementById(
+            prefix + "MonthGroup"
+        );
+
+    const customDates =
+        document.getElementById(
+            prefix + "CustomDates"
+        );
+
+    const fromDate =
+        document.getElementById(
+            prefix + "FromDate"
+        );
+
+    const toDate =
+        document.getElementById(
+            prefix + "ToDate"
+        );
+
+    const status =
+        document.getElementById(
+            prefix + "FilterStatus"
+        );
+
+    const loading =
+        document.getElementById(
+            prefix + "FilterLoading"
+        );
+
+
+    /* =====================================================
+       SHOW / HIDE FILTERS
+    ====================================================== */
+
+    function updateFilterUI() {
+
+        if (!period) {
+            return;
+        }
+
+
+        const value = period.value;
+
+
+        /* Hide everything */
+
+        if (yearGroup) {
+            yearGroup.style.display = "none";
+        }
+
+        if (monthGroup) {
+            monthGroup.style.display = "none";
+        }
+
+        if (customDates) {
+            customDates.style.display = "none";
+        }
+
+
+        if (year) {
+            year.disabled = true;
+        }
+
+        if (month) {
+            month.disabled = true;
+        }
+
+
+        /* =================================================
+           YEAR
+        ================================================== */
+
+        if (value === "year") {
+
+            if (yearGroup) {
+                yearGroup.style.display = "flex";
+            }
+
+            if (year) {
+                year.disabled = false;
+            }
+
+            if (status) {
+                status.textContent = "Select Year";
+            }
+
+        }
+
+
+        /* =================================================
+           MONTH
+        ================================================== */
+
+        else if (value === "month") {
+
+            if (monthGroup) {
+                monthGroup.style.display = "flex";
+            }
+
+            if (month) {
+                month.disabled = false;
+            }
+
+            if (status) {
+                status.textContent = "Select Month";
+            }
+
+        }
+
+
+        /* =================================================
+           CUSTOM DATE
+        ================================================== */
+
+        else if (value === "custom") {
+
+            if (customDates) {
+                customDates.style.display = "flex";
+            }
+
+            if (status) {
+                status.textContent = "Select Date Range";
+            }
+
+        }
+
+
+        /* =================================================
+           NORMAL PERIOD
+        ================================================== */
+
+        else {
+
+            if (status) {
+
+                const selected =
+                    period.options[
+                        period.selectedIndex
+                    ];
+
+                if (selected && selected.value) {
+                    status.textContent =
+                        selected.textContent.trim();
+                } else {
+                    status.textContent =
+                        "All Data";
+                }
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOADING STATE
+    ====================================================== */
+
+    function showLoading() {
+
+        if (!loading) {
+            return;
+        }
+
+        loading.style.display = "flex";
+    }
+
+
+    function hideLoading() {
+
+        if (!loading) {
+            return;
+        }
+
+        loading.style.display = "none";
+    }
+
+
+    /* =====================================================
+       CHANGE STATUS
+    ====================================================== */
+
+    function updateStatus() {
+
+        if (!status) {
+            return;
+        }
+
+
+        if (
+            period &&
+            period.value === "year" &&
+            year &&
+            year.value
+        ) {
+
+            status.textContent =
+                year.options[
+                    year.selectedIndex
+                ].textContent.trim();
+
+            return;
+        }
+
+
+        if (
+            period &&
+            period.value === "month" &&
+            month &&
+            month.value
+        ) {
+
+            status.textContent =
+                month.options[
+                    month.selectedIndex
+                ].textContent.trim();
+
+            return;
+        }
+
+
+        if (
+            period &&
+            period.value === "custom" &&
+            fromDate &&
+            toDate &&
+            fromDate.value &&
+            toDate.value
+        ) {
+
+            status.textContent =
+                fromDate.value +
+                " → " +
+                toDate.value;
+
+            return;
+        }
+
+
+        if (period && period.value) {
+
+            status.textContent =
+                period.options[
+                    period.selectedIndex
+                ].textContent.trim();
+
+            return;
+        }
+
+
+        status.textContent = "All Data";
+
+    }
+
+
+    /* =====================================================
+       CHANGE EVENTS
+    ====================================================== */
+
+    if (period) {
+
+        period.addEventListener(
+            "change",
+            function () {
+
+                updateFilterUI();
+
+                updateStatus();
+
+            }
+        );
+
+    }
+
+
+    if (year) {
+
+        year.addEventListener(
+            "change",
+            function () {
+
+                updateStatus();
+
+            }
+        );
+
+    }
+
+
+    if (month) {
+
+        month.addEventListener(
+            "change",
+            function () {
+
+                updateStatus();
+
+            }
+        );
+
+    }
+
+
+    if (fromDate) {
+
+        fromDate.addEventListener(
+            "change",
+            function () {
+
+                updateStatus();
+
+            }
+        );
+
+    }
+
+
+    if (toDate) {
+
+        toDate.addEventListener(
+            "change",
+            function () {
+
+                updateStatus();
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       INITIAL STATE
+    ====================================================== */
+
+    updateFilterUI();
+    updateStatus();
+
+
+})();
+
+</script>

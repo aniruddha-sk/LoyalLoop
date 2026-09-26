@@ -4,675 +4,1309 @@
 
 {% block content %}
 
-<!-- ANALYTICS PAGE CSS -->
 <link
     rel="stylesheet"
     href="{{ url_for('static', filename='css/owner/analytics.css') }}"
 >
 
+<style>
+.analytics-date-filter{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 24px;padding:16px 18px;background:#fff;border:1px solid #e7e7f2;border-radius:18px;box-shadow:0 8px 30px rgba(80,70,180,.05)}
+.analytics-filter-info{display:flex;align-items:center;gap:12px}
+.analytics-filter-icon{width:42px;height:42px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:#f0edff;color:#6255f5;font-size:19px}
+.analytics-filter-info span{display:block;font-size:11px;font-weight:700;letter-spacing:1px;color:#8b89a5;text-transform:uppercase}
+.analytics-filter-info strong{display:block;margin-top:3px;font-size:15px;color:#17152d}
+.analytics-filter-form{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.analytics-filter-form select,.analytics-filter-form input{height:42px;padding:0 12px;border:1px solid #deddf0;border-radius:11px;background:#fff;color:#27243e;font-size:13px;outline:none}
+.analytics-filter-form select:focus,.analytics-filter-form input:focus{border-color:#6255f5;box-shadow:0 0 0 3px rgba(98,85,245,.10)}
+.analytics-custom-dates{display:none;align-items:center;gap:8px}
+.analytics-custom-dates.show{display:flex}
+.analytics-filter-loading{opacity:.55;pointer-events:none}
+.analytics-refresh-dot{display:none;width:7px;height:7px;border-radius:50%;background:#6255f5;animation:analyticsPulse .8s infinite}
+.analytics-filter-loading .analytics-refresh-dot{display:inline-block}
+@keyframes analyticsPulse{50%{transform:scale(1.7);opacity:.3}}
+@media(max-width:900px){.analytics-date-filter{align-items:flex-start;flex-direction:column}.analytics-filter-form{width:100%}}
+@media(max-width:600px){.analytics-filter-form{display:grid;grid-template-columns:1fr 1fr;width:100%}.analytics-filter-form select{width:100%}.analytics-custom-dates{grid-column:1/-1;display:none;grid-template-columns:1fr 1fr}.analytics-custom-dates.show{display:grid}}
+</style>
+
 <div class="owner-app">
 
-    <!-- SIDEBAR -->
-    {% include "owner/components/sidebar.html" %}
+{% include "owner/components/sidebar.html" %}
+
+<main class="owner-main">
+
+{% set header_section = "BUSINESS INSIGHTS" %}
+{% set header_title = "Analytics" %}
+
+{% include "owner/components/header.html" %}
+
+<div class="dashboard-content analytics-page">
 
 
-    <!-- MAIN -->
-    <main class="owner-main">
+<div class="analytics-header">
 
-        <!-- HEADER -->
-        {% set header_section = "BUSINESS INSIGHTS" %}
-        {% set header_title = "Analytics" %}
+<div class="analytics-header-left">
 
-        {% include "owner/components/header.html" %}
+<span class="analytics-eyebrow">
+BUSINESS INSIGHTS
+</span>
 
+<h2>
+Analytics
+</h2>
 
-        <!-- ANALYTICS CONTENT -->
-        <div class="dashboard-content analytics-page">
+<p>
+Understand your customers, orders, revenue and loyalty activity.
+</p>
 
+</div>
 
-            <!-- ==========================================
-                 ANALYTICS HEADER
-            =========================================== -->
-
-            <div class="analytics-header">
-
-                <div class="analytics-header-left">
-
-                    <span class="analytics-eyebrow">
-                        BUSINESS INSIGHTS
-                    </span>
-
-                    <h2>
-                        Analytics
-                    </h2>
-
-                    <p>
-                        Understand your customers, orders,
-                        revenue and loyalty activity.
-                    </p>
-
-                </div>
+</div>
 
 
-                <div class="analytics-period">
+<div
+    class="analytics-date-filter"
+    id="analyticsDateFilter"
+>
 
-                    <span class="period-dot"></span>
+<div class="analytics-filter-info">
 
-                    <span>
-                        Last 7 Days + Overall
-                    </span>
+<div class="analytics-filter-icon">
+◷
+</div>
 
-                </div>
+<div>
 
-            </div>
+<span>
+Analytics Period
+</span>
+
+<strong id="analyticsFilterLabel">
+{{ filter_label }}
+</strong>
+
+</div>
+
+<span class="analytics-refresh-dot"></span>
+
+</div>
 
 
+<div
+    class="analytics-filter-form"
+    id="analyticsFilterForm"
+>
 
-            <!-- ==========================================
-                 MAIN STATS
-            =========================================== -->
+<select
+    id="analyticsPreset"
+    aria-label="Analytics period"
+>
 
-            <div class="analytics-stats">
+<option
+    value="7d"
+    {% if period=="7d" %}selected{% endif %}
+>
+Last 7 Days
+</option>
+
+<option
+    value="28d"
+    {% if period=="28d" %}selected{% endif %}
+>
+Last 28 Days
+</option>
+
+<option
+    value="90d"
+    {% if period=="90d" %}selected{% endif %}
+>
+Last 90 Days
+</option>
+
+<option
+    value="365d"
+    {% if period=="365d" %}selected{% endif %}
+>
+Last 365 Days
+</option>
+
+<option
+    value="lifetime"
+    {% if period=="lifetime" %}selected{% endif %}
+>
+Lifetime
+</option>
+
+<option
+    value="custom"
+    {% if period=="custom" %}selected{% endif %}
+>
+Custom
+</option>
+
+</select>
 
 
-                <!-- TOTAL CUSTOMERS -->
+<select
+    id="analyticsYear"
+    aria-label="Select year"
+>
 
-                <div class="analytics-stat-card">
+<option value="">
+Year
+</option>
 
-                    <div class="analytics-stat-icon">
-                        👥
-                    </div>
+{% for option_year in year_options %}
 
-                    <div class="analytics-stat-content">
+<option
+    value="{{ option_year }}"
+    {% if period=="year" and option_year|string==year|string %}selected{% endif %}
+>
+{{ option_year }}
+</option>
 
+{% endfor %}
+
+</select>
+
+
+<select
+    id="analyticsMonth"
+    aria-label="Select month"
+>
+
+<option value="">
+Month
+</option>
+
+{% for option_month in range(1,13) %}
+
+<option
+    value="{{ '%02d'|format(option_month) }}"
+    {% if period=="month" and '%02d'|format(option_month)==month %}selected{% endif %}
+>
+{{ '%02d'|format(option_month) }}
+</option>
+
+{% endfor %}
+
+</select>
+
+
+<div
+    class="analytics-custom-dates {% if period=='custom' %}show{% endif %}"
+    id="analyticsCustomDates"
+>
+
+<input
+    type="date"
+    id="analyticsFromDate"
+    value="{{ custom_from }}"
+>
+
+<input
+    type="date"
+    id="analyticsToDate"
+    value="{{ custom_to }}"
+>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="analytics-stats">
+
+
+<div class="analytics-stat-card">
+
+<div class="analytics-stat-icon">
+👥
+</div>
+
+<div class="analytics-stat-content">
+
+<span>
+Total Customers
+</span>
+
+<strong id="analyticsTotalCustomers">
+{{ total_customers or 0 }}
+</strong>
+
+<small id="analyticsActiveCustomersSmall">
+{{ active_customers or 0 }} active
+</small>
+
+</div>
+
+</div>
+
+
+<div class="analytics-stat-card">
+
+<div class="analytics-stat-icon">
+↻
+</div>
+
+<div class="analytics-stat-content">
+
+<span>
+Returning Customers
+</span>
+
+<strong id="analyticsReturningCustomers">
+{{ returning_customers or 0 }}
+</strong>
+
+<small>
+2+ visits in selected period
+</small>
+
+</div>
+
+</div>
+
+
+<div class="analytics-stat-card">
+
+<div class="analytics-stat-icon">
+🛍
+</div>
+
+<div class="analytics-stat-content">
+
+<span>
+Total Orders
+</span>
+
+<strong id="analyticsTotalOrders">
+{{ total_orders or 0 }}
+</strong>
+
+<small id="analyticsDeliveredSmall">
+{{ delivered_orders or 0 }} delivered
+</small>
+
+</div>
+
+</div>
+
+
+<div class="analytics-stat-card">
+
+<div class="analytics-stat-icon">
+₹
+</div>
+
+<div class="analytics-stat-content">
+
+<span>
+Total Revenue
+</span>
+
+<strong id="analyticsTotalRevenue">
+₹{{ "{:,.0f}".format(total_revenue or 0) }}
+</strong>
+
+<small>
+Delivered orders
+</small>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="analytics-mini-grid">
+
+
+<div class="analytics-mini-card">
+
+<div>
+
+<span>
+Average Order Value
+</span>
+
+<strong id="analyticsAverageOrder">
+₹{{ "{:,.2f}".format(average_order_value or 0) }}
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="analytics-mini-card">
+
+<div>
+
+<span>
+Total Visits
+</span>
+
+<strong id="analyticsTotalVisits">
+{{ total_visits or 0 }}
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="analytics-mini-card">
+
+<div>
+
+<span>
+Loyalty Stamps
+</span>
+
+<strong id="analyticsTotalStamps">
+{{ total_stamps or 0 }}
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="analytics-mini-card">
+
+<div>
+
+<span>
+Rewards Claimed
+</span>
+
+<strong id="analyticsRewardsClaimed">
+{{ rewards_claimed or 0 }}
+</strong>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<div class="analytics-grid">
+
+
+<div class="analytics-panel">
+
+<div class="analytics-panel-head">
+
+<div>
+
+<h3 id="analyticsChartTitle">
+{{ filter_label }}
+</h3>
+
+<p>
+Orders and revenue performance.
+</p>
+
+</div>
+
+</div>
+
+
+<div
+    class="analytics-chart"
+    id="analyticsChart"
+>
+
+{% if chart %}
+
+{% for item in chart %}
+
+<div class="chart-row">
+
+<div class="chart-label">
+<span>
+{{ item.label }}
+</span>
+</div>
+
+<div class="chart-track">
+
+<div
+    class="chart-bar"
+    style="width:{{ item.percent }}%;"
+></div>
+
+</div>
+
+<div class="chart-value">
+₹{{ "{:,.0f}".format(item.revenue or 0) }}
+</div>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<div class="analytics-empty">
+No order activity in the selected period.
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<div class="analytics-panel">
+
+<div class="analytics-panel-head">
+
+<div>
+
+<h3>
+Customer Overview
+</h3>
+
+<p>
+Customer activity in selected period.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="customer-overview-list">
+
+
+<div class="overview-row">
+
+<span>
+Total Customers
+</span>
+
+<strong id="analyticsOverviewCustomers">
+{{ total_customers or 0 }}
+</strong>
+
+</div>
+
+
+<div class="overview-row">
+
+<span>
+Active Customers
+</span>
+
+<strong id="analyticsOverviewActive">
+{{ active_customers or 0 }}
+</strong>
+
+</div>
+
+
+<div class="overview-row">
+
+<span>
+Returning Customers
+</span>
+
+<strong id="analyticsOverviewReturning">
+{{ returning_customers or 0 }}
+</strong>
+
+</div>
+
+
+<div class="overview-row">
+
+<span>
+Inactive Customers
+</span>
+
+<strong id="analyticsOverviewInactive">
+{{ inactive_customers or 0 }}
+</strong>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="analytics-panel analytics-full-panel">
+
+<div class="analytics-panel-head">
+
+<div>
+
+<h3>
+Top Selling Items
+</h3>
+
+<p>
+Items with the highest quantity sold in the selected period.
+</p>
+
+</div>
+
+</div>
+
+
+<div id="analyticsTopItems">
+
+{% if top_items %}
+
+<div class="top-items">
+
+{% for item in top_items %}
+
+<div class="top-item-row">
+
+<div class="top-item-rank">
+{{ loop.index }}
+</div>
+
+<div class="top-item-info">
+
+<strong>
+{{ item[0] }}
+</strong>
+
+<span>
+{{ item[1] }}
+item{% if item[1] != 1 %}s{% endif %}
+sold
+</span>
+
+</div>
+
+<div class="top-item-revenue">
+₹{{ "{:,.0f}".format(item[2] or 0) }}
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="analytics-empty">
+No item sales data available for this period.
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+<div class="analytics-panel analytics-full-panel">
+
+<div class="analytics-panel-head">
+
+<div>
+
+<h3>
+Loyalty Insights
+</h3>
+
+<p>
+Understand how your loyalty program is performing in the selected period.
+</p>
+
+</div>
+
+<a
+    href="{{ url_for('owner_loyalty_settings') }}"
+    class="analytics-btn"
+>
+Manage Loyalty
+</a>
+
+</div>
+
+
+<div class="loyalty-insight-grid">
+
+
+<div class="loyalty-insight-card">
+
+<div class="insight-icon">
+★
+</div>
+
+<div>
+
+<span>
+Total Stamps
+</span>
+
+<strong id="analyticsLoyaltyStamps">
+{{ total_stamps or 0 }}
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="loyalty-insight-card">
+
+<div class="insight-icon">
+🎁
+</div>
+
+<div>
+
+<span>
+Rewards Claimed
+</span>
+
+<strong id="analyticsLoyaltyRewards">
+{{ rewards_claimed or 0 }}
+</strong>
+
+</div>
+
+</div>
+
+
+<div class="loyalty-insight-card">
+
+<div class="insight-icon">
+✓
+</div>
+
+<div>
+
+<span>
+Eligible Customers
+</span>
+
+<strong id="analyticsEligibleCustomers">
+{{ eligible_customers or 0 }}
+</strong>
+
+</div>
+
+</div>
+
+
+</div>
+
+</div>
+
+</div>
+
+
+{% include "owner/components/footer.html" %}
+
+</main>
+
+</div>
+
+
+<script>
+(function(){
+
+const filter =
+    document.getElementById(
+        "analyticsDateFilter"
+    );
+
+const preset =
+    document.getElementById(
+        "analyticsPreset"
+    );
+
+const year =
+    document.getElementById(
+        "analyticsYear"
+    );
+
+const month =
+    document.getElementById(
+        "analyticsMonth"
+    );
+
+const custom =
+    document.getElementById(
+        "analyticsCustomDates"
+    );
+
+const from =
+    document.getElementById(
+        "analyticsFromDate"
+    );
+
+const to =
+    document.getElementById(
+        "analyticsToDate"
+    );
+
+
+function showCustom(show){
+
+    custom.classList.toggle(
+        "show",
+        show
+    );
+
+}
+
+
+function setLoading(loading){
+
+    filter.classList.toggle(
+        "analytics-filter-loading",
+        loading
+    );
+
+}
+
+
+function money(
+    value,
+    decimals=0
+){
+
+    return "₹" +
+        Number(
+            value || 0
+        ).toLocaleString(
+            "en-IN",
+            {
+                minimumFractionDigits:
+                    decimals,
+
+                maximumFractionDigits:
+                    decimals
+            }
+        );
+
+}
+
+
+function escapeHtml(value){
+
+    return String(
+        value ?? ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+function renderChart(chart){
+
+    const box =
+        document.getElementById(
+            "analyticsChart"
+        );
+
+
+    if(
+        !chart ||
+        !chart.length
+    ){
+
+        box.innerHTML =
+            '<div class="analytics-empty">' +
+            'No order activity in the selected period.' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    box.innerHTML =
+        chart.map(
+            item => `
+
+                <div class="chart-row">
+
+                    <div class="chart-label">
                         <span>
-                            Total Customers
+                            ${escapeHtml(item.label)}
                         </span>
+                    </div>
 
-                        <strong>
-                            {{ total_customers or 0 }}
-                        </strong>
+                    <div class="chart-track">
 
-                        <small>
-                            {{ active_customers or 0 }} active
-                        </small>
+                        <div
+                            class="chart-bar"
+                            style="width:${Number(item.percent || 0)}%;"
+                        ></div>
 
+                    </div>
+
+                    <div class="chart-value">
+                        ${money(item.revenue)}
                     </div>
 
                 </div>
 
+            `
+        ).join("");
 
+}
 
-                <!-- RETURNING CUSTOMERS -->
 
-                <div class="analytics-stat-card">
+function renderTopItems(items){
 
-                    <div class="analytics-stat-icon">
-                        ↻
-                    </div>
+    const box =
+        document.getElementById(
+            "analyticsTopItems"
+        );
 
-                    <div class="analytics-stat-content">
 
-                        <span>
-                            Returning Customers
-                        </span>
+    if(
+        !items ||
+        !items.length
+    ){
 
-                        <strong>
-                            {{ returning_customers or 0 }}
-                        </strong>
+        box.innerHTML =
+            '<div class="analytics-empty">' +
+            'No item sales data available for this period.' +
+            '</div>';
 
-                        <small>
-                            Visited more than once
-                        </small>
+        return;
 
-                    </div>
+    }
 
-                </div>
 
+    box.innerHTML = `
 
+        <div class="top-items">
 
-                <!-- TOTAL ORDERS -->
+            ${
+                items.map(
+                    (item,index) => `
 
-                <div class="analytics-stat-card">
+                        <div class="top-item-row">
 
-                    <div class="analytics-stat-icon">
-                        🛍
-                    </div>
+                            <div class="top-item-rank">
+                                ${index + 1}
+                            </div>
 
-                    <div class="analytics-stat-content">
+                            <div class="top-item-info">
 
-                        <span>
-                            Total Orders
-                        </span>
+                                <strong>
+                                    ${escapeHtml(item[0])}
+                                </strong>
 
-                        <strong>
-                            {{ total_orders or 0 }}
-                        </strong>
-
-                        <small>
-                            {{ delivered_orders or 0 }} delivered
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- TOTAL REVENUE -->
-
-                <div class="analytics-stat-card">
-
-                    <div class="analytics-stat-icon">
-                        ₹
-                    </div>
-
-                    <div class="analytics-stat-content">
-
-                        <span>
-                            Total Revenue
-                        </span>
-
-                        <strong>
-                            ₹{{ "{:,.0f}".format(total_revenue or 0) }}
-                        </strong>
-
-                        <small>
-                            Delivered orders
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- ==========================================
-                 SECONDARY STATS
-            =========================================== -->
-
-            <div class="analytics-mini-grid">
-
-
-                <div class="analytics-mini-card">
-
-                    <div>
-
-                        <span>
-                            Average Order Value
-                        </span>
-
-                        <strong>
-                            ₹{{ "{:,.2f}".format(average_order_value or 0) }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="analytics-mini-card">
-
-                    <div>
-
-                        <span>
-                            Total Visits
-                        </span>
-
-                        <strong>
-                            {{ total_visits or 0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="analytics-mini-card">
-
-                    <div>
-
-                        <span>
-                            Loyalty Stamps
-                        </span>
-
-                        <strong>
-                            {{ total_stamps or 0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-
-                <div class="analytics-mini-card">
-
-                    <div>
-
-                        <span>
-                            Rewards Claimed
-                        </span>
-
-                        <strong>
-                            {{ rewards_claimed or 0 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- ==========================================
-                 PERFORMANCE SECTION
-            =========================================== -->
-
-            <div class="analytics-grid">
-
-
-                <!-- ======================================
-                     LAST 7 DAYS
-                ======================================= -->
-
-                <div class="analytics-panel">
-
-                    <div class="analytics-panel-head">
-
-                        <div>
-
-                            <h3>
-                                Last 7 Days
-                            </h3>
-
-                            <p>
-                                Orders and revenue performance.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="analytics-chart">
-
-                        {% if daily_stats %}
-
-                            {% for day in daily_stats %}
-
-                                <div class="chart-row">
-
-
-                                    <!-- DATE -->
-
-                                    <div class="chart-label">
-
-                                        <span>
-                                            {{ day[0].strftime('%d %b') }}
-                                        </span>
-
-                                    </div>
-
-
-
-                                    <!-- BAR -->
-
-                                    <div class="chart-track">
-
-                                        <div
-                                            class="chart-bar"
-                                            style="width: {{ day[3] or 0 }}%;"
-                                        ></div>
-
-                                    </div>
-
-
-
-                                    <!-- REVENUE -->
-
-                                    <div class="chart-value">
-
-                                        ₹{{ "{:,.0f}".format(day[2] or 0) }}
-
-                                    </div>
-
-
-                                </div>
-
-                            {% endfor %}
-
-
-                        {% else %}
-
-                            <div class="analytics-empty">
-
-                                No order activity in the last 7 days.
+                                <span>
+                                    ${item[1]}
+                                    item${Number(item[1]) !== 1 ? "s" : ""}
+                                    sold
+                                </span>
 
                             </div>
 
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- ======================================
-                     CUSTOMER OVERVIEW
-                ======================================= -->
-
-                <div class="analytics-panel">
-
-                    <div class="analytics-panel-head">
-
-                        <div>
-
-                            <h3>
-                                Customer Overview
-                            </h3>
-
-                            <p>
-                                Current customer activity.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="customer-overview-list">
-
-
-                        <div class="overview-row">
-
-                            <span>
-                                Total Customers
-                            </span>
-
-                            <strong>
-                                {{ total_customers or 0 }}
-                            </strong>
-
-                        </div>
-
-
-
-                        <div class="overview-row">
-
-                            <span>
-                                Active Customers
-                            </span>
-
-                            <strong>
-                                {{ active_customers or 0 }}
-                            </strong>
-
-                        </div>
-
-
-
-                        <div class="overview-row">
-
-                            <span>
-                                Returning Customers
-                            </span>
-
-                            <strong>
-                                {{ returning_customers or 0 }}
-                            </strong>
-
-                        </div>
-
-
-
-                        <div class="overview-row">
-
-                            <span>
-                                Inactive Customers
-                            </span>
-
-                            <strong>
-                                {{ inactive_customers or 0 }}
-                            </strong>
-
-                        </div>
-
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- ==========================================
-                 TOP SELLING ITEMS
-            =========================================== -->
-
-            <div class="analytics-panel analytics-full-panel">
-
-
-                <div class="analytics-panel-head">
-
-                    <div>
-
-                        <h3>
-                            Top Selling Items
-                        </h3>
-
-                        <p>
-                            Items with the highest quantity sold.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-
-                {% if top_items %}
-
-                    <div class="top-items">
-
-                        {% for item in top_items %}
-
-                            <div class="top-item-row">
-
-
-                                <!-- RANK -->
-
-                                <div class="top-item-rank">
-                                    {{ loop.index }}
-                                </div>
-
-
-
-                                <!-- ITEM -->
-
-                                <div class="top-item-info">
-
-                                    <strong>
-                                        {{ item[0] }}
-                                    </strong>
-
-                                    <span>
-
-                                        {{ item[1] }}
-
-                                        item{% if item[1] != 1 %}s{% endif %}
-
-                                        sold
-
-                                    </span>
-
-                                </div>
-
-
-
-                                <!-- REVENUE -->
-
-                                <div class="top-item-revenue">
-
-                                    ₹{{ "{:,.0f}".format(item[2] or 0) }}
-
-                                </div>
-
-
+                            <div class="top-item-revenue">
+                                ${money(item[2])}
                             </div>
 
-                        {% endfor %}
-
-                    </div>
-
-
-                {% else %}
-
-                    <div class="analytics-empty">
-
-                        No item sales data available yet.
-
-                    </div>
-
-                {% endif %}
-
-
-            </div>
-
-
-
-            <!-- ==========================================
-                 LOYALTY INSIGHTS
-            =========================================== -->
-
-            <div class="analytics-panel analytics-full-panel">
-
-
-                <div class="analytics-panel-head">
-
-                    <div>
-
-                        <h3>
-                            Loyalty Insights
-                        </h3>
-
-                        <p>
-                            Understand how your loyalty
-                            program is performing.
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="{{ url_for('owner_loyalty_settings') }}"
-                        class="analytics-btn"
-                    >
-                        Manage Loyalty
-                    </a>
-
-                </div>
-
-
-
-                <div class="loyalty-insight-grid">
-
-
-                    <!-- TOTAL STAMPS -->
-
-                    <div class="loyalty-insight-card">
-
-                        <div class="insight-icon">
-                            ★
                         </div>
 
-                        <div>
-
-                            <span>
-                                Total Stamps
-                            </span>
-
-                            <strong>
-                                {{ total_stamps or 0 }}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- REWARDS -->
-
-                    <div class="loyalty-insight-card">
-
-                        <div class="insight-icon">
-                            🎁
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Rewards Claimed
-                            </span>
-
-                            <strong>
-                                {{ rewards_claimed or 0 }}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- ELIGIBLE -->
-
-                    <div class="loyalty-insight-card">
-
-                        <div class="insight-icon">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Eligible Customers
-                            </span>
-
-                            <strong>
-                                {{ eligible_customers or 0 }}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-            </div>
-
+                    `
+                ).join("")
+            }
 
         </div>
 
+    `;
 
-        <!-- FOOTER -->
+}
 
-        {% include "owner/components/footer.html" %}
 
-    </main>
+function updateUI(data){
 
-</div>
+    document.getElementById(
+        "analyticsFilterLabel"
+    ).textContent =
+        data.filter_label;
+
+
+    document.getElementById(
+        "analyticsChartTitle"
+    ).textContent =
+        data.filter_label;
+
+
+    document.getElementById(
+        "analyticsTotalCustomers"
+    ).textContent =
+        data.total_customers;
+
+
+    document.getElementById(
+        "analyticsActiveCustomersSmall"
+    ).textContent =
+        data.active_customers +
+        " active";
+
+
+    document.getElementById(
+        "analyticsReturningCustomers"
+    ).textContent =
+        data.returning_customers;
+
+
+    document.getElementById(
+        "analyticsTotalOrders"
+    ).textContent =
+        data.total_orders;
+
+
+    document.getElementById(
+        "analyticsDeliveredSmall"
+    ).textContent =
+        data.delivered_orders +
+        " delivered";
+
+
+    document.getElementById(
+        "analyticsTotalRevenue"
+    ).textContent =
+        money(
+            data.total_revenue
+        );
+
+
+    document.getElementById(
+        "analyticsAverageOrder"
+    ).textContent =
+        money(
+            data.average_order_value,
+            2
+        );
+
+
+    document.getElementById(
+        "analyticsTotalVisits"
+    ).textContent =
+        data.total_visits;
+
+
+    document.getElementById(
+        "analyticsTotalStamps"
+    ).textContent =
+        data.total_stamps;
+
+
+    document.getElementById(
+        "analyticsRewardsClaimed"
+    ).textContent =
+        data.rewards_claimed;
+
+
+    document.getElementById(
+        "analyticsOverviewCustomers"
+    ).textContent =
+        data.total_customers;
+
+
+    document.getElementById(
+        "analyticsOverviewActive"
+    ).textContent =
+        data.active_customers;
+
+
+    document.getElementById(
+        "analyticsOverviewReturning"
+    ).textContent =
+        data.returning_customers;
+
+
+    document.getElementById(
+        "analyticsOverviewInactive"
+    ).textContent =
+        data.inactive_customers;
+
+
+    document.getElementById(
+        "analyticsLoyaltyStamps"
+    ).textContent =
+        data.total_stamps;
+
+
+    document.getElementById(
+        "analyticsLoyaltyRewards"
+    ).textContent =
+        data.rewards_claimed;
+
+
+    document.getElementById(
+        "analyticsEligibleCustomers"
+    ).textContent =
+        data.eligible_customers;
+
+
+    renderChart(
+        data.chart
+    );
+
+
+    renderTopItems(
+        data.top_items
+    );
+
+}
+
+
+async function loadAnalytics(params){
+
+    setLoading(true);
+
+    try{
+
+        const response =
+            await fetch(
+                "{{ url_for('analytics_data') }}?" +
+                params.toString(),
+                {
+                    headers:{
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.message ||
+                "Unable to load analytics"
+            );
+
+        }
+
+
+        updateUI(data);
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+    finally{
+
+        setLoading(false);
+
+    }
+
+}
+
+
+preset.addEventListener(
+    "change",
+    () => {
+
+        const value =
+            preset.value;
+
+
+        showCustom(
+            value === "custom"
+        );
+
+
+        if(
+            value === "custom"
+        ){
+
+            return;
+
+        }
+
+
+        year.value = "";
+
+        month.value = "";
+
+
+        loadAnalytics(
+            new URLSearchParams({
+                period:value
+            })
+        );
+
+    }
+);
+
+
+year.addEventListener(
+    "change",
+    () => {
+
+        if(
+            !year.value
+        ){
+
+            return;
+
+        }
+
+
+        preset.value = "";
+
+        month.value = "";
+
+        showCustom(false);
+
+
+        loadAnalytics(
+            new URLSearchParams({
+                period:"year",
+                year:year.value
+            })
+        );
+
+    }
+);
+
+
+month.addEventListener(
+    "change",
+    () => {
+
+        if(
+            !month.value
+        ){
+
+            return;
+
+        }
+
+
+        const selectedYear =
+            year.value ||
+            "{{ current_year }}";
+
+
+        if(
+            !selectedYear
+        ){
+
+            return;
+
+        }
+
+
+        preset.value = "";
+
+        showCustom(false);
+
+
+        loadAnalytics(
+            new URLSearchParams({
+                period:"month",
+                year:selectedYear,
+                month:month.value
+            })
+        );
+
+    }
+);
+
+
+function customChanged(){
+
+    if(
+        preset.value !== "custom"
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        !from.value ||
+        !to.value
+    ){
+
+        return;
+
+    }
+
+
+    loadAnalytics(
+        new URLSearchParams({
+            period:"custom",
+            from_date:from.value,
+            to_date:to.value
+        })
+    );
+
+}
+
+
+from.addEventListener(
+    "change",
+    customChanged
+);
+
+to.addEventListener(
+    "change",
+    customChanged
+);
+
+
+showCustom(
+    preset.value === "custom"
+);
+
+})();
+</script>
+
 
 {% endblock %}
