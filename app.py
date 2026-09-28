@@ -15,6 +15,8 @@ load_dotenv()
 
 app=Flask(__name__)
 app.config["SECRET_KEY"]=os.getenv("SECRET_KEY")
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=7)
+app.config["SESSION_REFRESH_EACH_REQUEST"] = True
 
 def get_db_connection():
     try:
@@ -137,59 +139,170 @@ def owner_register():
 
     return render_template("auth/owner_register.html")
 
-@app.route("/owner/login",methods=["GET","POST"])
+@app.route("/owner/login", methods=["GET", "POST"])
 def owner_login():
-    if request.method=="POST":
-        email=request.form.get("email","").strip().lower()
-        password=request.form.get("password","")
+
+    if request.method == "POST":
+
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
 
         if not email or not password:
-            flash("Please enter email and password.","error")
-            return redirect(url_for("owner_login"))
 
-        connection=get_db_connection()
+            flash(
+                "Please enter email and password.",
+                "error"
+            )
+
+            return redirect(
+                url_for("owner_login")
+            )
+
+        connection = get_db_connection()
+
         if not connection:
-            flash("Database connection failed.","error")
-            return redirect(url_for("owner_login"))
+
+            flash(
+                "Database connection failed.",
+                "error"
+            )
+
+            return redirect(
+                url_for("owner_login")
+            )
 
         try:
+
             with connection.cursor() as cursor:
-                cursor.execute("""SELECT id,full_name,email,password_hash,is_active FROM owners WHERE email=%s""",(email,))
-                owner=cursor.fetchone()
+
+                cursor.execute("""
+                    SELECT
+                        id,
+                        full_name,
+                        email,
+                        password_hash,
+                        is_active
+                    FROM owners
+                    WHERE email = %s
+                """, (
+                    email,
+                ))
+
+                owner = cursor.fetchone()
 
                 if not owner:
-                    flash("Invalid email or password.","error")
-                    return redirect(url_for("owner_login"))
 
-                owner_id,full_name,owner_email,password_hash,is_active=owner
+                    flash(
+                        "Invalid email or password.",
+                        "error"
+                    )
+
+                    return redirect(
+                        url_for("owner_login")
+                    )
+
+                owner_id, full_name, owner_email, password_hash, is_active = owner
 
                 if not is_active:
-                    flash("Your account is currently inactive.","error")
-                    return redirect(url_for("owner_login"))
 
-                if not check_password_hash(password_hash,password):
-                    flash("Invalid email or password.","error")
-                    return redirect(url_for("owner_login"))
+                    flash(
+                        "Your account is currently inactive.",
+                        "error"
+                    )
+
+                    return redirect(
+                        url_for("owner_login")
+                    )
+
+                if not check_password_hash(
+                    password_hash,
+                    password
+                ):
+
+                    flash(
+                        "Invalid email or password.",
+                        "error"
+                    )
+
+                    return redirect(
+                        url_for("owner_login")
+                    )
+
+                # =========================================
+                # CLEAR OLD SESSION
+                # =========================================
 
                 session.clear()
-                session["owner_id"]=str(owner_id)
-                session["owner_name"]=full_name
-                session["owner_email"]=owner_email
-                session["user_type"]="owner"
 
-                cursor.execute("UPDATE owners SET last_login_at=CURRENT_TIMESTAMP WHERE id=%s",(owner_id,))
+                # =========================================
+                # PERMANENT SESSION
+                # SESSION VALID FOR 7 DAYS
+                # =========================================
+
+                session.permanent = True
+
+                # =========================================
+                # OWNER SESSION
+                # =========================================
+
+                session["owner_id"] = str(
+                    owner_id
+                )
+
+                session["owner_name"] = full_name
+
+                session["owner_email"] = owner_email
+
+                session["user_type"] = "owner"
+
+                # =========================================
+                # UPDATE LAST LOGIN
+                # =========================================
+
+                cursor.execute("""
+                    UPDATE owners
+                    SET last_login_at = CURRENT_TIMESTAMP
+                    WHERE id = %s
+                """, (
+                    owner_id,
+                ))
+
             connection.commit()
-            flash("Welcome back! 👋","success")
-            return redirect(url_for("owner_dashboard"))
+
+            flash(
+                "Welcome back! 👋",
+                "success"
+            )
+
+            return redirect(
+                url_for("owner_dashboard")
+            )
+
         except Exception as e:
+
             connection.rollback()
-            print("Owner login error:",e)
-            flash("Something went wrong. Please try again.","error")
-            return redirect(url_for("owner_login"))
+
+            print(
+                "Owner login error:",
+                e
+            )
+
+            flash(
+                "Something went wrong. Please try again.",
+                "error"
+            )
+
+            return redirect(
+                url_for("owner_login")
+            )
+
         finally:
+
             connection.close()
 
-    return render_template("auth/owner_login.html")
+    return render_template(
+        "auth/owner_login.html"
+    )
 
 @app.route("/owner/setup-business",methods=["GET","POST"])
 @owner_required
@@ -3727,7 +3840,10 @@ def customer_profile():
 @app.route("/customer/login/<qr_token>", methods=["GET", "POST"])
 def customer_login(qr_token):
 
-    qr_token = clean_text(qr_token, 255)
+    qr_token = clean_text(
+        qr_token,
+        255
+    )
 
     if not qr_token:
         abort(404)
@@ -3813,15 +3929,27 @@ def customer_login(qr_token):
             if request.method == "POST":
 
                 phone = normalize_phone(
-                    request.form.get("phone", "")
+                    request.form.get(
+                        "phone",
+                        ""
+                    )
                 )
 
                 print("\n===================================")
                 print("CUSTOMER LOGIN")
                 print("===================================")
-                print("QR TOKEN:", qr_token)
-                print("BUSINESS ID:", business_id)
-                print("PHONE:", phone)
+                print(
+                    "QR TOKEN:",
+                    qr_token
+                )
+                print(
+                    "BUSINESS ID:",
+                    business_id
+                )
+                print(
+                    "PHONE:",
+                    phone
+                )
 
                 # =====================================
                 # PHONE VALIDATION
@@ -3863,7 +3991,10 @@ def customer_login(qr_token):
 
                 customer = cursor.fetchone()
 
-                print("CUSTOMER RESULT:", customer)
+                print(
+                    "CUSTOMER RESULT:",
+                    customer
+                )
 
                 # =====================================
                 # CUSTOMER NOT FOUND
@@ -3871,7 +4002,9 @@ def customer_login(qr_token):
 
                 if not customer:
 
-                    print("CUSTOMER NOT FOUND")
+                    print(
+                        "CUSTOMER NOT FOUND"
+                    )
 
                     flash(
                         "Account not found. Please create your account first.",
@@ -3909,6 +4042,13 @@ def customer_login(qr_token):
                 session.clear()
 
                 # =====================================
+                # PERMANENT SESSION
+                # SESSION VALID FOR 7 DAYS
+                # =====================================
+
+                session.permanent = True
+
+                # =====================================
                 # CUSTOMER SESSION
                 # =====================================
 
@@ -3926,13 +4066,27 @@ def customer_login(qr_token):
 
                 session["customer_logged_in"] = True
 
-                session.permanent = True
+                print(
+                    "CUSTOMER LOGIN SUCCESS"
+                )
 
-                print("CUSTOMER LOGIN SUCCESS")
-                print("CUSTOMER ID:", customer[0])
-                print("BUSINESS ID:", customer[1])
+                print(
+                    "CUSTOMER ID:",
+                    customer[0]
+                )
 
-                print("===================================\n")
+                print(
+                    "BUSINESS ID:",
+                    customer[1]
+                )
+
+                print(
+                    "SESSION: 7 DAYS"
+                )
+
+                print(
+                    "===================================\n"
+                )
 
                 # =====================================
                 # GO TO CUSTOMER DASHBOARD
@@ -3969,8 +4123,11 @@ def customer_login(qr_token):
         if connection:
 
             try:
+
                 connection.rollback()
+
             except Exception:
+
                 pass
 
         flash(
@@ -3981,12 +4138,15 @@ def customer_login(qr_token):
         return render_template(
             "auth/customer_login.html",
             qr_token=qr_token,
-            business=locals().get("business")
+            business=locals().get(
+                "business"
+            )
         )
 
     finally:
 
         if connection:
+
             connection.close()
 
 @app.route("/customer/register/<qr_token>", methods=["GET", "POST"])
