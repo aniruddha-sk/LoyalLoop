@@ -28,7 +28,7 @@
 
     <link
         rel="preconnect"
-        href="https://fonts.gstatic.com"
+        href="https://fonts.googleapis.com"
         crossorigin
     >
 
@@ -125,6 +125,11 @@
             href="{{ url_for('static', filename='css/customer.css') }}"
         >
 
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/customer-loader.css') }}"
+        >
+
     {% endif %}
 
     {% block head %}{% endblock %}
@@ -132,6 +137,146 @@
 </head>
 
 <body>
+
+    <!-- LOYALLOOP INFINITY LOADER -->
+
+    {% if request.path.startswith('/owner')
+       or request.path == '/analytics' %}
+
+        <div
+            id="loyalloop-loader"
+            aria-hidden="true"
+        >
+
+            <div class="loyalloop-loader-box">
+
+                <svg
+                    class="loyalloop-infinity-svg"
+                    viewBox="0 0 240 120"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+
+                    <defs>
+
+                        <linearGradient
+                            id="loyalloop-loader-gradient"
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="100%"
+                        >
+
+                            <stop
+                                offset="0%"
+                                stop-color="#1740ff"
+                            />
+
+                            <stop
+                                offset="50%"
+                                stop-color="#08c9e8"
+                            />
+
+                            <stop
+                                offset="100%"
+                                stop-color="#25efb5"
+                            />
+
+                        </linearGradient>
+
+                    </defs>
+
+                    <path
+                        class="loyalloop-infinity-shadow"
+                        d="M30 60 C30 20 75 20 120 60 C165 100 210 100 210 60 C210 20 165 20 120 60 C75 100 30 100 30 60"
+                    />
+
+                    <path
+                        class="loyalloop-infinity-path"
+                        pathLength="1"
+                        d="M30 60 C30 20 75 20 120 60 C165 100 210 100 210 60 C210 20 165 20 120 60 C75 100 30 100 30 60"
+                    />
+
+                    <polygon
+                        class="loyalloop-loader-star"
+                        points="120,43 124,53 135,54 127,61 130,72 120,66 110,72 113,61 105,54 116,53"
+                    />
+
+                </svg>
+
+                <div class="loyalloop-loader-text">
+                    LOADING
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- CUSTOMER CAFE LOADER -->
+
+    {% if request.path.startswith('/customer')
+       or request.path.startswith('/business/') %}
+
+        <div
+            id="customer-loader"
+            aria-hidden="true"
+        >
+
+            <div class="customer-loader-card">
+
+                <div class="customer-loader-visual">
+
+                    <div class="customer-loader-ring"></div>
+
+                    <div class="customer-loader-image">
+
+                        <img
+                            src="{{ url_for('static', filename='images/cafe-loader.png') }}"
+                            alt="LoyalLoop Cafe"
+                        >
+
+                    </div>
+
+                    <div class="customer-loader-dot dot-one"></div>
+
+                    <div class="customer-loader-dot dot-two"></div>
+
+                    <div class="customer-loader-dot dot-three"></div>
+
+                </div>
+
+
+                <div
+                    class="customer-loader-business"
+                    id="customerLoaderBusiness"
+                >
+                    YOUR CAFE
+                </div>
+
+
+                <div class="customer-loader-text">
+                    PREPARING YOUR EXPERIENCE
+                </div>
+
+
+                <div class="customer-loader-dots">
+
+                    <span></span>
+
+                    <span></span>
+
+                    <span></span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
 
     <!-- FLASH -->
 
@@ -166,6 +311,7 @@
 
     {% endwith %}
 
+
     <!-- MAIN -->
 
     <main>
@@ -174,11 +320,13 @@
 
     </main>
 
+
     <!-- GLOBAL JS -->
 
     <script
         src="{{ url_for('static', filename='js/main.js') }}"
     ></script>
+
 
     <!-- OWNER JS -->
 
@@ -202,6 +350,7 @@
         ></script>
 
     {% endif %}
+
 
     <!-- CUSTOMER JS -->
 
@@ -232,7 +381,12 @@
             src="{{ url_for('static', filename='js/rewards.js') }}"
         ></script>
 
+        <script
+            src="{{ url_for('static', filename='js/customer-loader.js') }}"
+        ></script>
+
     {% endif %}
+
 
     {% block scripts %}{% endblock %}
 
